@@ -1,9 +1,11 @@
+import 'package:deanora/Widgets/Calendar.dart';
 import 'package:deanora/Widgets/Tutorial.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/crawl/crawl.dart';
 import 'package:deanora/crawl/customException.dart';
 import 'package:deanora/screen/MyLogin.dart';
 import 'package:deanora/screen/MyClass.dart';
+import 'package:deanora/screen/Test.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'dart:async';
@@ -33,7 +35,7 @@ class _MyAppState extends State<MyApp> {
             primaryColor: Colors.black,
             accentColor: Colors.white),
         debugShowCheckedModeBanner: false,
-        home: Cover());
+        home: Calendar());
   }
 }
 
