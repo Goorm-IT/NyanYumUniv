@@ -44,9 +44,6 @@ Container loginTextF(_controller, hintext, icon, obscure) {
         child: Stack(
           children: [
             TextField(
-                // onChanged: (text) {
-                //   print(text);
-                // },
                 controller: _controller,
                 obscureText: obscure,
                 decoration: InputDecoration(
@@ -56,9 +53,6 @@ Container loginTextF(_controller, hintext, icon, obscure) {
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
-                    // border: UnderlineInputBorder(
-                    //   borderSide: BorderSide(color: Colors.red),
-                    // ),
                     hintText: hintext,
                     hintStyle: TextStyle(color: Colors.grey.withOpacity(0.5)),
                     prefixIcon: Container(
@@ -141,7 +135,6 @@ Widget firstfault = Text(
 
 Future<List> requestAssignment(id, pw, props) async {
   try {
-    //throw CustomException(500, "me");
     var crawl = new Crawl(id, pw);
     List<dynamic> assignment = [];
     List doneCnt = [];
