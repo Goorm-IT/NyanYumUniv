@@ -3,6 +3,7 @@ package com.goorm.it.server.UserInfo;
 public class UserInfoDto {
     private String id;
     private String nickName;
+    private String userLevel;
     private int postId;
 
     public String getId(){
@@ -10,6 +11,9 @@ public class UserInfoDto {
     }
     public String getNickName(){
         return nickName;
+    }
+    public String getUserLevel(){
+        return userLevel;
     }
     public int getPostId(){
         return postId;
@@ -23,8 +27,13 @@ public class UserInfoDto {
         this.nickName = nickName;
     }
 
+    public void setUserLevel(String userLevel){
+        this.userLevel = userLevel;
+    }
+
     public void setPostId(int postId) {
         this.postId = postId;
     }
+
 
 }
