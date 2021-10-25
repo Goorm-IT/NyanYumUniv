@@ -24,6 +24,7 @@ class _MyClassState extends State<MyClass> {
   String _searchText = "";
   List filteredNames = [];
   List fname = [];
+  DateTime _refreshTime = DateTime.now();
   Icon searchIcon = new Icon(Icons.search);
   Widget bar = new Text("");
   late Future<double> progressCnt;
@@ -145,6 +146,8 @@ class _MyClassState extends State<MyClass> {
   }
 
   Future<void> _refresh() async {
+    if(DateTime.now().difference(_refreshTime).inSeconds < 5) return;
+    _refreshTime = DateTime.now();
     Navigator.pushReplacement(
         context,
         PageTransition(
