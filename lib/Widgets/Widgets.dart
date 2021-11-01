@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:deanora/crawl/crawl.dart';
 import 'package:deanora/crawl/customException.dart';
 import 'package:deanora/object/assignment.dart';
@@ -140,8 +141,8 @@ Widget firstfault = Text(
 );
 
 Future<List> requestAssignment(id, pw, props) async {
+  
   try {
-    //throw CustomException(500, "me");
     var crawl = new Crawl(id, pw);
     List<dynamic> assignment = [];
     List doneCnt = [];
