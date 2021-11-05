@@ -5,14 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c16c7395-9373-45f0-bc4b-895d13d7a799" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/com/goorm/it/server/RegisterUser/RegisterUserDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/com/goorm/it/server/RegisterUser/RegisterUserDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/discord.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/discord.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/App/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/com/goorm/it/server/Log/logDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/com/goorm/it/server/Log/logDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/com/goorm/it/server/ServerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/com/goorm/it/server/ServerController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
