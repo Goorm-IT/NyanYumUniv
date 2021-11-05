@@ -2,6 +2,7 @@ import 'package:deanora/Widgets/ClassAppbar.dart';
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/Widgets/Classdivid.dart';
+import 'package:deanora/screen/MyCalendar.dart';
 import 'package:deanora/screen/MyLogin.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
@@ -38,7 +39,7 @@ class _MyClassState extends State<MyClass> {
     var windowHeight = MediaQuery.of(context).size.height;
     return MaterialApp(
       theme: ThemeData(primaryColor: Colors.lightGreen),
-      debugShowCheckedModeBanner: false,
+      //debugShowCheckedModeBanner: false,
       home: GestureDetector(
         onTap: () => {
           FocusScope.of(context).unfocus(),
@@ -85,10 +86,36 @@ class _MyClassState extends State<MyClass> {
                         height: 10,
                       ),
                       Container(
-                          margin: const EdgeInsets.only(left: 10),
-                          child: Text("내 강의실 List",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w900, fontSize: 18))),
+                          margin: const EdgeInsets.only(left: 10, right: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("내 강의실 List",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 18)),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MyCalendar()));
+                                },
+                                child: Ink(
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.event_available,
+                                        size: 20,
+                                      ),
+                                      Text("학사일정"),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          )),
                       SizedBox(
                         height: 30,
                       ),
@@ -123,9 +150,12 @@ class _MyClassState extends State<MyClass> {
                                 ),
                               );
                             } else if (snap.hasError) {
-                              String? tmp = snap.error.toString();
-                              print(tmp);
-                              return Text(tmp);
+                              return Column(
+                                children: [
+                                  Text("Error"),
+                                  Text(snap.error.toString()),
+                                ],
+                              );
                             } else {
                               return SizedBox(
                                   width: 50,
