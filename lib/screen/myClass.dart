@@ -103,7 +103,7 @@ class _MyClassState extends State<MyClass> {
                               return SizedBox(
                                 height: windowHeight - 190,
                                 child: RefreshIndicator(
-                                  onRefresh: _refresh,
+                                  onRefresh: () async {_refresh(context);},
                                   child: ListView.builder(
                                     itemCount: filteredNames.length,
                                     itemBuilder: (context, index) {
@@ -145,8 +145,18 @@ class _MyClassState extends State<MyClass> {
     );
   }
 
-  Future<void> _refresh() async {
-    if(DateTime.now().difference(_refreshTime).inSeconds < 5) return;
+  Future<void> _refresh(BuildContext context) async {
+    int leftTime = 5 - DateTime.now().difference(_refreshTime).inSeconds;
+    if(leftTime > 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$leftTime초 후에 다시 시도해주세요',
+            textAlign: TextAlign.center,),
+            duration: Duration(seconds: 1),
+            backgroundColor: Colors.blue,
+          )
+      );
+      return;
+    }
     _refreshTime = DateTime.now();
     Navigator.pushReplacement(
         context,
