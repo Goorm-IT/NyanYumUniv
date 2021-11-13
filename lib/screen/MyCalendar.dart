@@ -301,6 +301,7 @@ class _MyCalendarState extends State<MyCalendar> {
 
   Widget _calendarDates(Calendar calendarDate) {
     List<Widget> _children = [];
+    print(calendarDate.number);
     calendarDate.snc.sort((a, b) => b.order.compareTo(a.order));
     for (int i = 0; i < calendarDate.snc.length; i++) {
       if (calendarDate.thisMonth) {
@@ -364,8 +365,14 @@ class _MyCalendarState extends State<MyCalendar> {
           '${calendarDate.date.day}',
           style: TextStyle(
               fontSize: 15,
-              color:
-                  (calendarDate.thisMonth) ? Color(0xffBABABA) : Colors.white),
+              color: (calendarDate.thisMonth)
+                  ? (calendarDate.single ||
+                          calendarDate.left ||
+                          calendarDate.right ||
+                          calendarDate.middle)
+                      ? Color(0xff707070)
+                      : Color(0xffAAAAAA)
+                  : Colors.white),
         ),
       ),
     );

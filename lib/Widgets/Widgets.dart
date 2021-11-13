@@ -141,12 +141,14 @@ Widget firstfault = Text(
 );
 
 Future<List> requestAssignment(id, pw, props) async {
-  
   try {
     var crawl = new Crawl(id, pw);
     List<dynamic> assignment = [];
     List doneCnt = [];
+
     if (props != null) {
+      // var assignmentProps = await crawl.crawlAssignments(props.classId);
+
       for (int i = 0; i < props.length; i++) {
         var assignmentProps = await crawl.crawlAssignments(props[i].classId);
         if (assignmentProps.length > 0) {
@@ -165,6 +167,29 @@ Future<List> requestAssignment(id, pw, props) async {
       return doneCnt;
     }
     return [];
+  } catch (e) {
+    return Future.error(e);
+  }
+}
+
+requestDnc(id, pw, props) async {
+  var crawl = new Crawl(id, pw);
+  List<dynamic> _assignment = [];
+  try {
+    var _assp = await crawl.crawlAssignments(props.classId);
+    if (_assp.length > 0) {
+      _assignment = assignments(_assp);
+      double tmp = 0.0;
+      for (int i = 0; i < _assignment.length; i++) {
+        if (_assignment[i].state == "제출완료") {
+          tmp++;
+        }
+      }
+
+      return (tmp / _assignment.length);
+    } else {
+      return 0.0;
+    }
   } catch (e) {
     return Future.error(e);
   }
