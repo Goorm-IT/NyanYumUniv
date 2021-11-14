@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:deanora/Widgets/ClassAppbar.dart';
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/Widgets.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:page_transition/page_transition.dart';
+import 'package:admob_flutter/admob_flutter.dart';
 
 class MyClass extends StatefulWidget {
   var id, pw, classProps, userProps;
@@ -59,6 +62,10 @@ class _MyClassState extends State<MyClass> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      AdmobBanner(
+                          adUnitId: Platform.isAndroid ? 'ca-app-pub-3940256099942544~3347511713' : 'ca-app-pub-3894904986041703~9063818915',
+                          adSize: AdmobBannerSize.BANNER
+                      ),
                       Container(
                         height: 30,
                         margin: const EdgeInsets.only(left: 10, bottom: 20),

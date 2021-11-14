@@ -10,10 +10,12 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
+import 'package:admob_flutter/admob_flutter.dart';
 
 int? isviewed;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Admob.initialize();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isviewed = prefs.getInt('Tutorial');
   runApp(MyApp());
