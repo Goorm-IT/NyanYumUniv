@@ -244,6 +244,12 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                                                 vsync: this,
                                                                 upperBound:
                                                                     ddnc));
+                                                  } else if (snap.hasError) {
+                                                    return Container(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Text("NaN"),
+                                                    );
                                                   } else {
                                                     return Container(
                                                         alignment: Alignment
