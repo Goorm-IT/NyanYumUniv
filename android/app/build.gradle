@@ -43,7 +43,7 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "goorm.It"
         //applicationId "com.example.deanora"
-        minSdkVersion 18
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -77,4 +77,14 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.android.gms:play-services-ads:20.4.0'
+
+    // For apps targeting Android 12, add WorkManager dependency.
+    constraints {
+        implementation('androidx.work:work-runtime:2.7.0') {
+            because '''androidx.work:work-runtime:2.1.0 pulled from play-services-ads
+                   has a bug using PendingIntent without FLAG_IMMUTABLE or
+                   FLAG_MUTABLE and will fail in apps targeting S+.'''
+        }
+    }
 }

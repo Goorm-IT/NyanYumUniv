@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:page_transition/page_transition.dart';
+import '../Widgets/googleBanner.dart';
 
 class MyClass extends StatefulWidget {
   var id, pw, classProps, userProps;
@@ -59,6 +60,7 @@ class _MyClassState extends State<MyClass> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      GoogleBanner('ca-app-pub-3894904986041703/8655150027'),
                       Container(
                         height: 30,
                         margin: const EdgeInsets.only(left: 10, bottom: 20),
