@@ -11,9 +11,12 @@ import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 int? isviewed;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isviewed = prefs.getInt('Tutorial');
   runApp(MyApp());

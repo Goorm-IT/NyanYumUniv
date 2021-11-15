@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:page_transition/page_transition.dart';
+import '../Widgets/googleBanner.dart';
 
 class MyClass extends StatefulWidget {
   var id, pw, classProps, userProps;
@@ -28,6 +29,7 @@ class _MyClassState extends State<MyClass> {
   Icon searchIcon = new Icon(Icons.search);
   Widget bar = new Text("");
   late Future<double> progressCnt;
+
   _MyClassState(this.id, this.pw, this.classProps, this.userProps);
   @override
   void initState() {
@@ -59,6 +61,7 @@ class _MyClassState extends State<MyClass> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      GoogleBanner('ca-app-pub-3894904986041703/1161278163'),
                       Container(
                         height: 30,
                         margin: const EdgeInsets.only(left: 10, bottom: 20),
@@ -101,7 +104,7 @@ class _MyClassState extends State<MyClass> {
                             doneCntList = snap.data;
                             if (snap.hasData) {
                               return SizedBox(
-                                height: windowHeight - 190,
+                                height: windowHeight - 300,
                                 child: RefreshIndicator(
                                   onRefresh: () async {_refresh(context);},
                                   child: ListView.builder(
