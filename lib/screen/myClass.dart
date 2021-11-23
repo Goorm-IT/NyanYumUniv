@@ -36,11 +36,20 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
   double ddnc = 0.0;
   Widget bar = new Text("");
   late Future<double> progressCnt;
+  late AnimationController animationController;
   _MyClassState(this.id, this.pw, this.classProps, this.userProps);
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(
+        duration: new Duration(milliseconds: 1000), vsync: this);
+    animationController.repeat();
     _getNames(classProps);
+  }
+
+  dispose() {
+    animationController.dispose();
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
@@ -254,8 +263,18 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                                     return Container(
                                                         alignment: Alignment
                                                             .centerRight,
-                                                        child:
-                                                            CircularProgressIndicator());
+                                                        child: SizedBox(
+                                                            width: 50,
+                                                            height: 50,
+                                                            child:
+                                                                CircularProgressIndicator(
+                                                              valueColor: animationController
+                                                                  .drive(ColorTween(
+                                                                      begin: Color(
+                                                                          0xff8E53E9),
+                                                                      end: Colors
+                                                                          .red)),
+                                                            )));
                                                   }
                                                 },
                                               ),
