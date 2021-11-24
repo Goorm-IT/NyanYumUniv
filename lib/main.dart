@@ -1,9 +1,13 @@
+import 'package:deanora/Widgets/MakeCalendar.dart';
+import 'package:deanora/Widgets/MenuTabBar.dart';
 import 'package:deanora/Widgets/Tutorial.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/crawl/crawl.dart';
 import 'package:deanora/crawl/customException.dart';
+import 'package:deanora/screen/MyCalendar.dart';
 import 'package:deanora/screen/MyLogin.dart';
 import 'package:deanora/screen/MyClass.dart';
+import 'package:deanora/screen/Test.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'dart:async';
@@ -67,15 +71,6 @@ class _CoverState extends State<Cover> {
           child: putimg(
               windowWidth * 0.3, windowWidth * 0.3 * 0.416, "coverTitle"),
         )
-        // Align(
-        //   alignment: Alignment(0.0, -0.18),
-        //   child: putimg(windowWidth * 0.3, windowWidth * 0.3, "coverLogo"),
-        // ),
-        // Align(
-        //   alignment: Alignment(0.0, 0.16),
-        //   child: putimg(
-        //       windowWidth * 0.3, windowWidth * 0.3 * 0.416, "coverTitle"),
-        // ),
       ],
     );
   }
