@@ -70,103 +70,102 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
           })
         },
         child: Container(
-          child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              body: SafeArea(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 3, left: 20, right: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GoogleBanner('ca-app-pub-3894904986041703/1161278163'),
-                      Container(
-                        height: 30,
-                        margin: const EdgeInsets.only(left: 10, bottom: 20),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.account_circle,
-                              color: Colors.blueGrey,
-                              size: 35,
-                            ),
-                              Text.rich(TextSpan(children: <TextSpan>[
-                                TextSpan(text: "  안녕하세요, "),
-                                TextSpan(
-                                  text: "${user(userProps)[0].name}",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 18),
-                                ),
-                                TextSpan(text: "님")
-                              ])),
-                            ],
+            child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: SafeArea(
+            child: Container(
+              margin: const EdgeInsets.only(top: 3, left: 20, right: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GoogleBanner('ca-app-pub-3894904986041703/1161278163'),
+                  Container(
+                    height: 30,
+                    margin: const EdgeInsets.only(left: 10, bottom: 20),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.account_circle,
+                          color: Colors.blueGrey,
+                          size: 35,
+                        ),
+                        Text.rich(TextSpan(children: <TextSpan>[
+                          TextSpan(text: "  안녕하세요, "),
+                          TextSpan(
+                            text: "${user(userProps)[0].name}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900, fontSize: 18),
                           ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                            margin: const EdgeInsets.only(left: 10, right: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text("내 강의실 List",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 18)),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                MyCalendar()));
-                                  },
-                                  child: Ink(
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.event_available,
-                                          size: 20,
-                                        ),
-                                        Text("학사일정"),
-                                      ],
-                                    ),
+                          TextSpan(text: "님")
+                        ])),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                      margin: const EdgeInsets.only(left: 10, right: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text("내 강의실 List",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w900, fontSize: 18)),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyCalendar()));
+                            },
+                            child: Ink(
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.event_available,
+                                    size: 20,
                                   ),
-                                )
-                              ],
-                            )),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Center(
-                          child: SizedBox(
-                            height: windowHeight - 200,
-                            child: RefreshIndicator(
-                                onRefresh: () async {_refresh(context);},
-                                child: ListView(
-                                  children: filteredNames
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
+                                  Text("학사일정"),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      )),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Center(
+                      child: SizedBox(
+                    height: windowHeight - 200,
+                    child: Builder(
+                      builder: (BuildContext context) {
+                        return RefreshIndicator(
+                            onRefresh: () async {
+                              _refresh(context);
+                            },
+                            child: ListView(
+                              children:
+                                  filteredNames.asMap().entries.map((entry) {
                                 var e = entry.value;
                                 var index = entry.key;
                                 return InkWell(
                                   onTap: () async {
                                     var crawl = new Crawl(id, pw);
-                                    var _adssi = await crawl
-                                        .crawlAssignments(e.classId);
+                                    var _adssi =
+                                        await crawl.crawlAssignments(e.classId);
                                     Navigator.push(
                                         context,
                                         PageTransition(
-                                            type: PageTransitionType
-                                                .bottomToTop,
+                                            type:
+                                                PageTransitionType.bottomToTop,
                                             duration:
                                                 Duration(microseconds: 300),
-                                            child: MyAssignment(e ?? "",
-                                                _adssi, dncList[index])));
+                                            child: MyAssignment(e ?? "", _adssi,
+                                                dncList[index])));
                                   },
                                   child: Container(
                                     margin: const EdgeInsets.symmetric(
@@ -175,14 +174,11 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                       color: Colors.white,
                                       border: Border.all(
                                           width: 2,
-                                          color: Colors.grey
-                                              .withOpacity(0.03)),
-                                      borderRadius:
-                                          BorderRadius.circular(15),
+                                          color: Colors.grey.withOpacity(0.03)),
+                                      borderRadius: BorderRadius.circular(15),
                                       boxShadow: [
                                         BoxShadow(
-                                          color:
-                                              Colors.grey.withOpacity(0.2),
+                                          color: Colors.grey.withOpacity(0.2),
                                           spreadRadius: 1,
                                           blurRadius: 4,
                                           offset: Offset(3, 5),
@@ -201,24 +197,22 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceEvenly,
+                                                  MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 Container(
                                                   width: windowWidth - 205,
                                                   child: Text(
                                                     e.className,
                                                     maxLines: 1,
-                                                    overflow: TextOverflow
-                                                        .ellipsis,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                     softWrap: false,
                                                     style: TextStyle(
                                                         fontSize: 15,
-                                                        color: Color(
-                                                            0xff707070),
+                                                        color:
+                                                            Color(0xff707070),
                                                         fontWeight:
-                                                            FontWeight
-                                                                .w800),
+                                                            FontWeight.w800),
                                                   ),
                                                 ),
                                                 SizedBox(
@@ -227,24 +221,22 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                                 Text(' ${e.profName} 교수님',
                                                     style: TextStyle(
                                                         fontSize: 12,
-                                                        color: Color(
-                                                            0xff707070)))
+                                                        color:
+                                                            Color(0xff707070)))
                                               ]),
                                           FutureBuilder(
                                             future: requestDnc(id, pw, e),
-                                            builder: (context,
-                                                AsyncSnapshot snap) {
+                                            builder:
+                                                (context, AsyncSnapshot snap) {
                                               if (snap.hasData) {
                                                 ddnc = snap.data!;
                                                 dncList[index] = ddnc;
                                                 return Container(
-                                                    alignment: Alignment
-                                                        .centerRight,
-                                                    child:
-                                                        CustomCircularBar(
-                                                            vsync: this,
-                                                            upperBound:
-                                                                ddnc));
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: CustomCircularBar(
+                                                        vsync: this,
+                                                        upperBound: ddnc));
                                               } else if (snap.hasError) {
                                                 return Container(
                                                   alignment:
@@ -253,8 +245,8 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                                 );
                                               } else {
                                                 return Container(
-                                                    alignment: Alignment
-                                                        .centerRight,
+                                                    alignment:
+                                                        Alignment.centerRight,
                                                     child: SizedBox(
                                                         width: 50,
                                                         height: 50,
@@ -275,29 +267,31 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                     ),
                                   ),
                                 );
-                                  }).toList(),
-                                )),
-                          ),
-                        )
-                      ],
+                              }).toList(),
+                            ));
+                      },
                     ),
-                  ),
-                ),
-              )),
-        ),
-      );
+                  ))
+                ],
+              ),
+            ),
+          ),
+        )),
+      ),
+    );
   }
 
   Future<void> _refresh(BuildContext context) async {
     int leftTime = 5 - DateTime.now().difference(_refreshTime).inSeconds;
-    if(leftTime > 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$leftTime초 후에 다시 시도해주세요',
-            textAlign: TextAlign.center,),
-            duration: Duration(seconds: 1),
-            backgroundColor: Colors.blue,
-          )
-      );
+    if (leftTime > 0) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          '$leftTime초 후에 다시 시도해주세요',
+          textAlign: TextAlign.center,
+        ),
+        duration: Duration(seconds: 1),
+        backgroundColor: Colors.blue,
+      ));
       return;
     }
     _refreshTime = DateTime.now();
