@@ -97,6 +97,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_secure_storage:
+    dependency: "direct main"
+    description:
+      name: flutter_secure_storage
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.2.1"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -114,6 +121,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  google_mobile_ads:
+    dependency: "direct main"
+    description:
+      name: google_mobile_ads
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.13.6"
   html:
     dependency: "direct main"
     description:
@@ -247,6 +261,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.3"
+  rxdart:
+    dependency: "direct main"
+    description:
+      name: rxdart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.27.2"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -322,6 +343,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  syncfusion_flutter_calendar:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_calendar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "19.2.62"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "19.2.62"
+  syncfusion_flutter_datepicker:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_datepicker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "19.2.62"
   term_glyph:
     dependency: transitive
     description:
@@ -336,6 +378,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
+  timezone:
+    dependency: transitive
+    description:
+      name: timezone
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.7.0"
   typed_data:
     dependency: transitive
     description:

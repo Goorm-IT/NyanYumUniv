@@ -1,9 +1,13 @@
+import 'package:deanora/Widgets/MakeCalendar.dart';
+import 'package:deanora/Widgets/MenuTabBar.dart';
 import 'package:deanora/Widgets/Tutorial.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/crawl/crawl.dart';
 import 'package:deanora/crawl/customException.dart';
+import 'package:deanora/screen/MyCalendar.dart';
 import 'package:deanora/screen/MyLogin.dart';
 import 'package:deanora/screen/MyClass.dart';
+import 'package:deanora/screen/Test.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'dart:async';
@@ -11,9 +15,12 @@ import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 int? isviewed;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isviewed = prefs.getInt('Tutorial');
   runApp(MyApp());
