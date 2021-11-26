@@ -1,5 +1,9 @@
+import 'package:deanora/Widgets/MemoData.dart';
+import 'package:deanora/Widgets/MenuTabBar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
+
 import 'package:deanora/Widgets/Widgets.dart';
 
 class MyAssignment extends StatefulWidget {
@@ -14,11 +18,61 @@ class MyAssignment extends StatefulWidget {
 class _MyAssignmentState extends State<MyAssignment>
     with TickerProviderStateMixin {
   var classProps, userProps, assignmentProps, progress;
+  final _focusNode = FocusNode();
   _MyAssignmentState(this.classProps, this.assignmentProps, this.progress);
 
   @override
   void initState() {
     super.initState();
+  }
+
+  // @override
+  // void dispose() {
+  //   _focusNode.dispose();
+  //   super.dispose();
+  // }
+  final _memoController = TextEditingController();
+  String mymemo = "";
+  String tmpmemo = "";
+
+  var saveloadMemo = new MemoData();
+  Widget buildBottomSheet(BuildContext context) {
+    //return Container();
+    return SingleChildScrollView(
+      child: Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            SizedBox(
+              height: 15,
+            ),
+            Text(
+              "과목 메모",
+              style: TextStyle(fontSize: 30),
+            ),
+            Container(
+              margin: EdgeInsets.all(30),
+              height: 280,
+              child: TextFormField(
+                onChanged: (text) async {
+                  await saveloadMemo.saveMemo(text, classProps.classId);
+                },
+                initialValue: mymemo,
+                maxLines: 10,
+                decoration: InputDecoration(
+                  hintText: "과목에대한 메모를 자유롭게 남겨보세요!",
+                  fillColor: Color(0xfff3f3f3),
+                  filled: true,
+                ),
+              ),
+            ),
+          ])),
+    );
+  }
+
+  loadmemo() async {
+    var getmemo = await saveloadMemo.loadMemo(classProps.classId);
+    mymemo = getmemo['memoText'] ?? "";
   }
 
   Widget build(BuildContext context) {
@@ -37,98 +91,135 @@ class _MyAssignmentState extends State<MyAssignment>
       home: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
-          child: Container(
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 245,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                          colors: <Color>[
-                            Color(0xff6D6CEB),
-                            Color(0xff7C4DF1)
-                          ]),
-                      borderRadius: BorderRadius.only(
-                          bottomLeft: const Radius.circular(30.0),
-                          bottomRight: const Radius.circular(30.0))),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 225,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(
-                              height: 30,
-                              margin: const EdgeInsets.only(left: 20, top: 3),
-                              child: GestureDetector(
-                                  onTap: () => {
-                                        Navigator.pop(context),
-                                      },
-                                  child: Icon(
-                                    Icons.arrow_back,
-                                    color: Colors.white,
-                                    size: 25,
-                                  )),
-                            ),
-                            Center(
-                                child: Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 100),
-                              child: Text("${classProps.className}",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 23,
-                                      fontWeight: FontWeight.w700),
-                                  textAlign: TextAlign.center),
-                            )),
-                            Center(
-                                child: Text("${classProps.profName} 교수님",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 18))),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+          child: Stack(
+            children: [
+              Container(
+                color: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 245,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: <Color>[
+                                Color(0xff6D6CEB),
+                                Color(0xff7C4DF1)
+                              ]),
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: const Radius.circular(30.0),
+                              bottomRight: const Radius.circular(30.0))),
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 225,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                doneNmiss(Color(0xffB2C3FF), "done  ", doneCnt),
-                                SizedBox(
-                                  width: 23,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      height: 30,
+                                      margin: const EdgeInsets.only(left: 20),
+                                      child: GestureDetector(
+                                          onTap: () => {
+                                                Navigator.pop(context),
+                                              },
+                                          child: Icon(
+                                            Icons.arrow_back,
+                                            color: Colors.white,
+                                            size: 25,
+                                          )),
+                                    ),
+                                    Container(
+                                        height: 20,
+                                        margin: EdgeInsets.only(right: 20),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            await loadmemo();
+                                            showModalBottomSheet(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  30.0),
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  30.0)),
+                                                ),
+                                                context: context,
+                                                builder: buildBottomSheet,
+                                                isScrollControlled: true);
+                                          },
+                                          child: Image.asset(
+                                              'assets/images/memoIcon.png'),
+                                        ))
+                                  ],
                                 ),
-                                doneNmiss(Color(0xffF2A7C5), "missed  ",
-                                    myAssignment.length - doneCnt),
+                                Center(
+                                    child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 100),
+                                  child: Text("${classProps.className}",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 23,
+                                          fontWeight: FontWeight.w700),
+                                      textAlign: TextAlign.center),
+                                )),
+                                Center(
+                                    child: Text("${classProps.profName} 교수님",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18))),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    doneNmiss(
+                                        Color(0xffB2C3FF), "done  ", doneCnt),
+                                    SizedBox(
+                                      width: 23,
+                                    ),
+                                    doneNmiss(Color(0xffF2A7C5), "missed  ",
+                                        myAssignment.length - doneCnt),
+                                  ],
+                                )
                               ],
-                            )
-                          ],
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 24),
+                      child: Text(
+                        "과제 목록",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      height: MediaQuery.of(context).size.height - 330,
+                      child: _child,
+                    )
+                  ],
                 ),
-                SizedBox(
-                  height: 15,
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 24),
-                  child: Text(
-                    "과제 목록",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  height: MediaQuery.of(context).size.height - 325,
-                  child: _child,
-                )
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
