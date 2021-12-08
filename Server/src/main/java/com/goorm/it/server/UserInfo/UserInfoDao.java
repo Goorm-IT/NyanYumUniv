@@ -27,7 +27,6 @@ public class UserInfoDao {
             mss.put("uid", rs.getString(1));
             mss.put("nickName", rs.getString(2));
             mss.put("postId", rs.getInt(3));
-            System.out.println(rs.getString(1));
             return mss;
         });
     }
