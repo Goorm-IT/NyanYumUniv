@@ -13,8 +13,7 @@ public class UserInfoDao {
     @Autowired JdbcTemplate jt;
 
     public List<Map<String, ?>> selectAll(){
-
-        return jt.query("select * from userinfo", (rs, rowNum) -> {
+        return jt.query("select * from user", (rs, rowNum) -> {
             Map<String, Object> mss = new HashMap<>();
             mss.put("uid", rs.getString(1));
             mss.put("nickName", rs.getString(2));
@@ -22,4 +21,15 @@ public class UserInfoDao {
             return mss;
         });
     }
+    public List<Map<String, Object>> selectUid(String uid){
+        return jt.query("select * from user where uid ='" + uid +"'", (rs, rowNum) -> {
+            Map<String, Object> mss = new HashMap<>();
+            mss.put("uid", rs.getString(1));
+            mss.put("nickName", rs.getString(2));
+            mss.put("postId", rs.getInt(3));
+            System.out.println(rs.getString(1));
+            return mss;
+        });
+    }
+
 }
