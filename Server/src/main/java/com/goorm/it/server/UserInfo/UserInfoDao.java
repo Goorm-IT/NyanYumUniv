@@ -21,7 +21,7 @@ public class UserInfoDao {
             return mss;
         });
     }
-    public List<Map<String, Object>> selectUid(String uid){
+    public List<Map<String, Object>> checkUser(String uid){
         return jt.query("select * from user where uid ='" + uid +"'", (rs, rowNum) -> {
             Map<String, Object> mss = new HashMap<>();
             mss.put("uid", rs.getString(1));
