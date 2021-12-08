@@ -5,14 +5,13 @@ package com.goorm.it.server;
 import java.util.List;
 import java.util.Map;
 
+import com.goorm.it.server.RegisterUser.RegisterUserDao;
+import com.goorm.it.server.RegisterUser.RegisterUserDto;
 import com.goorm.it.server.UserInfo.UserInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.RestController;
 import com.goorm.it.server.UserInfo.UserInfoDao;
 
 
@@ -26,16 +25,22 @@ public class ServerController {
         SpringApplication.run(ServerController.class, args);
     }
 
-    @Autowired UserInfoDao infoDao;
+    @Autowired UserInfoDao UIFD;
 
     @RequestMapping("/select")
     public List<Map<String, ?>> getMessage(){
-        return infoDao.selectAll();
+        return UIFD.selectAll();
     }
     @PostMapping("/selectUid")
-    public List<Map<String, Object>> selectUid(@RequestBody UserInfoDto userInfoDto){
-        return infoDao.selectUid(userInfoDto.getUid());
+    public List<Map<String, Object>> checkUser(@RequestBody UserInfoDto userInfoDto){
+        return UIFD.checkUser(userInfoDto.getUid());
     }
+
+    @PostMapping("/register")
+    public List<Map<String,?>> registerUser(@RequestBody RegisterUserDto registerUserDto){
+        return RegisterUserDao.add(registerUserDto.getUid(),registerUserDto.getNickName());
+    }
+
 
 
 }
