@@ -4,12 +4,11 @@ package com.goorm.it.server;
 
 import java.util.List;
 import java.util.Map;
-
-import com.goorm.it.server.UserInfo.UserInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.RestController;
 import com.goorm.it.server.UserInfo.UserInfoDao;
 
 
@@ -30,21 +29,5 @@ public class ServerController {
     public List<Map<String, ?>> getMessage(){
         return infoDao.selectAll();
     }
-    @PostMapping("/selectUid")
-
-    public List<Map<String, Object>> UserInfoDto(@RequestBody UserInfoDto userInfoDto){
-        return infoDao.selectUid(userInfoDto.getUid());
-    }
-
-//    @GetMapping("/login/{uid}")
-//    public ResponseEntity<Boolean> checkUidDuplicate(@PathVariable String uid){
-//
-//
-//    }
-
-
-
-
-
 
 }

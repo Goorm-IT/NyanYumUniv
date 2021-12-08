@@ -31,7 +31,9 @@ dependencies:
   intl: ^0.17.0
   custom_check_box: 0.0.4
   blinking_text: 1.0.1+2
-
+  rxdart: 0.27.2
+  syncfusion_flutter_datepicker: 19.2.62
+  syncfusion_flutter_calendar: 19.2.62
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
