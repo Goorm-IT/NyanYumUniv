@@ -10,12 +10,10 @@ import java.util.Map;
 
 @Repository
 public class RegisterUserDao {
+    @Autowired static JdbcTemplate jt = null;
 
-    @Autowired
-    static JdbcTemplate jt;
-
-    public static List<Map<String, ?>> add(){
-        return jt.query("insert into userinfo (uid, nickName)", (rs, rowNum)->{
+    public static List<Map<String, ?>> add(String uid, String nickName){
+        return jt.query("insert into user (uid, nickName)" + "values ('" + uid + "','" + nickName +"')" , (rs, rowNum)->{
             Map<String, Object> mss = new HashMap<>();
             mss.put("uid", rs.getString(1));
             mss.put("nickName", rs.getString(2));
