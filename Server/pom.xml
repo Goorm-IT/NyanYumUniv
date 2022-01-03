@@ -13,6 +13,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>Server</name>
     <description>Server</description>
+    <!-- 배포 형식 지정 -->
+    <packaging>jar</packaging>
     <properties>
         <java.version>11</java.version>
         <repackage.classifier/>

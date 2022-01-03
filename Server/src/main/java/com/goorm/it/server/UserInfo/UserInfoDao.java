@@ -1,5 +1,6 @@
 package com.goorm.it.server.UserInfo;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public class UserInfoDao {
     @Autowired JdbcTemplate jt;
 
-    public List<Map<String, ?>> selectAll(){
+    public List<Map<String, ?>> selectAll() {
         return jt.query("select * from user", (rs, rowNum) -> {
             Map<String, Object> mss = new HashMap<>();
             mss.put("uid", rs.getString(1));
@@ -21,7 +22,7 @@ public class UserInfoDao {
             return mss;
         });
     }
-    public List<Map<String, Object>> checkUser(String uid){
+    public List<Map<String, Object>> checkUser(String uid) {
         return jt.query("select * from user where uid ='" + uid +"'", (rs, rowNum) -> {
             Map<String, Object> mss = new HashMap<>();
             mss.put("uid", rs.getString(1));
