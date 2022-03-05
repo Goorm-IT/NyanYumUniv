@@ -48,7 +48,7 @@ class _MyAssignmentState extends State<MyAssignment>
             ),
             Text(
               "과목 메모",
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
             ),
             Container(
               margin: EdgeInsets.all(30),
