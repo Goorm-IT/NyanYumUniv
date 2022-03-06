@@ -6,6 +6,7 @@ import 'package:deanora/crawl/customException.dart';
 import 'package:deanora/screen/MyClass.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class MyLogin extends StatefulWidget {
   @override
@@ -18,7 +19,12 @@ class _MyLoginState extends State<MyLogin> {
 
   var ctrl = new LoginDataCtrl();
   bool _isChecked = false;
+
   @override
+  void initState() {
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     var windowWidth = MediaQuery.of(context).size.width;
     return MaterialApp(

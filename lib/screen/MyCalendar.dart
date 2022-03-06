@@ -152,31 +152,35 @@ class _MyCalendarState extends State<MyCalendar> {
                               borderRadius: BorderRadius.circular(100),
                             )),
                         SizedBox(width: 15),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(),
-                            Text(
-                              "${_selected[index].schdule}",
-                              style: TextStyle(
-                                  color: Color(0xff707070),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800),
-                            ),
-                            Container(
-                              child: (_selected[index].date.length > 1)
-                                  ? Text(
-                                      "${DateFormat('MM. dd').format(_selected[index].date[0])}~ ${DateFormat('MM. dd').format(_selected[index].date[_selected[index].date.length - 1])}",
-                                      style:
-                                          TextStyle(color: Color(0xff707070)))
-                                  : Text(
-                                      "${DateFormat('MM. dd').format(_selected[index].date[0])}",
-                                      style:
-                                          TextStyle(color: Color(0xff707070))),
-                            ),
-                            SizedBox(),
-                          ],
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(),
+                              Text(
+                                "${_selected[index].schdule}",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 3,
+                                style: TextStyle(
+                                    color: Color(0xff707070),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800),
+                              ),
+                              Container(
+                                child: (_selected[index].date.length > 1)
+                                    ? Text(
+                                        "${DateFormat('MM. dd').format(_selected[index].date[0])} ~ ${DateFormat('MM. dd').format(_selected[index].date[_selected[index].date.length - 1])}",
+                                        style:
+                                            TextStyle(color: Color(0xff707070)))
+                                    : Text(
+                                        "${DateFormat('MM. dd').format(_selected[index].date[0])}",
+                                        style: TextStyle(
+                                            color: Color(0xff707070))),
+                              ),
+                              SizedBox(),
+                            ],
+                          ),
                         ),
                       ],
                     ),

@@ -48,7 +48,7 @@ class _MyAssignmentState extends State<MyAssignment>
             ),
             Text(
               "과목 메모",
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
             ),
             Container(
               margin: EdgeInsets.all(30),
@@ -60,7 +60,7 @@ class _MyAssignmentState extends State<MyAssignment>
                 initialValue: mymemo,
                 maxLines: 10,
                 decoration: InputDecoration(
-                  hintText: "과목에대한 메모를 자유롭게 남겨보세요!",
+                  hintText: "과목에 대한 메모를 자유롭게 남겨보세요!",
                   fillColor: Color(0xfff3f3f3),
                   filled: true,
                 ),
