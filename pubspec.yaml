@@ -47,6 +47,7 @@ dependencies:
   firebase_crashlytics: ^2.5.0
   firebase_dynamic_links: ^4.0.5
   firebase_auth: ^3.3.6
+  firebase_auth_web: ^3.3.9
 
 dependency_overrides:
   firebase_messaging_platform_interface:
