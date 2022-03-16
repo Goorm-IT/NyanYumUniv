@@ -13,20 +13,22 @@ class MyLogin extends StatefulWidget {
   _MyLoginState createState() => _MyLoginState();
 }
 
-class _MyLoginState extends State<MyLogin> {
+class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
   final id = TextEditingController();
   final pw = TextEditingController();
 
   var ctrl = new LoginDataCtrl();
   bool _isChecked = false;
-
+  late AnimationController _animationController;
+  bool _visible = false;
   @override
   void initState() {
     super.initState();
+    _animationController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 200));
   }
 
   Widget build(BuildContext context) {
-    var windowWidth = MediaQuery.of(context).size.width;
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: GestureDetector(
@@ -49,9 +51,21 @@ class _MyLoginState extends State<MyLogin> {
                       ),
                       loginTextF(pw, "비밀번호", "loginPwIcon", true),
                       SizedBox(
-                        height: 15,
+                        height: 10,
                       ),
-                      Container(height: 40, child: logindefault),
+                      FadeTransition(
+                        opacity: _animationController,
+                        child: Center(
+                            child: Text(
+                          "입력한 정보가 일치하지 않습니다",
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        )),
+                      )
+
+//for blinking login fault alert
                     ],
                   ),
                 ),
@@ -123,23 +137,18 @@ class _MyLoginState extends State<MyLogin> {
                                 type: PageTransitionType.fade,
                                 child: MyClass(id.text, pw.text, classes, user),
                               ));
-                          setState(() {
-                            logindefault = new Text("");
-                          });
                         } on CustomException catch (e) {
                           print('${e.code} ${e.message}');
-                          print(logindefault);
-                          setState(() {
-                            if (logindefault != loginfault2 &&
-                                logindefault != loginfault &&
-                                logindefault != firstfault) {
-                              logindefault = firstfault;
-                            } else if (logindefault != loginfault) {
-                              logindefault = loginfault;
-                            } else if (logindefault != loginfault2) {
-                              logindefault = loginfault2;
-                            }
-                          });
+                          if (!_visible) {
+                            _animationController.forward();
+                            _visible = !_visible;
+                          } else {
+                            _animationController.reverse();
+                            Future.delayed(const Duration(milliseconds: 200),
+                                () {
+                              _animationController.forward();
+                            });
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(

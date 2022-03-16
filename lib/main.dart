@@ -1,17 +1,13 @@
-import 'package:deanora/Widgets/MakeCalendar.dart';
-import 'package:deanora/Widgets/MenuTabBar.dart';
 import 'package:deanora/Widgets/Tutorial.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/crawl/crawl.dart';
 import 'package:deanora/crawl/customException.dart';
-import 'package:deanora/screen/MyCalendar.dart';
 import 'package:deanora/screen/MyLogin.dart';
 import 'package:deanora/screen/MyClass.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'dart:async';
-import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -44,9 +40,9 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         title: '냥냠대',
         theme: ThemeData(
-            brightness: Brightness.light,
-            primaryColor: Colors.black,
-            accentColor: Colors.white),
+          brightness: Brightness.light,
+          primaryColor: Colors.black,
+        ),
         debugShowCheckedModeBanner: false,
         home: Cover());
   }
@@ -65,21 +61,23 @@ class _CoverState extends State<Cover> {
     var windowWidth = MediaQuery.of(context).size.width;
     var windowHeight = MediaQuery.of(context).size.height;
 
-    return Stack(
-      children: <Widget>[
-        Positioned(child: cover_Background()),
-        Positioned(
-          bottom: windowHeight / 2,
-          left: windowWidth / 2 - windowWidth * 0.3 / 2,
-          child: putimg(windowWidth * 0.3, windowWidth * 0.3, "coverLogo"),
-        ),
-        Positioned(
-          bottom: windowHeight / 2 - windowWidth * 0.3 * 0.416 - 50,
-          left: windowWidth / 2 - windowWidth * 0.3 / 2,
-          child: putimg(
-              windowWidth * 0.3, windowWidth * 0.3 * 0.416, "coverTitle"),
-        )
-      ],
+    return SafeArea(
+      child: Stack(
+        children: <Widget>[
+          Positioned(child: cover_Background()),
+          Positioned(
+            bottom: windowHeight / 2,
+            left: windowWidth / 2 - windowWidth * 0.3 / 2,
+            child: putimg(windowWidth * 0.3, windowWidth * 0.3, "coverLogo"),
+          ),
+          Positioned(
+            bottom: windowHeight / 2 - windowWidth * 0.3 * 0.416 - 50,
+            left: windowWidth / 2 - windowWidth * 0.3 / 2,
+            child: putimg(
+                windowWidth * 0.3, windowWidth * 0.3 * 0.416, "coverTitle"),
+          )
+        ],
+      ),
     );
   }
 

@@ -123,15 +123,18 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
             searchIcon = new Icon(Icons.search);
           })
         },
-        child: Container(
+        child: SafeArea(
             child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Container(
-            margin: const EdgeInsets.only(top: 3, left: 20, right: 20),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GoogleBanner('ca-app-pub-3894904986041703/1161278163'),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
                   height: 30,
                   margin: const EdgeInsets.only(left: 10, bottom: 20),
@@ -191,19 +194,18 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                 SizedBox(
                   height: 30,
                 ),
-                Builder(builder: (BuildContext context) {
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      _refresh(context);
-                    },
-                    child: FutureBuilder(
-                        future: requestAssignment(id, pw, filteredNames),
-                        builder: (context, AsyncSnapshot snap) {
-                          if (snap.hasData) {
-                            dncList = snap.data;
-                            return Center(
-                              child: SizedBox(
-                                height: windowHeight - 180,
+                Expanded(
+                  child: Builder(builder: (BuildContext context) {
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        _refresh(context);
+                      },
+                      child: FutureBuilder(
+                          future: requestAssignment(id, pw, filteredNames),
+                          builder: (context, AsyncSnapshot snap) {
+                            if (snap.hasData) {
+                              dncList = snap.data;
+                              return Center(
                                 child: filteredNames.length != 0
                                     ? ListView(
                                         children: filteredNames
@@ -313,36 +315,36 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                     : ListView(children: [
                                         Center(child: Text("강의가 없습니다"))
                                       ]),
-                              ),
-                            );
-                          } else if (snap.hasError) {
-                            return Container(
-                              height: windowHeight - 270,
-                              child: ListView(
-                                children: [
-                                  Container(
-                                    alignment: Alignment.center,
-                                    child: Text(snap.error.toString()),
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else {
-                            return Container(
-                                alignment: Alignment.center,
-                                child: SizedBox(
-                                    width: 50,
-                                    height: 50,
-                                    child: CircularProgressIndicator(
-                                      valueColor: animationController.drive(
-                                          ColorTween(
-                                              begin: Color(0xff8E53E9),
-                                              end: Colors.red)),
-                                    )));
-                          }
-                        }),
-                  );
-                })
+                              );
+                            } else if (snap.hasError) {
+                              return Container(
+                                height: windowHeight - 270,
+                                child: ListView(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child: Text(snap.error.toString()),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return Container(
+                                  alignment: Alignment.center,
+                                  child: SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: CircularProgressIndicator(
+                                        valueColor: animationController.drive(
+                                            ColorTween(
+                                                begin: Color(0xff8E53E9),
+                                                end: Colors.red)),
+                                      )));
+                            }
+                          }),
+                    );
+                  }),
+                )
               ],
             ),
           ),

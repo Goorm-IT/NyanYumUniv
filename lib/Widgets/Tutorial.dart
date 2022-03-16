@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:deanora/main.dart';
 import 'package:deanora/screen/MyLogin.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +16,6 @@ class _TutorialState extends State<Tutorial> {
     'tutorial4.jpg'
   ];
   int doneCnt = 0;
-  PageController _pController = PageController();
   StreamController _sController = StreamController<int>()..add(0);
   Widget doneOrnot = new TextButton(
     onPressed: () {},
