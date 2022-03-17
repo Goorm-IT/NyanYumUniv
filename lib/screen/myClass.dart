@@ -121,11 +121,8 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                color: Color(0xffFAFAFA),
-                child: SafeArea(
-                  child: GoogleBanner('ca-app-pub-3894904986041703/1161278163'),
-                ),
+              SafeArea(
+                child: GoogleBanner('ca-app-pub-3889684121903706/4549664650'),
               ),
               SizedBox(
                 height: 15,
