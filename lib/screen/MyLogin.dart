@@ -23,8 +23,6 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
   bool _visible = false;
   @override
   void initState() {
-    _animationController = new AnimationController(
-        vsync: this, duration: Duration(milliseconds: 200));
     super.initState();
     _animationController = new AnimationController(
         vsync: this, duration: Duration(milliseconds: 200));
