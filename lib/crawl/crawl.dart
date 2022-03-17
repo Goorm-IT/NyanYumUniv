@@ -42,7 +42,7 @@ class Crawl {
     var loginBtn = document.getElementById('login_popup');
     var element = document.querySelector('.login_info > ul > li:last-child');
 
-    if (loginBtn != null) throw new CustomException(301, 'Cookie has Expired');
+    if (loginBtn != null) throw new CustomException(301, 'Cookie has Expired1');
 
     String userData = element!.text;
     List<String> data = userData.split(' ');
@@ -65,7 +65,7 @@ class Crawl {
     var options = document.getElementsByTagName('option');
     List<Map<String, String>> classes = [];
 
-    if (loginBtn != null) throw new CustomException(300, 'Cookie has Expired');
+    if (loginBtn != null) throw new CustomException(300, 'Cookie has Expired2');
 
     for (var i = 1; i < options.length; i++) {
       var data = options[i].attributes['value']?.split(',');
@@ -91,14 +91,14 @@ class Crawl {
       throw new CustomException(500, 'Homepage Error');
 
     var error = document.querySelector('.error_none');
-    if (error != null) throw new CustomException(300, 'Cookie has Expired');
+    if (error != null) throw new CustomException(300, 'Cookie has Expired3');
 
     url =
         'https://cyber.anyang.ac.kr/MReport.do?cmd=viewReportInfoPageList&boardInfoDTO.boardInfoGubun=report&courseDTO.courseId=$courseId';
     response = await _getResponse('GET', url, {'cookie': this._cookie});
     document = parse(await response.stream.bytesToString());
     error = document.querySelector('.error_none');
-    if (error != null) throw new CustomException(300, 'Cookie has Expired');
+    if (error != null) throw new CustomException(300, 'Cookie has Expired4');
 
     List<Map<String, String>> assignments = [];
 

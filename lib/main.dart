@@ -65,23 +65,21 @@ class _CoverState extends State<Cover> {
     var windowWidth = MediaQuery.of(context).size.width;
     var windowHeight = MediaQuery.of(context).size.height;
 
-    return SafeArea(
-      child: Stack(
-        children: <Widget>[
-          Positioned(child: cover_Background()),
-          Positioned(
-            bottom: windowHeight / 2,
-            left: windowWidth / 2 - windowWidth * 0.3 / 2,
-            child: putimg(windowWidth * 0.3, windowWidth * 0.3, "coverLogo"),
-          ),
-          Positioned(
-            bottom: windowHeight / 2 - windowWidth * 0.3 * 0.416 - 50,
-            left: windowWidth / 2 - windowWidth * 0.3 / 2,
-            child: putimg(
-                windowWidth * 0.3, windowWidth * 0.3 * 0.416, "coverTitle"),
-          )
-        ],
-      ),
+    return Stack(
+      children: <Widget>[
+        Positioned(child: cover_Background()),
+        Positioned(
+          bottom: windowHeight / 2,
+          left: windowWidth / 2 - windowWidth * 0.3 / 2,
+          child: putimg(windowWidth * 0.3, windowWidth * 0.3, "coverLogo"),
+        ),
+        Positioned(
+          bottom: windowHeight / 2 - windowWidth * 0.3 * 0.416 - 50,
+          left: windowWidth / 2 - windowWidth * 0.3 / 2,
+          child: putimg(
+              windowWidth * 0.3, windowWidth * 0.3 * 0.416, "coverTitle"),
+        )
+      ],
     );
   }
 

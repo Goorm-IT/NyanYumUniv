@@ -90,135 +90,123 @@ class _MyAssignmentState extends State<MyAssignment>
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: SafeArea(
-          child: Stack(
+        body: Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                color: Colors.white,
+                height: 265,
+                padding: const EdgeInsets.all(0.0),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: <Color>[Color(0xff6D6CEB), Color(0xff7C4DF1)]),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: const Radius.circular(30.0),
+                        bottomRight: const Radius.circular(30.0))),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      height: 245,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: <Color>[
-                                Color(0xff6D6CEB),
-                                Color(0xff7C4DF1)
-                              ]),
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: const Radius.circular(30.0),
-                              bottomRight: const Radius.circular(30.0))),
-                      child: Column(
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SafeArea(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            height: 225,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      height: 30,
-                                      margin: const EdgeInsets.only(left: 20),
-                                      child: GestureDetector(
-                                          onTap: () => {
-                                                Navigator.pop(context),
-                                              },
-                                          child: Icon(
-                                            Icons.arrow_back,
-                                            color: Colors.white,
-                                            size: 25,
-                                          )),
-                                    ),
-                                    Container(
-                                        height: 20,
-                                        margin: EdgeInsets.only(right: 20),
-                                        child: GestureDetector(
-                                          onTap: () async {
-                                            await loadmemo();
-                                            showModalBottomSheet(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  30.0),
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  30.0)),
-                                                ),
-                                                context: context,
-                                                builder: buildBottomSheet,
-                                                isScrollControlled: true);
-                                          },
-                                          child: Image.asset(
-                                              'assets/images/memoIcon.png'),
-                                        ))
-                                  ],
-                                ),
-                                Center(
-                                    child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 100),
-                                  child: Text("${classProps.className}",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.w700),
-                                      textAlign: TextAlign.center),
+                            height: 30,
+                            margin: const EdgeInsets.only(left: 20),
+                            child: GestureDetector(
+                                onTap: () => {
+                                      Navigator.pop(context),
+                                    },
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                  size: 25,
                                 )),
-                                Center(
-                                    child: Text("${classProps.profName} 교수님",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18))),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    doneNmiss(
-                                        Color(0xffB2C3FF), "done  ", doneCnt),
-                                    SizedBox(
-                                      width: 23,
-                                    ),
-                                    doneNmiss(Color(0xffF2A7C5), "missed  ",
-                                        myAssignment.length - doneCnt),
-                                  ],
-                                )
-                              ],
-                            ),
                           ),
+                          Container(
+                              height: 20,
+                              margin: EdgeInsets.only(right: 20),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await loadmemo();
+                                  showModalBottomSheet(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            topRight: Radius.circular(30.0),
+                                            topLeft: Radius.circular(30.0)),
+                                      ),
+                                      context: context,
+                                      builder: buildBottomSheet,
+                                      isScrollControlled: true);
+                                },
+                                child:
+                                    Image.asset('assets/images/memoIcon.png'),
+                              ))
                         ],
                       ),
                     ),
                     SizedBox(
-                      height: 15,
+                      height: 10,
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 24),
-                      child: Text(
-                        "과제 목록",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w800),
-                      ),
-                    ),
+                    Center(
+                        child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 100),
+                      child: Text("${classProps.className}",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 23,
+                              fontWeight: FontWeight.w700),
+                          textAlign: TextAlign.center),
+                    )),
                     SizedBox(
-                      height: 15,
+                      height: 10,
                     ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      height: MediaQuery.of(context).size.height - 330,
-                      child: _child,
-                    )
+                    Center(
+                        child: Text("${classProps.profName} 교수님",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 18))),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        doneNmiss(Color(0xffB2C3FF), "done  ", doneCnt),
+                        SizedBox(
+                          width: 23,
+                        ),
+                        doneNmiss(Color(0xffF2A7C5), "missed  ",
+                            myAssignment.length - doneCnt),
+                      ],
+                    ),
                   ],
                 ),
               ),
+              SizedBox(
+                height: 15,
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 24),
+                child: Text(
+                  "과제 목록",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  child: _child,
+                ),
+              )
             ],
           ),
         ),
@@ -230,6 +218,7 @@ class _MyAssignmentState extends State<MyAssignment>
 Widget notassignment = new Center(
   child: Text("아직 과제가 없습니다"),
 );
+
 Widget haveassignment(myAssignment) {
   return ListView.builder(
     itemCount: myAssignment.length,
@@ -256,7 +245,7 @@ Widget assignmentDivided(BuildContext context, myAssignment) {
   }
 
   return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
     child: Stack(
       children: [
         Container(
