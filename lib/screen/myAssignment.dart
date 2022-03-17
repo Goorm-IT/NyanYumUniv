@@ -97,7 +97,7 @@ class _MyAssignmentState extends State<MyAssignment>
             children: [
               Container(
                 height: 265,
-                padding: const EdgeInsets.all(0.0),
+                padding: const EdgeInsets.only(bottom: 15.0),
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
                         begin: Alignment.topRight,
@@ -109,7 +109,7 @@ class _MyAssignmentState extends State<MyAssignment>
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 10,
+                      height: 5,
                     ),
                     SafeArea(
                       child: Row(
@@ -150,8 +150,10 @@ class _MyAssignmentState extends State<MyAssignment>
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
+                    Flexible(
+                      child: SizedBox(
+                        height: 15,
+                      ),
                     ),
                     Center(
                         child: Container(
@@ -163,15 +165,19 @@ class _MyAssignmentState extends State<MyAssignment>
                               fontWeight: FontWeight.w700),
                           textAlign: TextAlign.center),
                     )),
-                    SizedBox(
-                      height: 10,
+                    Flexible(
+                      child: SizedBox(
+                        height: 10,
+                      ),
                     ),
                     Center(
                         child: Text("${classProps.profName} 교수님",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 18))),
-                    SizedBox(
-                      height: 30,
+                    Flexible(
+                      child: SizedBox(
+                        height: 40,
+                      ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -179,7 +185,7 @@ class _MyAssignmentState extends State<MyAssignment>
                       children: [
                         doneNmiss(Color(0xffB2C3FF), "done  ", doneCnt),
                         SizedBox(
-                          width: 23,
+                          width: 24,
                         ),
                         doneNmiss(Color(0xffF2A7C5), "missed  ",
                             myAssignment.length - doneCnt),
