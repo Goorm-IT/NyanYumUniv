@@ -107,33 +107,6 @@ List assignments(props) {
   return assignment;
 }
 
-//for blinking login fault alert
-Widget logindefault = new Text("");
-Widget loginfault = Container(
-    child: BlinkText(
-  "입력한 정보가 일치하지 않습니다",
-  beginColor: Colors.red,
-  endColor: Colors.white,
-  times: 1,
-  duration: Duration(milliseconds: 300),
-  style:
-      TextStyle(color: Colors.red, fontWeight: FontWeight.w600, fontSize: 12),
-));
-Widget loginfault2 = new BlinkText(
-  "입력한 정보가 일치하지 않습니다",
-  beginColor: Colors.red,
-  endColor: Colors.white,
-  times: 1,
-  duration: Duration(milliseconds: 300),
-  style:
-      TextStyle(color: Colors.red, fontWeight: FontWeight.w600, fontSize: 12),
-);
-Widget firstfault = Text(
-  "입력한 정보가 일치하지 않습니다",
-  style:
-      TextStyle(color: Colors.red, fontWeight: FontWeight.w600, fontSize: 12),
-);
-
 Future<List> requestAssignment(id, pw, props) async {
   try {
     var crawl = new Crawl(id, pw);
