@@ -42,12 +42,17 @@ dependencies:
   firebase_analytics: ^9.1.2
   firebase_core: ^1.8.0
   firebase_messaging: ^11.2.7
-
   firebase_remote_config: ^2.0.0
   firebase_crashlytics: ^2.5.0
   firebase_dynamic_links: ^4.0.5
   firebase_auth: ^3.3.6
   firebase_auth_web: ^3.3.9
+
+  kakao_flutter_sdk: ^1.1.0
+  dio: ^4.0.0
+  json_annotation: ^4.0.1
+  package_info_plus: ^1.0.4
+  platform: ^3.0.0
 
 dependency_overrides:
   firebase_messaging_platform_interface: 3.2.1

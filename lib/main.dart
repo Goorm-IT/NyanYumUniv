@@ -4,6 +4,7 @@ import 'package:deanora/crawl/crawl.dart';
 import 'package:deanora/crawl/customException.dart';
 import 'package:deanora/screen/MyLogin.dart';
 import 'package:deanora/screen/MyClass.dart';
+import 'package:deanora/screen/MyMenu.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -12,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 int? isviewed;
 
@@ -23,6 +25,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
   await Firebase.initializeApp();
+  KakaoSdk.init(nativeAppKey: 'ce3fd3b2c65fa60fbe8029b59c6167b0');
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isviewed = prefs.getInt('Tutorial');
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
@@ -48,90 +51,51 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+String saved_id = "", saved_pw = "";
+
 class Cover extends StatefulWidget {
   const Cover({Key? key}) : super(key: key);
   @override
   _CoverState createState() => _CoverState();
 }
 
-String saved_id = "", saved_pw = "";
-
 class _CoverState extends State<Cover> {
+  @override
+  void initState() {
+    super.initState();
+
+    Timer(Duration(milliseconds: 500), () {
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          duration: Duration(milliseconds: 800),
+          type: PageTransitionType.fade,
+          alignment: Alignment.topCenter,
+          child: MyMenu(),
+        ),
+      );
+    });
+  }
+
   Widget build(BuildContext context) {
     var windowWidth = MediaQuery.of(context).size.width;
     var windowHeight = MediaQuery.of(context).size.height;
 
-    return SafeArea(
-      child: Stack(
-        children: <Widget>[
-          Positioned(child: cover_Background()),
-          Positioned(
-            bottom: windowHeight / 2,
-            left: windowWidth / 2 - windowWidth * 0.3 / 2,
-            child: putimg(windowWidth * 0.3, windowWidth * 0.3, "coverLogo"),
-          ),
-          Positioned(
-            bottom: windowHeight / 2 - windowWidth * 0.3 * 0.416 - 50,
-            left: windowWidth / 2 - windowWidth * 0.3 / 2,
-            child: putimg(
-                windowWidth * 0.3, windowWidth * 0.3 * 0.416, "coverTitle"),
-          )
-        ],
-      ),
+    return Stack(
+      children: <Widget>[
+        Positioned(child: cover_Background()),
+        Positioned(
+          bottom: windowHeight / 2,
+          left: windowWidth / 2 - windowWidth * 0.3 / 2,
+          child: putimg(windowWidth * 0.3, windowWidth * 0.3, "coverLogo"),
+        ),
+        Positioned(
+          bottom: windowHeight / 2 - windowWidth * 0.3 * 0.416 - 50,
+          left: windowWidth / 2 - windowWidth * 0.3 / 2,
+          child: putimg(
+              windowWidth * 0.3, windowWidth * 0.3 * 0.416, "coverTitle"),
+        )
+      ],
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    logintest();
-    if (saved_id != 'null' && saved_pw != 'null') {
-    } else {
-      Timer(Duration(seconds: 1), () {
-        print('first_login');
-        Navigator.pushReplacement(
-          context,
-          PageTransition(
-            duration: Duration(milliseconds: 800),
-            type: PageTransitionType.fade,
-            alignment: Alignment.topCenter,
-            child: MyLogin(),
-          ),
-        );
-      });
-    }
-  }
-
-  logintest() async {
-    var ctrl = new LoginDataCtrl();
-    var assurance = await ctrl.loadLoginData();
-    saved_id = assurance["user_id"] ?? "";
-    saved_pw = assurance["user_pw"] ?? "";
-    var crawl = new Crawl(saved_id, saved_pw);
-
-    try {
-      var classes = await crawl.crawlClasses();
-      var user = await crawl.crawlUser();
-      print("Saved_login");
-      Navigator.pushReplacement(
-          context,
-          PageTransition(
-            duration: Duration(milliseconds: 250),
-            type: PageTransitionType.fade,
-            child: MyClass(saved_id, saved_pw, classes, user),
-          ));
-    } on CustomException catch (e) {
-      Timer(Duration(milliseconds: 1000), () {
-        Navigator.pushReplacement(
-          context,
-          PageTransition(
-            duration: Duration(milliseconds: 800),
-            type: PageTransitionType.fade,
-            alignment: Alignment.topCenter,
-            child: isviewed != 0 ? Tutorial() : MyLogin(),
-          ),
-        );
-      });
-    }
   }
 }
