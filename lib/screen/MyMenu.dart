@@ -163,6 +163,11 @@ class _MyMenuState extends State<MyMenu> {
                       SizedBox(
                         height: 30,
                       ),
+                      contentsMenu(isYumLogin, "yumTitle", "냠대 - 맛집 정보",
+                          "안양대생만의 숨은 꿀 맛집 정보를 공유"),
+                      SizedBox(
+                        height: 18,
+                      ),
                     ],
                   ),
                 ),
@@ -201,6 +206,52 @@ class _MyMenuState extends State<MyMenu> {
           child: isviewed != 0 ? Tutorial() : MyLogin(),
         ),
       );
+    }
+  }
+
+  isYumLogin() async {
+    if (await AuthApi.instance.hasToken()) {
+      print("여기는 바로 가능");
+      try {
+        // await UserApi.instance.loginWithKakaoAccount();
+        print('카카오계정으로 로그인 성공');
+        User _user = await UserApi.instance.me();
+        String _email =
+            _user.kakaoAccount!.profile?.toJson()['nickname'].toString() ?? "";
+        var yumHttp = new YumUserHttp(_email);
+        var yumLogin = await yumHttp.yumLogin();
+        if (yumLogin == 200) {
+          //로그인 성공
+          var yumInfo = await yumHttp.yumInfo();
+          print(yumInfo);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    MyYumMain(yumInfo[0]["nickName"], _email)),
+          );
+        } else if (yumLogin == 400) {
+          // 로그인 실패, 회원가입 으로
+          print("닉네임 설정 해야함 토큰은 있음");
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => MyYumNickName(_email)));
+        } else {
+          // 기타 에러
+          print(yumLogin);
+        }
+      } catch (e) {
+        if (e is KakaoException && e.isInvalidTokenError()) {
+          print('토큰 만료 $e');
+        } else {
+          print('토큰 정보 조회 실패 $e');
+        }
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => MyKakaoLogin()));
+      }
+    } else {
+      print("토큰 없음");
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MyKakaoLogin()));
     }
   }
 }
