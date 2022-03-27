@@ -8,7 +8,7 @@ import 'package:deanora/screen/MyKakaoLogin.dart';
 import 'package:deanora/screen/MyLogin.dart';
 import 'package:deanora/screen/MyClass.dart';
 import 'package:deanora/screen/MyYumMain.dart';
-import 'package:deanora/screen/MyYumNickName.dart';
+import 'package:deanora/screen/MyYumNickRegist.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -234,7 +234,7 @@ class _MyMenuState extends State<MyMenu> {
           // 로그인 실패, 회원가입 으로
           print("닉네임 설정 해야함 토큰은 있음");
           Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => MyYumNickName(_email)));
+              MaterialPageRoute(builder: (context) => MyYumNickRegist(_email)));
         } else {
           // 기타 에러
           print(yumLogin);

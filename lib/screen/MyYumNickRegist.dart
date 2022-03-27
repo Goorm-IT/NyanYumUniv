@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class MyYumNickName extends StatefulWidget {
+class MyYumNickRegist extends StatefulWidget {
   final _kakaoNick;
-  MyYumNickName(this._kakaoNick);
+  MyYumNickRegist(this._kakaoNick);
 
   @override
-  _MyYumNickNameState createState() => _MyYumNickNameState(this._kakaoNick);
+  _MyYumNickRegistState createState() => _MyYumNickRegistState(this._kakaoNick);
 }
 
-class _MyYumNickNameState extends State<MyYumNickName> {
+class _MyYumNickRegistState extends State<MyYumNickRegist> {
   final _kakaoNick;
-  _MyYumNickNameState(this._kakaoNick);
+  _MyYumNickRegistState(this._kakaoNick);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

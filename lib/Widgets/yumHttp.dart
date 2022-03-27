@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 
 class YumUserHttp {
   late String _cookie;
-  String _uid;
-  YumUserHttp(this._uid);
+  String _kakaoNickName;
+  YumUserHttp(this._kakaoNickName);
 
   Future<int> yumRegister(_nickName) async {
     final url = Uri.parse("http://52.79.251.162:80/auth/register");
-    var response = await http
-        .put(url, body: <String, String>{"uid": _uid, "nickName": _nickName});
+    var response = await http.put(url,
+        body: <String, String>{"uid": _kakaoNickName, "nickName": _nickName});
     // print(response.body);
     return response.statusCode;
   }
@@ -30,7 +30,8 @@ class YumUserHttp {
   }
 
   Future<int> yumLogin() async {
-    var url = Uri.http('52.79.251.162:80', '/auth/login', {"uid": _uid});
+    var url =
+        Uri.http('52.79.251.162:80', '/auth/login', {"uid": _kakaoNickName});
     var response = await http.get(url);
     String _tmpCookie = response.headers['set-cookie'] ?? '';
     var idx = _tmpCookie.indexOf(';');
