@@ -5,6 +5,8 @@ import 'package:deanora/crawl/customException.dart';
 import 'package:deanora/screen/MyLogin.dart';
 import 'package:deanora/screen/MyClass.dart';
 import 'package:deanora/screen/MyMenu.dart';
+import 'package:deanora/screen/MyAssignment.dart';
+import 'package:deanora/screen/MyClass.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';

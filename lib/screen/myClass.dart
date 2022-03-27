@@ -4,7 +4,7 @@ import 'package:deanora/Widgets/custom_circlular_bar.dart';
 import 'package:deanora/crawl/crawl.dart';
 import 'package:deanora/screen/MyCalendar.dart';
 import 'package:deanora/screen/MyLogin.dart';
-import 'package:deanora/screen/myAssignment.dart';
+import 'package:deanora/screen/MyAssignment.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
