@@ -1,13 +1,18 @@
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/Tutorial.dart';
+import 'package:deanora/Widgets/yumHttp.dart';
 import 'package:deanora/crawl/crawl.dart';
 import 'package:deanora/crawl/customException.dart';
 import 'package:deanora/main.dart';
+import 'package:deanora/screen/MyKakaoLogin.dart';
 import 'package:deanora/screen/MyLogin.dart';
 import 'package:deanora/screen/MyClass.dart';
+import 'package:deanora/screen/MyYumMain.dart';
+import 'package:deanora/screen/MyYumNickName.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:page_transition/page_transition.dart';
 
 class MyMenu extends StatefulWidget {
@@ -83,8 +88,8 @@ class _MyMenuState extends State<MyMenu> {
 
     Widget contentsMenu(_ontapcontroller, image, title, descrition) {
       return InkWell(
-        onTap: () {
-          _ontapcontroller();
+        onTap: () async {
+          await _ontapcontroller();
         },
         child: Center(
           child: Container(
@@ -139,14 +144,16 @@ class _MyMenuState extends State<MyMenu> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("냥냠대 컨탠츠",
+                SizedBox(
+                  height: 15,
+                ),
+                Text("냥냠대 컨텐츠",
                     style: TextStyle(color: Colors.white, fontSize: 25)),
                 SizedBox(
-                  height: 10,
+                  height: 15,
                 ),
-                Container(
-                  height: windowHeight - 100,
-                  child: Column(
+                Expanded(
+                  child: ListView(
                     children: [
                       SizedBox(
                         height: 18,
@@ -156,8 +163,6 @@ class _MyMenuState extends State<MyMenu> {
                       SizedBox(
                         height: 30,
                       ),
-                      // contentsMenu(yumLogintest, "yumTitle", "냠대 - 맛집 정보",
-                      //     "안양대생만의 숨은 꿀 맛집 정보를 공유"),
                     ],
                   ),
                 ),

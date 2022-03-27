@@ -191,14 +191,14 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                 height: 30,
               ),
               Expanded(
-                child: Builder(builder: (BuildContext context) {
+                child: Builder(builder: (BuildContext refreshContext) {
                   return RefreshIndicator(
                     onRefresh: () async {
-                      _refresh(context);
+                      _refresh(refreshContext);
                     },
                     child: FutureBuilder(
                         future: requestAssignment(id, pw, filteredNames),
-                        builder: (context, AsyncSnapshot snap) {
+                        builder: (futureContext, AsyncSnapshot snap) {
                           if (snap.hasData) {
                             dncList = snap.data;
                             return Center(
