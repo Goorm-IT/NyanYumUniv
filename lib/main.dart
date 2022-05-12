@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
           primaryColor: Colors.black,
         ),
         debugShowCheckedModeBanner: false,
-        home: Cover());
+        home: MyMenu());
   }
 }
 

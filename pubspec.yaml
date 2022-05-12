@@ -61,6 +61,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   change_app_package_name: ^1.0.0
+  flutter_native_splash: ^2.1.6
+
+flutter_native_splash:
+  color: "#8C65EC"
+  image: assets/images/logoAndTitle.png
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
