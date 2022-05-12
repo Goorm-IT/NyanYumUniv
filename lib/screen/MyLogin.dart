@@ -6,7 +6,6 @@ import 'package:deanora/crawl/customException.dart';
 import 'package:deanora/screen/MyClass.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 class MyLogin extends StatefulWidget {
   @override

@@ -1,8 +1,6 @@
 import 'package:deanora/Widgets/MemoData.dart';
-import 'package:deanora/Widgets/MenuTabBar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:page_transition/page_transition.dart';
 
 import 'package:deanora/Widgets/Widgets.dart';
 
@@ -317,7 +315,7 @@ Widget doneNmiss(color, name, cnt) {
               fontSize: 14,
             )),
         TextSpan(
-            text: "${cnt}",
+            text: "$cnt",
             style: TextStyle(
                 color: Colors.white, fontSize: 17, fontWeight: FontWeight.w900))
       ]))));

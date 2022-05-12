@@ -10,7 +10,6 @@ import 'package:deanora/screen/MyClass.dart';
 import 'package:deanora/screen/MyYumMain.dart';
 import 'package:deanora/screen/MyYumNickRegist.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:page_transition/page_transition.dart';
@@ -196,7 +195,7 @@ class _MyMenuState extends State<MyMenu> {
             type: PageTransitionType.fade,
             child: MyClass(saved_id, saved_pw, classes, user),
           ));
-    } on CustomException catch (e) {
+    } on CustomException {
       Navigator.push(
         context,
         PageTransition(

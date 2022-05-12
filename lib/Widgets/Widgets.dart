@@ -1,13 +1,9 @@
 import 'dart:async';
 import 'package:deanora/crawl/crawl.dart';
-import 'package:deanora/crawl/customException.dart';
 import 'package:deanora/object/assignment.dart';
 import 'package:deanora/object/lecture.dart';
 import 'package:deanora/object/user.dart';
-import 'package:deanora/screen/MyAssignment.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui';
-import 'package:blinking_text/blinking_text.dart';
 
 Container cover_Background() {
   return Container(

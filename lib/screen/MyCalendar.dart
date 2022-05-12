@@ -1,8 +1,5 @@
 import 'package:deanora/Widgets/MakeCalendar.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 
 class MyCalendar extends StatefulWidget {
@@ -60,7 +57,7 @@ class _MyCalendarState extends State<MyCalendar> {
     date = DateTime.now();
     _currentDateTime = DateTime(date.year, date.month);
     _selectDateTime = DateTime(date.year, date.month, date.day);
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() => _getCalendar());
     });
   }
