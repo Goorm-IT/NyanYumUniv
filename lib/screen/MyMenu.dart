@@ -11,6 +11,7 @@ import 'package:deanora/screen/MyYumMain.dart';
 import 'package:deanora/screen/MyYumNickRegist.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -133,47 +134,46 @@ class _MyMenuState extends State<MyMenu> {
     return MaterialApp(
       home: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: SafeArea(
-            child: Container(
+        body: Container(
           color: Colors.black,
-          width: windowWidth,
-          height: windowHeight,
-          child: Container(
-            margin: EdgeInsets.only(top: 30, left: 30, right: 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 15,
-                ),
-                Text("냥냠대 컨텐츠",
-                    style: TextStyle(color: Colors.white, fontSize: 25)),
-                SizedBox(
-                  height: 15,
-                ),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      SizedBox(
-                        height: 18,
+          child: SafeArea(
+              bottom: false,
+              child: Container(
+                margin: EdgeInsets.only(top: 30, left: 30, right: 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text("냥냠대 컨텐츠",
+                        style: TextStyle(color: Colors.white, fontSize: 25)),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          SizedBox(
+                            height: 18,
+                          ),
+                          contentsMenu(isNyanLogin, "nyanTitle", "냥대 - 내 강의실",
+                              "각 과목의 과제 정보와 학사 일정을 확인"),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          contentsMenu(isYumLogin, "yumTitle", "냠대 - 맛집 정보",
+                              "안양대생만의 숨은 꿀 맛집 정보를 공유"),
+                          SizedBox(
+                            height: 18,
+                          ),
+                        ],
                       ),
-                      contentsMenu(isNyanLogin, "nyanTitle", "냥대 - 내 강의실",
-                          "각 과목의 과제 정보와 학사 일정을 확인"),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      contentsMenu(isYumLogin, "yumTitle", "냠대 - 맛집 정보",
-                          "안양대생만의 숨은 꿀 맛집 정보를 공유"),
-                      SizedBox(
-                        height: 18,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        )),
+              )),
+        ),
       ),
     );
   }

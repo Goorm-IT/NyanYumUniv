@@ -7,6 +7,7 @@ import 'package:deanora/screen/MyLogin.dart';
 import 'package:deanora/screen/MyAssignment.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:math' as math;
 
 import 'package:page_transition/page_transition.dart';
@@ -112,239 +113,250 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
     List dncList = List.generate(20, (i) => 0.0);
     var windowHeight = MediaQuery.of(context).size.height;
     var windowWidth = MediaQuery.of(context).size.width;
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                alignment: Alignment.center,
-                color: Color(0xffFAFAFA),
-                child: SafeArea(
-                  child: GoogleBanner('ca-app-pub-3889684121903706/4549664650'),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.black,
+      ),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  color: Color(0xffFAFAFA),
+                  child: SafeArea(
+                    child:
+                        GoogleBanner('ca-app-pub-3889684121903706/4549664650'),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Container(
-                height: 30,
-                margin: const EdgeInsets.only(left: 10, bottom: 20),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.account_circle,
-                      color: Colors.blueGrey,
-                      size: 35,
-                    ),
-                    Text.rich(TextSpan(children: <TextSpan>[
-                      TextSpan(text: "  안녕하세요, "),
-                      TextSpan(
-                        text: "${user(userProps)[0].name}",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w900, fontSize: 18),
-                      ),
-                      TextSpan(text: "님")
-                    ])),
-                  ],
+                SizedBox(
+                  height: 15,
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                  margin: const EdgeInsets.only(left: 10, right: 10),
+                Container(
+                  height: 30,
+                  margin: const EdgeInsets.only(left: 10, bottom: 20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("내 강의실 List",
+                      Icon(
+                        Icons.account_circle,
+                        color: Colors.blueGrey,
+                        size: 35,
+                      ),
+                      Text.rich(TextSpan(children: <TextSpan>[
+                        TextSpan(text: "  안녕하세요, "),
+                        TextSpan(
+                          text: "${user(userProps)[0].name}",
                           style: TextStyle(
-                              fontWeight: FontWeight.w900, fontSize: 18)),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MyCalendar()));
-                        },
-                        child: Ink(
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.event_available,
-                                size: 20,
-                              ),
-                              Text("학사일정"),
-                            ],
-                          ),
+                              fontWeight: FontWeight.w900, fontSize: 18),
                         ),
-                      )
+                        TextSpan(text: "님")
+                      ])),
                     ],
-                  )),
-              SizedBox(
-                height: 30,
-              ),
-              Expanded(
-                child: Builder(builder: (BuildContext refreshContext) {
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      _refresh(refreshContext);
-                    },
-                    child: FutureBuilder(
-                        future: requestAssignment(id, pw, filteredNames),
-                        builder: (futureContext, AsyncSnapshot snap) {
-                          if (snap.hasData) {
-                            dncList = snap.data;
-                            return Center(
-                              child: SizedBox(
-                                height: windowHeight - 180,
-                                child: filteredNames.length != 0
-                                    ? ListView(
-                                        children: filteredNames
-                                            .asMap()
-                                            .entries
-                                            .map((entry) {
-                                          var e = entry.value;
-                                          var index = entry.key;
-                                          return InkWell(
-                                            onTap: () async {
-                                              var crawl = new Crawl(id, pw);
-                                              var _adssi = await crawl
-                                                  .crawlAssignments(e.classId);
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          MyAssignment(
-                                                              e ?? "",
-                                                              _adssi,
-                                                              dncList[index])));
-                                            },
-                                            child: Container(
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 7,
-                                                      horizontal: 7),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                border: Border.all(
-                                                    width: 2,
-                                                    color: Colors.grey
-                                                        .withOpacity(0.03)),
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.2),
-                                                    spreadRadius: 1,
-                                                    blurRadius: 4,
-                                                    offset: Offset(3, 5),
-                                                  )
-                                                ],
-                                              ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                    margin: const EdgeInsets.only(left: 10, right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text("내 강의실 List",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900, fontSize: 18)),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyCalendar()));
+                          },
+                          child: Ink(
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.event_available,
+                                  size: 20,
+                                ),
+                                Text("학사일정"),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    )),
+                SizedBox(
+                  height: 30,
+                ),
+                Expanded(
+                  child: Builder(builder: (BuildContext refreshContext) {
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        _refresh(refreshContext);
+                      },
+                      child: FutureBuilder(
+                          future: requestAssignment(id, pw, filteredNames),
+                          builder: (futureContext, AsyncSnapshot snap) {
+                            if (snap.hasData) {
+                              dncList = snap.data;
+                              return Center(
+                                child: SizedBox(
+                                  height: windowHeight - 180,
+                                  child: filteredNames.length != 0
+                                      ? ListView(
+                                          children: filteredNames
+                                              .asMap()
+                                              .entries
+                                              .map((entry) {
+                                            var e = entry.value;
+                                            var index = entry.key;
+                                            return InkWell(
+                                              onTap: () async {
+                                                var crawl = new Crawl(id, pw);
+                                                var _adssi = await crawl
+                                                    .crawlAssignments(
+                                                        e.classId);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            MyAssignment(
+                                                                e ?? "",
+                                                                _adssi,
+                                                                dncList[
+                                                                    index])));
+                                              },
                                               child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    top: 20,
-                                                    right: 30,
-                                                    left: 25,
-                                                    bottom: 18),
-                                                child: Stack(
-                                                  children: [
-                                                    Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        children: [
-                                                          Container(
-                                                            width: windowWidth -
-                                                                205,
-                                                            child: Text(
-                                                              e.className,
-                                                              maxLines: 1,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              softWrap: false,
-                                                              style: TextStyle(
-                                                                  fontSize: 15,
-                                                                  color: Color(
-                                                                      0xff707070),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Text(
-                                                              ' ${e.profName} 교수님',
-                                                              style: TextStyle(
-                                                                  fontSize: 12,
-                                                                  color: Color(
-                                                                      0xff707070))),
-                                                        ]),
-                                                    Container(
-                                                        alignment: Alignment
-                                                            .centerRight,
-                                                        child:
-                                                            CustomCircularBar(
-                                                                vsync: this,
-                                                                upperBound:
-                                                                    dncList[
-                                                                        index]))
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 7,
+                                                        horizontal: 7),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(
+                                                      width: 2,
+                                                      color: Colors.grey
+                                                          .withOpacity(0.03)),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey
+                                                          .withOpacity(0.2),
+                                                      spreadRadius: 1,
+                                                      blurRadius: 4,
+                                                      offset: Offset(3, 5),
+                                                    )
                                                   ],
                                                 ),
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 20,
+                                                      right: 30,
+                                                      left: 25,
+                                                      bottom: 18),
+                                                  child: Stack(
+                                                    children: [
+                                                      Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                          children: [
+                                                            Container(
+                                                              width:
+                                                                  windowWidth -
+                                                                      205,
+                                                              child: Text(
+                                                                e.className,
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                softWrap: false,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Color(
+                                                                        0xff707070),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w800),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Text(
+                                                                ' ${e.profName} 교수님',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    color: Color(
+                                                                        0xff707070))),
+                                                          ]),
+                                                      Container(
+                                                          alignment: Alignment
+                                                              .centerRight,
+                                                          child:
+                                                              CustomCircularBar(
+                                                                  vsync: this,
+                                                                  upperBound:
+                                                                      dncList[
+                                                                          index]))
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      )
-                                    : ListView(children: [
-                                        Center(child: Text("강의가 없습니다"))
-                                      ]),
-                              ),
-                            );
-                          } else if (snap.hasError) {
-                            return Container(
-                              height: windowHeight - 270,
-                              child: ListView(
-                                children: [
-                                  Container(
-                                    alignment: Alignment.center,
-                                    child: Text(snap.error.toString()),
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else {
-                            return Container(
-                                alignment: Alignment.topCenter,
-                                child: SizedBox(
-                                    width: 50,
-                                    height: 50,
-                                    child: CircularProgressIndicator(
-                                      valueColor: animationController.drive(
-                                          ColorTween(
-                                              begin: Color(0xff8E53E9),
-                                              end: Colors.red)),
-                                    )));
-                          }
-                        }),
-                  );
-                }),
-              )
-            ],
+                                            );
+                                          }).toList(),
+                                        )
+                                      : ListView(children: [
+                                          Center(child: Text("강의가 없습니다"))
+                                        ]),
+                                ),
+                              );
+                            } else if (snap.hasError) {
+                              return Container(
+                                height: windowHeight - 270,
+                                child: ListView(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child: Text(snap.error.toString()),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return Container(
+                                  alignment: Alignment.topCenter,
+                                  child: SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: CircularProgressIndicator(
+                                        valueColor: animationController.drive(
+                                            ColorTween(
+                                                begin: Color(0xff8E53E9),
+                                                end: Colors.red)),
+                                      )));
+                            }
+                          }),
+                    );
+                  }),
+                )
+              ],
+            ),
           ),
         ),
       ),
