@@ -1,4 +1,5 @@
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
+import 'package:deanora/screen/nyanScreen/nyanMainScreen/myClass.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/Tutorial.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/http/crawl/crawl.dart';
@@ -6,7 +7,6 @@ import 'package:deanora/http/crawl/customException.dart';
 import 'package:deanora/main.dart';
 import 'package:deanora/screen/MyKakaoLogin.dart';
 
-import 'package:deanora/screen/MyClass.dart';
 import 'package:deanora/screen/MyYumMain.dart';
 import 'package:deanora/screen/MyYumNickRegist.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/MyLogin.dart';

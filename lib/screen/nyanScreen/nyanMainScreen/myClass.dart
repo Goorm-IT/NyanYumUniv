@@ -1,9 +1,11 @@
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/Widgets/custom_circlular_bar.dart';
+import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/http/crawl/crawl.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
-import 'package:deanora/screen/MyAssignment.dart';
+import 'package:deanora/screen/nyanScreen/nyanMainScreen/myAssignment.dart';
+
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/MyCalendar.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/MyLogin.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -384,17 +386,8 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                       );
                                     } else {
                                       return Container(
-                                          alignment: Alignment.topCenter,
-                                          child: SizedBox(
-                                              width: 50,
-                                              height: 50,
-                                              child: CircularProgressIndicator(
-                                                valueColor: animationController
-                                                    .drive(ColorTween(
-                                                        begin:
-                                                            Color(0xff8E53E9),
-                                                        end: Colors.red)),
-                                              )));
+                                          alignment: Alignment.center,
+                                          child: CustomLoadingImage());
                                     }
                                   }),
                             );
