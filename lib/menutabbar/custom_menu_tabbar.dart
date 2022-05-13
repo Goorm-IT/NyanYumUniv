@@ -1,6 +1,7 @@
 import 'package:blur/blur.dart';
 import 'package:deanora/const/color.dart';
-import 'package:deanora/screen/MyCalendar.dart';
+import 'package:deanora/screen/nyanScreen/nyanSubScreen/MyCalendar.dart';
+
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 

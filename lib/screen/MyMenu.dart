@@ -1,14 +1,15 @@
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
-import 'package:deanora/Widgets/Tutorial.dart';
-import 'package:deanora/Widgets/yumHttp.dart';
-import 'package:deanora/crawl/crawl.dart';
-import 'package:deanora/crawl/customException.dart';
+import 'package:deanora/screen/nyanScreen/nyanSubScreen/Tutorial.dart';
+import 'package:deanora/http/yumServer/yumHttp.dart';
+import 'package:deanora/http/crawl/crawl.dart';
+import 'package:deanora/http/crawl/customException.dart';
 import 'package:deanora/main.dart';
 import 'package:deanora/screen/MyKakaoLogin.dart';
-import 'package:deanora/screen/MyLogin.dart';
+
 import 'package:deanora/screen/MyClass.dart';
 import 'package:deanora/screen/MyYumMain.dart';
 import 'package:deanora/screen/MyYumNickRegist.dart';
+import 'package:deanora/screen/nyanScreen/nyanMainScreen/MyLogin.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';

@@ -1,5 +1,5 @@
 import 'package:deanora/Widgets/Widgets.dart';
-import 'package:deanora/crawl/crawl.dart';
+import 'package:deanora/http/crawl/crawl.dart';
 import 'package:deanora/Widgets/custom_circlular_bar.dart';
 import 'package:deanora/screen/MyAssignment.dart';
 import 'package:flutter/material.dart';

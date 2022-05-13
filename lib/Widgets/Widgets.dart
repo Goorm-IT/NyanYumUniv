@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:deanora/crawl/crawl.dart';
+import 'package:deanora/http/crawl/crawl.dart';
 import 'package:deanora/object/assignment.dart';
 import 'package:deanora/object/lecture.dart';
 import 'package:deanora/object/user.dart';

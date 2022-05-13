@@ -1,19 +1,18 @@
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/Widgets/custom_circlular_bar.dart';
-import 'package:deanora/crawl/crawl.dart';
+import 'package:deanora/http/crawl/crawl.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
-import 'package:deanora/screen/MyCalendar.dart';
-import 'package:deanora/screen/MyLogin.dart';
 import 'package:deanora/screen/MyAssignment.dart';
+import 'package:deanora/screen/nyanScreen/nyanSubScreen/MyCalendar.dart';
+import 'package:deanora/screen/nyanScreen/nyanMainScreen/MyLogin.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
-
 import 'package:page_transition/page_transition.dart';
 import 'package:rxdart/rxdart.dart';
-import '../Widgets/googleBanner.dart';
+import '../../../Widgets/googleBanner.dart';
 
 class CnDPair<T1, T2> {
   int index;

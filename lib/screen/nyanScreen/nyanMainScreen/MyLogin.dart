@@ -1,8 +1,8 @@
 import 'package:custom_check_box/custom_check_box.dart';
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/Widgets.dart';
-import 'package:deanora/crawl/crawl.dart';
-import 'package:deanora/crawl/customException.dart';
+import 'package:deanora/http/crawl/crawl.dart';
+import 'package:deanora/http/crawl/customException.dart';
 import 'package:deanora/screen/MyClass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
