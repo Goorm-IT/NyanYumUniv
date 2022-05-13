@@ -3,7 +3,8 @@ import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/http/crawl/crawl.dart';
 import 'package:deanora/http/crawl/customException.dart';
-import 'package:deanora/screen/MyClass.dart';
+import 'package:deanora/screen/nyanScreen/nyanMainScreen/myClass.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';

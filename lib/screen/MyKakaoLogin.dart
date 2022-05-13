@@ -1,5 +1,5 @@
 import 'package:deanora/Widgets/Widgets.dart';
-import 'package:deanora/Widgets/yumHttp.dart';
+import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/screen/MyYumMain.dart';
 import 'package:deanora/screen/MyYumNickRegist.dart';
 import 'package:flutter/material.dart';
