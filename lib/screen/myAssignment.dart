@@ -1,8 +1,10 @@
 import 'package:deanora/Widgets/MemoData.dart';
+import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:deanora/Widgets/Widgets.dart';
+import 'package:rxdart/rxdart.dart';
 
 class MyAssignment extends StatefulWidget {
   var classProps, assignmentProps, progress;
@@ -16,12 +18,14 @@ class MyAssignment extends StatefulWidget {
 class _MyAssignmentState extends State<MyAssignment>
     with TickerProviderStateMixin {
   var classProps, userProps, assignmentProps, progress;
-  final _focusNode = FocusNode();
+  // final _focusNode = FocusNode();
   _MyAssignmentState(this.classProps, this.assignmentProps, this.progress);
-
+  late BehaviorSubject<int> backButtonToggle;
+  int willpop = 1;
   @override
   void initState() {
     super.initState();
+    backButtonToggle = BehaviorSubject.seeded(-1);
   }
 
   // @override
@@ -29,7 +33,8 @@ class _MyAssignmentState extends State<MyAssignment>
   //   _focusNode.dispose();
   //   super.dispose();
   // }
-  final _memoController = TextEditingController();
+
+  // final _memoController = TextEditingController();
   String mymemo = "";
   String tmpmemo = "";
 
@@ -84,136 +89,178 @@ class _MyAssignmentState extends State<MyAssignment>
         _child = notassignment;
       }
     });
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return WillPopScope(
+      onWillPop: () async {
+        print('willpop $willpop');
+        if (willpop == 1) {
+          backButtonToggle.sink.add(1);
+          return false;
+        } else {
+          backButtonToggle.sink.add(-1);
+          return true;
+        }
+      },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Stack(
             children: [
               Container(
-                height: 265,
-                padding: const EdgeInsets.only(bottom: 15.0),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: <Color>[Color(0xff6D6CEB), Color(0xff7C4DF1)]),
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: const Radius.circular(30.0),
-                        bottomRight: const Radius.circular(30.0))),
+                color: Colors.white,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 5,
-                    ),
-                    SafeArea(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Container(
+                      height: 265,
+                      padding: const EdgeInsets.only(bottom: 15.0),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: <Color>[
+                                Color(0xff6D6CEB),
+                                Color(0xff7C4DF1)
+                              ]),
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: const Radius.circular(30.0),
+                              bottomRight: const Radius.circular(30.0))),
+                      child: Column(
                         children: [
-                          Container(
-                            height: 30,
-                            margin: const EdgeInsets.only(left: 20),
-                            child: GestureDetector(
-                                onTap: () => {
-                                      Navigator.pop(context),
-                                    },
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                  size: 25,
-                                )),
+                          SizedBox(
+                            height: 5,
                           ),
-                          Container(
-                              height: 20,
-                              margin: EdgeInsets.only(right: 20),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  await loadmemo();
-                                  showModalBottomSheet(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(30.0),
-                                            topLeft: Radius.circular(30.0)),
-                                      ),
-                                      context: context,
-                                      builder: buildBottomSheet,
-                                      isScrollControlled: true);
-                                },
-                                child:
-                                    Image.asset('assets/images/memoIcon.png'),
-                              ))
+                          SafeArea(
+                            bottom: false,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  height: 30,
+                                  margin: const EdgeInsets.only(left: 20),
+                                  child: GestureDetector(
+                                      onTap: () => {
+                                            Navigator.pop(context),
+                                          },
+                                      child: Icon(
+                                        Icons.arrow_back,
+                                        color: Colors.white,
+                                        size: 25,
+                                      )),
+                                ),
+                                Container(
+                                    height: 20,
+                                    margin: EdgeInsets.only(right: 20),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                  topRight:
+                                                      Radius.circular(30.0),
+                                                  topLeft:
+                                                      Radius.circular(30.0)),
+                                            ),
+                                            context: context,
+                                            builder: buildBottomSheet,
+                                            isScrollControlled: true);
+                                      },
+                                      child: Image.asset(
+                                          'assets/images/memoIcon.png'),
+                                    ))
+                              ],
+                            ),
+                          ),
+                          Flexible(
+                            child: SizedBox(
+                              height: 15,
+                            ),
+                          ),
+                          Center(
+                              child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 100),
+                            child: Text("${classProps.className}",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 23,
+                                    fontWeight: FontWeight.w700),
+                                textAlign: TextAlign.center),
+                          )),
+                          Flexible(
+                            child: SizedBox(
+                              height: 10,
+                            ),
+                          ),
+                          Center(
+                              child: Text("${classProps.profName} 교수님",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18))),
+                          Flexible(
+                            child: SizedBox(
+                              height: 40,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              doneNmiss(Color(0xffB2C3FF), "done  ", doneCnt),
+                              SizedBox(
+                                width: 24,
+                              ),
+                              doneNmiss(Color(0xffF2A7C5), "missed  ",
+                                  myAssignment.length - doneCnt),
+                            ],
+                          ),
                         ],
                       ),
                     ),
-                    Flexible(
-                      child: SizedBox(
-                        height: 15,
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 24),
+                      child: Text(
+                        "과제 목록",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w800),
                       ),
                     ),
-                    Center(
-                        child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 100),
-                      child: Text("${classProps.className}",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 23,
-                              fontWeight: FontWeight.w700),
-                          textAlign: TextAlign.center),
-                    )),
-                    Flexible(
-                      child: SizedBox(
-                        height: 10,
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        child: _child,
                       ),
-                    ),
-                    Center(
-                        child: Text("${classProps.profName} 교수님",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 18))),
-                    Flexible(
-                      child: SizedBox(
-                        height: 40,
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        doneNmiss(Color(0xffB2C3FF), "done  ", doneCnt),
-                        SizedBox(
-                          width: 24,
-                        ),
-                        doneNmiss(Color(0xffF2A7C5), "missed  ",
-                            myAssignment.length - doneCnt),
-                      ],
-                    ),
+                    )
                   ],
                 ),
               ),
-              SizedBox(
-                height: 15,
+              CustomMenuTabbar(
+                menuTabBarToggle: (int id) {
+                  willpop = id;
+                },
+                backButtonToggle: backButtonToggle,
+                parentsContext: context,
               ),
-              Container(
-                margin: const EdgeInsets.only(left: 24),
-                child: Text(
-                  "과제 목록",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  child: _child,
-                ),
-              )
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget haveassignment(myAssignment) {
+    return MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      child: ListView.builder(
+        itemCount: myAssignment.length,
+        itemBuilder: (BuildContext context, int index) {
+          return assignmentDivided(context, myAssignment[index]);
+        },
       ),
     );
   }
@@ -222,15 +269,6 @@ class _MyAssignmentState extends State<MyAssignment>
 Widget notassignment = new Center(
   child: Text("아직 과제가 없습니다"),
 );
-
-Widget haveassignment(myAssignment) {
-  return ListView.builder(
-    itemCount: myAssignment.length,
-    itemBuilder: (BuildContext context, int index) {
-      return assignmentDivided(context, myAssignment[index]);
-    },
-  );
-}
 
 Widget assignmentDivided(BuildContext context, myAssignment) {
   var dateformatter = new DateFormat('yyyy-MM-dd');
