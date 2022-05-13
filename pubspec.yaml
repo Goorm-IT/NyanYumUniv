@@ -53,6 +53,7 @@ dependencies:
   json_annotation: ^4.0.1
   package_info_plus: ^1.0.4
   platform: ^3.0.0
+  blur: ^3.1.0
 
 dependency_overrides:
   firebase_messaging_platform_interface: 3.2.1
