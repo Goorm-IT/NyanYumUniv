@@ -1,12 +1,15 @@
+import 'package:deanora/object/assignment.dart';
+import 'package:deanora/object/lecture.dart';
+import 'package:deanora/object/user.dart';
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'customException.dart';
 
-class Crawl {
+class Crawl with ChangeNotifier {
   String _cookie = '';
-  String _id, _pw;
-
-  Crawl(this._id, this._pw);
+  static String id = "", pw = "";
 
   Future<http.StreamedResponse> _getResponse(String method, String url,
       [Map<String, String> headers = const {},
@@ -19,7 +22,7 @@ class Crawl {
 
   Future<void> _login() async {
     final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-    final body = {'userDTO.userId': this._id, 'userDTO.password': this._pw};
+    final body = {'userDTO.userId': id, 'userDTO.password': pw};
     final url = 'http://cyber.anyang.ac.kr/MUser.do?cmd=loginUser';
     final response = await _getResponse('POST', url, headers, body);
 
@@ -30,11 +33,11 @@ class Crawl {
       int index = rawCookie.indexOf(';');
       this._cookie = (index == -1) ? rawCookie : rawCookie.substring(0, index);
     }
+    print('$_cookie  쿠키시바라');
   }
 
   Future<Map<String, String>> crawlUser() async {
-    if (this._cookie == '') await _login();
-
+    await _login();
     final url = 'http://cyber.anyang.ac.kr/MMain.do?cmd=viewIndexPage';
     final response = await _getResponse('GET', url, {'cookie': this._cookie});
     final document = parse(await response.stream.bytesToString());
@@ -50,12 +53,14 @@ class Crawl {
       'name': data[0],
       'studentId': data[1].substring(1, data[1].length - 1)
     };
-
+    GetIt.I.registerSingleton<NyanUser>(
+        NyanUser(user["name"]!, user["studentId"]!),
+        instanceName: "userInfo");
     return user;
   }
 
   Future<List<Map<String, String>>> crawlClasses() async {
-    if (this._cookie == '') await _login();
+    await _login();
 
     final url = 'http://cyber.anyang.ac.kr/MMain.do?cmd=viewIndexPage';
     final response = await _getResponse('GET', url, {'cookie': this._cookie});
@@ -75,12 +80,24 @@ class Crawl {
         'profName': data?[1] ?? ''
       });
     }
+    List<Lecture> tmp = [];
+    for (int i = 0; i < classes.length; i++) {
+      tmp.add(Lecture(
+        classes[i]["classId"]!,
+        classes[i]["className"]!,
+        classes[i]["profName"]!,
+      ));
+    }
+    GetIt.I.registerSingleton<List<Lecture>>(
+      tmp,
+      instanceName: "classesInfo",
+    );
 
     return classes;
   }
 
   Future<List<Map<String, String>>> crawlAssignments(String courseId) async {
-    if (this._cookie == '') await _login();
+    await _login();
 
     var url =
         'http://cyber.anyang.ac.kr/Learner.do?cmd=viewLearnerStatusList&courseDTO.courseId=$courseId&mainDTO.parentMenuId=menu_00101&mainDTO.menuId=menu_00100';
@@ -129,6 +146,12 @@ class Crawl {
         'endDate': date[1].trim()
       });
     }
+    List<Assignment> tmp = [];
+    for (int i = 0; i < assignments.length; i++) {
+      tmp.add(Assignment(assignments[i]['title']!, assignments[i]['state']!,
+          assignments[i]['startDate']!, assignments[i]['endDate']!));
+    }
+    GetIt.I.registerSingleton<List<Assignment>>(tmp, instanceName: courseId);
 
     return assignments;
   }

@@ -1,16 +1,19 @@
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/Widgets/custom_circlular_bar.dart';
 import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/http/crawl/crawl.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
+import 'package:deanora/object/assignment.dart';
+import 'package:deanora/object/lecture.dart';
+import 'package:deanora/object/user.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/myAssignment.dart';
-
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/MyCalendar.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/MyLogin.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'dart:math' as math;
 import 'package:page_transition/page_transition.dart';
 import 'package:rxdart/rxdart.dart';
@@ -23,12 +26,10 @@ class CnDPair<T1, T2> {
 }
 
 class MyClass extends StatefulWidget {
-  var id, pw, classProps, userProps;
-
-  MyClass(this.id, this.pw, this.classProps, this.userProps);
+  var id, pw;
+  MyClass(this.id, this.pw);
   @override
-  _MyClassState createState() =>
-      _MyClassState(this.id, this.pw, this.classProps, this.userProps);
+  _MyClassState createState() => _MyClassState();
 }
 
 class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
@@ -43,19 +44,23 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
   double ddnc = 0.0;
   Widget bar = new Text("");
   late Future<double> progressCnt;
-  late AnimationController animationController;
-
+  // late AnimationController animationController;
+  late AnimationController _animationControllerFadePage;
   late BehaviorSubject<int> backButtonToggle;
+  List myclasses = [];
+  List dncList = [];
   int willpop = 1;
-  _MyClassState(this.id, this.pw, this.classProps, this.userProps);
+  _MyClassState();
   late FirebaseMessaging messaging;
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(
-        duration: new Duration(milliseconds: 1000), vsync: this);
-    animationController.repeat();
-    _getNames(classProps);
+    myclasses = GetIt.I<List<Lecture>>(instanceName: "classesInfo");
+    _animationControllerFadePage = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 200));
+    // animationController = AnimationController(
+    //     duration: new Duration(milliseconds: 1000), vsync: this);
+    // animationController.repeat();
     backButtonToggle = BehaviorSubject.seeded(-1);
     messaging = FirebaseMessaging.instance;
     messaging.getToken().then((value) {
@@ -110,290 +115,258 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
     });
   }
 
-  dispose() {
-    animationController.dispose();
+  @override
+  void dispose() {
+    _animationControllerFadePage.dispose();
     super.dispose();
   }
 
   Widget build(BuildContext context) {
-    var ctrl = new LoginDataCtrl();
-    List dncList = List.generate(20, (i) => 0.0);
+    dncList = List.generate(10, (i) => 0.0);
     var windowHeight = MediaQuery.of(context).size.height;
     var windowWidth = MediaQuery.of(context).size.width;
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.black,
-      ),
+
+    var ctrl = new LoginDataCtrl();
+    Future<List> requestAssignment(props) async {
+      var crawl = new Crawl();
+      List<Assignment> assignments = [];
+      List doneCnt = [];
+
+      for (int i = 0; i < props.length; i++) {
+        try {
+          assignments = GetIt.I<List<Assignment>>(
+            instanceName: props[i].classId,
+          );
+        } catch (e) {
+          try {
+            await crawl.crawlAssignments(props[i].classId);
+            assignments =
+                GetIt.I<List<Assignment>>(instanceName: props[i].classId);
+          } catch (e) {
+            print(e);
+          }
+        }
+        if (assignments.length > 0) {
+          double tmp = 0.0;
+          for (int i = 0; i < assignments.length; i++) {
+            if (assignments[i].state == "제출완료") {
+              tmp++;
+            }
+          }
+          doneCnt.add(tmp / assignments.length);
+        } else {
+          doneCnt.add(0.0);
+        }
+      }
+
+      return doneCnt;
+    }
+
+    return WillPopScope(
+      onWillPop: () async {
+        print('willpop $willpop');
+        if (willpop == 1) {
+          backButtonToggle.sink.add(1);
+          return false;
+        } else {
+          backButtonToggle.sink.add(-1);
+          return true;
+        }
+      },
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
         home: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Container(
-            color: Colors.white,
-            child: SafeArea(
-              bottom: false,
-              child: Stack(
-                children: [
+            // appBar: myAppbar(context),
+            resizeToAvoidBottomInset: false,
+            body: Container(
+              color: Colors.white,
+              child: SafeArea(
+                bottom: false,
+                child: Stack(children: [
                   Container(
-                    margin: const EdgeInsets.only(top: 3, left: 20, right: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Container(
-                        //   alignment: Alignment.center,
-                        //   color: Color(0xffFAFAFA),
-                        //   child: SafeArea(
-                        //     child: GoogleBanner(
-                        //         'ca-app-pub-3889684121903706/4549664650'),
-                        //   ),
-                        // ),
-                        Container(
-                          height: 20,
-                          child: GestureDetector(
-                              onTap: () async {
-                                ctrl.removeLoginData();
-                                Navigator.pop(context);
-                              },
-                              child: RotationTransition(
-                                turns: new AlwaysStoppedAnimation(180 / 360),
-                                child: Icon(
-                                  Icons.login_outlined,
-                                  color: Colors.grey,
-                                  size: 20,
-                                ),
-                              )),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Container(
-                          height: 30,
-                          margin: const EdgeInsets.only(left: 10, bottom: 20),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.account_circle,
-                                color: Colors.blueGrey,
-                                size: 35,
-                              ),
-                              Text.rich(TextSpan(children: <TextSpan>[
-                                TextSpan(text: "  안녕하세요, "),
-                                TextSpan(
-                                  text: "${user(userProps)[0].name}",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 18),
-                                ),
-                                TextSpan(text: "님")
-                              ])),
-                            ],
+                    color: Colors.white,
+                    child: Container(
+                      margin:
+                          const EdgeInsets.only(top: 3, left: 20, right: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 20,
+                            child: GestureDetector(
+                                onTap: () async {
+                                  ctrl.removeLoginData();
+                                  Navigator.pop(context);
+                                },
+                                child: RotationTransition(
+                                  turns: new AlwaysStoppedAnimation(180 / 360),
+                                  child: Icon(
+                                    Icons.logout_outlined,
+                                    color: Colors.grey,
+                                    size: 20,
+                                  ),
+                                )),
                           ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                            margin: const EdgeInsets.only(left: 10, right: 10),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 30,
+                            margin: const EdgeInsets.only(left: 10, bottom: 20),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text("내 강의실 List",
+                                Icon(
+                                  Icons.account_circle,
+                                  color: Colors.blueGrey,
+                                  size: 35,
+                                ),
+                                Text.rich(TextSpan(children: <TextSpan>[
+                                  TextSpan(text: "  안녕하세요, "),
+                                  TextSpan(
+                                    text:
+                                        "${GetIt.I<NyanUser>(instanceName: "userInfo").name}",
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 18)),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                MyCalendar()));
-                                  },
-                                  child: Ink(
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.event_available,
-                                          size: 20,
-                                        ),
-                                        Text("학사일정"),
-                                      ],
-                                    ),
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 18),
                                   ),
-                                )
+                                  TextSpan(text: "님")
+                                ])),
                               ],
-                            )),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Expanded(
-                          child:
-                              Builder(builder: (BuildContext refreshContext) {
-                            return RefreshIndicator(
-                              onRefresh: () async {
-                                _refresh(refreshContext);
-                              },
-                              child: FutureBuilder(
-                                  future:
-                                      requestAssignment(id, pw, filteredNames),
-                                  builder: (futureContext, AsyncSnapshot snap) {
-                                    if (snap.hasData) {
-                                      dncList = snap.data;
-                                      return Center(
-                                        child: SizedBox(
-                                          height: windowHeight - 180,
-                                          child: filteredNames.length != 0
-                                              ? ListView(
-                                                  children: filteredNames
-                                                      .asMap()
-                                                      .entries
-                                                      .map((entry) {
-                                                    var e = entry.value;
-                                                    var index = entry.key;
-                                                    return InkWell(
-                                                      onTap: () async {
-                                                        var crawl =
-                                                            new Crawl(id, pw);
-                                                        var _adssi = await crawl
-                                                            .crawlAssignments(
-                                                                e.classId);
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    MyAssignment(
-                                                                        e ?? "",
-                                                                        _adssi,
-                                                                        dncList[
-                                                                            index])));
-                                                      },
-                                                      child: Container(
-                                                        margin: const EdgeInsets
-                                                                .symmetric(
-                                                            vertical: 7,
-                                                            horizontal: 7),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.white,
-                                                          border: Border.all(
-                                                              width: 2,
-                                                              color: Colors.grey
-                                                                  .withOpacity(
-                                                                      0.03)),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: Colors.grey
-                                                                  .withOpacity(
-                                                                      0.2),
-                                                              spreadRadius: 1,
-                                                              blurRadius: 4,
-                                                              offset:
-                                                                  Offset(3, 5),
-                                                            )
-                                                          ],
-                                                        ),
-                                                        child: Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 20,
-                                                                  right: 30,
-                                                                  left: 25,
-                                                                  bottom: 18),
-                                                          child: Stack(
-                                                            children: [
-                                                              Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceEvenly,
-                                                                  children: [
-                                                                    Container(
-                                                                      width:
-                                                                          windowWidth -
-                                                                              205,
-                                                                      child:
-                                                                          Text(
-                                                                        e.className,
-                                                                        maxLines:
-                                                                            1,
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        softWrap:
-                                                                            false,
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                15,
-                                                                            color:
-                                                                                Color(0xff707070),
-                                                                            fontWeight: FontWeight.w800),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height:
-                                                                          10,
-                                                                    ),
-                                                                    Text(
-                                                                        ' ${e.profName} 교수님',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                12,
-                                                                            color:
-                                                                                Color(0xff707070))),
-                                                                  ]),
-                                                              Container(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerRight,
-                                                                  child: CustomCircularBar(
-                                                                      vsync:
-                                                                          this,
-                                                                      upperBound:
-                                                                          dncList[
-                                                                              index]))
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                )
-                                              : ListView(children: [
-                                                  Center(
-                                                      child: Text("강의가 없습니다"))
-                                                ]),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          // Text((myclasses[0].test).toString()),
+                          Container(
+                              margin:
+                                  const EdgeInsets.only(left: 10, right: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text("내 강의실 List",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 18)),
+                                  InkWell(
+                                    onTap: () async {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MyCalendar()));
+                                    },
+                                    child: Ink(
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.event_available,
+                                            size: 20,
+                                          ),
+                                          Text("학사일정"),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          CustomRefreshIndicator(
+                            builder: (BuildContext refreshContext, Widget child,
+                                IndicatorController controller) {
+                              return AnimatedBuilder(
+                                animation: controller,
+                                builder: (BuildContext context, _) {
+                                  if (controller.isLoading) {
+                                    _animationControllerFadePage.forward();
+                                  }
+                                  return Stack(
+                                    alignment: Alignment.topCenter,
+                                    children: <Widget>[
+                                      Transform.translate(
+                                        offset:
+                                            Offset(0, 50.0 * controller.value),
+                                        child: child,
+                                      ),
+                                      if (controller.isLoading)
+                                        FadeTransition(
+                                          opacity: _animationControllerFadePage,
+                                          child: Stack(
+                                            children: [
+                                              Container(
+                                                width: windowWidth,
+                                                height: windowHeight - 200,
+                                                color: Colors.white,
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      );
-                                    } else if (snap.hasError) {
-                                      return Container(
+                                      if (!controller.isIdle)
+                                        Align(
+                                          alignment: Alignment.topCenter,
+                                          child: SizedBox(
+                                            height: 130,
+                                            width: 100,
+                                            child: CustomLoadingImage(),
+                                          ),
+                                        ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            onRefresh: _refresh,
+                            // onRefresh: () =>
+                            //     Future.delayed(const Duration(seconds: 3)),
+                            child: FutureBuilder(
+                                future: requestAssignment(myclasses),
+                                builder: (futureContext, AsyncSnapshot snap) {
+                                  if (snap.hasData) {
+                                    dncList = snap.data;
+                                    return Center(
+                                      child: SizedBox(
                                         height: windowHeight - 270,
-                                        child: ListView(
-                                          children: [
-                                            Container(
-                                              alignment: Alignment.center,
-                                              child:
-                                                  Text(snap.error.toString()),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      return Container(
-                                          alignment: Alignment.center,
-                                          child: CustomLoadingImage());
-                                    }
-                                  }),
-                            );
-                          }),
-                        )
-                      ],
+                                        child: myclasses.length != 0
+                                            ? ListView.builder(
+                                                itemCount: myclasses.length,
+                                                itemBuilder:
+                                                    (BuildContext classContext,
+                                                        int index) {
+                                                  return _ClassList(
+                                                      context,
+                                                      myclasses[index],
+                                                      dncList[index]);
+                                                })
+                                            : ListView(children: [
+                                                Center(child: Text("강의가 없습니다"))
+                                              ]),
+                                      ),
+                                    );
+                                  } else if (snap.hasError) {
+                                    return Container(
+                                      height: windowHeight - 270,
+                                      child: ListView(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            child: Text(snap.error.toString()),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  } else {
+                                    return Container(
+                                        alignment: Alignment.center,
+                                        child: CustomLoadingImage());
+                                  }
+                                }),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   CustomMenuTabbar(
@@ -403,139 +376,101 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                     backButtonToggle: backButtonToggle,
                     parentsContext: context,
                   ),
-                ],
+                ]),
               ),
-            ),
-          ),
-        ),
+            )),
       ),
     );
   }
 
-  Future<void> _refresh(BuildContext context) async {
-    int leftTime = 5 - DateTime.now().difference(_refreshTime).inSeconds;
-    if (leftTime > 0) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          '$leftTime초 후에 다시 시도해주세요',
-          textAlign: TextAlign.center,
-        ),
-        duration: Duration(seconds: 1),
-        backgroundColor: Colors.blue,
-      ));
-      return;
+  Future<void> _refresh() async {
+    await Crawl().crawlClasses();
+    for (int i = 0; i < myclasses.length; i++) {
+      await Crawl().crawlAssignments(myclasses[i].classId);
     }
-    _refreshTime = DateTime.now();
     Navigator.pushReplacement(
         context,
         PageTransition(
           duration: Duration(milliseconds: 250),
           type: PageTransitionType.fade,
-          child: MyClass(this.id, this.pw, this.classProps, this.userProps),
+          child: MyClass(widget.id, widget.pw),
         ));
   }
+}
 
-  PreferredSizeWidget myAppbar(BuildContext context) {
-    var ctrl = new LoginDataCtrl();
-    var windowWidth = MediaQuery.of(context).size.width;
-    return PreferredSize(
-      preferredSize: Size.fromHeight(40),
-      child: new AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        title: bar,
-        leading: new IconButton(
-          onPressed: () {
-            ctrl.removeLoginData();
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => MyLogin()));
-          },
-          icon: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.rotationY(math.pi),
-              child: Icon(
-                Icons.logout,
-                size: 22,
-              )),
-          color: Colors.grey,
+class _ClassList extends StatefulWidget {
+  BuildContext pageContext;
+  var props;
+  var dnc;
+  _ClassList(this.pageContext, this.props, this.dnc);
+  @override
+  _ClassListState createState() => _ClassListState();
+}
+
+class _ClassListState extends State<_ClassList> with TickerProviderStateMixin {
+  _ClassListState();
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        var crawl = new Crawl();
+        var _adssi = await crawl.crawlAssignments(widget.props.classId);
+        Navigator.push(
+            widget.pageContext,
+            MaterialPageRoute(
+                builder: (context) => MyAssignment(widget.props, widget.dnc)));
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 7, horizontal: 7),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(width: 2, color: Colors.grey.withOpacity(0.03)),
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: Offset(3, 5),
+            )
+          ],
         ),
-        actions: <Widget>[
-          new IconButton(
-            onPressed: () {
-              setState(() {
-                if (this.searchIcon.icon == Icons.search) {
-                  searchIcon = new Icon(Icons.close);
-                  bar = Container(
-                      width: windowWidth - 70,
-                      height: 30,
-                      child: Stack(
-                        children: [
-                          TextField(
-                            autofocus: true,
-                            onChanged: (text) {
-                              _searchText = text;
-                              print(_searchText);
-                              if (!(_searchText == "")) {
-                                List tmp = [];
-
-                                for (int i = 0; i < fname.length; i++) {
-                                  if (fname[i]
-                                          .className
-                                          .contains(_searchText) ||
-                                      fname[i].profName.contains(_searchText)) {
-                                    tmp.add(fname[i]);
-                                  }
-                                }
-                                setState(() {
-                                  filteredNames = tmp;
-                                });
-                              } else {
-                                setState(() {
-                                  filteredNames = fname;
-                                });
-                              }
-                            },
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            child: Container(
-                              height: 1,
-                              width: 300,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(colors: <Color>[
-                                  Color(0xff8C65EC),
-                                  Color(0xff6D6CEB)
-                                ]),
-                              ),
-                            ),
-                          )
-                        ],
-                      ));
-                } else {
-                  setState(() {
-                    bar = new Text("");
-                    searchIcon = new Icon(Icons.search);
-                    filteredNames = fname;
-                  });
-                }
-              });
-            },
-            icon: searchIcon,
-            color: Colors.grey,
-          )
-        ],
+        child: Container(
+          margin:
+              const EdgeInsets.only(top: 20, right: 30, left: 25, bottom: 18),
+          child: Stack(
+            children: [
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(widget.pageContext).size.width - 205,
+                      child: Text(
+                        widget.props.className,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Color(0xff707070),
+                            fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(' ${widget.props.profName} 교수님',
+                        style:
+                            TextStyle(fontSize: 12, color: Color(0xff707070))),
+                  ]),
+              Container(
+                  alignment: Alignment.centerRight,
+                  child: CustomCircularBar(vsync: this, upperBound: widget.dnc))
+            ],
+          ),
+        ),
       ),
     );
-  }
-
-  _getNames(classProps) async {
-    for (int i = 0; i < classes(classProps).length; i++) {
-      names.add(classes(classProps)[i]);
-    }
-    setState(() {
-      filteredNames = names;
-
-      fname = names;
-    });
   }
 }
