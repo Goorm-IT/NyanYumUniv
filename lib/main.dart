@@ -1,4 +1,5 @@
 import 'package:deanora/screen/MyMenu.dart';
+import 'package:deanora/screen/yumScreen/naver_login_test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -37,12 +38,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: '냥냠대',
-        theme: ThemeData(
-          brightness: Brightness.light,
-          primaryColor: Colors.white,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: MyMenu());
+      title: '냥냠대',
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Colors.white,
+      ),
+      debugShowCheckedModeBanner: false,
+      // home: MyMenu(),
+      home: NaverLoginTest(),
+    );
   }
 }
