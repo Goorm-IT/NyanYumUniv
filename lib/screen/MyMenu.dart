@@ -116,7 +116,7 @@ class _MyMenuState extends State<MyMenu> {
                               bottomLeft: Radius.circular(30),
                               bottomRight: Radius.circular(30))),
                       child: Container(
-                        padding: EdgeInsets.only(left: 20, top: 15, bottom: 15),
+                        padding: EdgeInsets.only(left: 20, top: 15, bottom: 14),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
