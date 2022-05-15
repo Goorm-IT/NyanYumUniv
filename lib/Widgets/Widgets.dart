@@ -1,8 +1,3 @@
-import 'dart:async';
-import 'package:deanora/http/crawl/crawl.dart';
-import 'package:deanora/object/assignment.dart';
-import 'package:deanora/object/lecture.dart';
-import 'package:deanora/object/user.dart';
 import 'package:flutter/material.dart';
 
 Container cover_Background() {

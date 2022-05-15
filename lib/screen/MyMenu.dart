@@ -13,7 +13,6 @@ import 'package:deanora/screen/MyYumNickRegist.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/MyLogin.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:page_transition/page_transition.dart';
