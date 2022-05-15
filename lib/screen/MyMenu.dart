@@ -1,4 +1,6 @@
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
+import 'package:deanora/object/lecture.dart';
+import 'package:deanora/object/user.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/myClass.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/Tutorial.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
@@ -6,13 +8,13 @@ import 'package:deanora/http/crawl/crawl.dart';
 import 'package:deanora/http/crawl/customException.dart';
 import 'package:deanora/main.dart';
 import 'package:deanora/screen/MyKakaoLogin.dart';
-
 import 'package:deanora/screen/MyYumMain.dart';
 import 'package:deanora/screen/MyYumNickRegist.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/MyLogin.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -25,6 +27,8 @@ class MyMenu extends StatefulWidget {
 
 class _MyMenuState extends State<MyMenu> {
   late FirebaseMessaging messaging;
+  NyanUser userInfo = NyanUser('', '');
+  List<Lecture> classesInfo = [];
   String saved_id = "", saved_pw = "";
   @override
   void initState() {
@@ -112,7 +116,7 @@ class _MyMenuState extends State<MyMenu> {
                               bottomLeft: Radius.circular(30),
                               bottomRight: Radius.circular(30))),
                       child: Container(
-                        padding: EdgeInsets.only(left: 20, top: 15, bottom: 15),
+                        padding: EdgeInsets.only(left: 20, top: 15, bottom: 14),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -158,7 +162,7 @@ class _MyMenuState extends State<MyMenu> {
                           SizedBox(
                             height: 18,
                           ),
-                          contentsMenu(isNyanLogin, "nyanTitle", "냥대 - 내 강의실",
+                          contentsMenu(nyanLogintest, "nyanTitle", "냥대 - 내 강의실",
                               "각 과목의 과제 정보와 학사 일정을 확인"),
                           SizedBox(
                             height: 30,
@@ -179,22 +183,34 @@ class _MyMenuState extends State<MyMenu> {
     );
   }
 
-  isNyanLogin() async {
+  nyanLogintest() async {
     var ctrl = new LoginDataCtrl();
     var assurance = await ctrl.loadLoginData();
     saved_id = assurance["user_id"] ?? "";
     saved_pw = assurance["user_pw"] ?? "";
-    var crawl = new Crawl(saved_id, saved_pw);
+    Crawl.id = saved_id;
+    Crawl.pw = saved_pw;
+    var crawl = new Crawl();
     try {
-      var classes = await crawl.crawlClasses();
-      var user = await crawl.crawlUser();
-      print("Saved_login");
+      try {
+        userInfo = GetIt.I<NyanUser>(instanceName: "userInfo");
+        classesInfo = GetIt.I<List<Lecture>>(instanceName: "classesInfo");
+        print(userInfo);
+      } catch (e) {
+        await crawl.crawlUser();
+        await crawl.crawlClasses();
+        userInfo = GetIt.I<NyanUser>(instanceName: "userInfo");
+        classesInfo = GetIt.I<List<Lecture>>(instanceName: "classesInfo");
+      }
       Navigator.push(
           context,
           PageTransition(
             duration: Duration(milliseconds: 250),
             type: PageTransitionType.fade,
-            child: MyClass(saved_id, saved_pw, classes, user),
+            child: MyClass(
+              saved_id,
+              saved_pw,
+            ),
           ));
     } on CustomException {
       Navigator.push(

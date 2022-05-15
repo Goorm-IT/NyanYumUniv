@@ -128,7 +128,9 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
                             print("저장할게요~");
                             await ctrl.saveLoginData(id.text, pw.text);
                           }
-                          var crawl = new Crawl(id.text, pw.text);
+                          Crawl.id = id.text;
+                          Crawl.pw = pw.text;
+                          var crawl = new Crawl();
                           try {
                             var classes = await crawl.crawlClasses();
                             var user = await crawl.crawlUser();
@@ -138,8 +140,7 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
                                 PageTransition(
                                   duration: Duration(milliseconds: 250),
                                   type: PageTransitionType.fade,
-                                  child:
-                                      MyClass(id.text, pw.text, classes, user),
+                                  child: MyClass(id.text, pw.text),
                                 ));
                           } on CustomException catch (e) {
                             print('${e.code} ${e.message}');

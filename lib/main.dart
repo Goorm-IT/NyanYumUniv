@@ -2,6 +2,7 @@ import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/screen/MyMenu.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -19,6 +20,7 @@ Future<void> _messageHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+  GetIt.I.allowReassignment = true;
   await Firebase.initializeApp();
   KakaoSdk.init(nativeAppKey: 'ce3fd3b2c65fa60fbe8029b59c6167b0');
   SharedPreferences prefs = await SharedPreferences.getInstance();
