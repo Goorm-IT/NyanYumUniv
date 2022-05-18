@@ -14,14 +14,21 @@ class _NaverLoginTestState extends State<NaverLoginTest> {
 
   void _login_naver() async {
     NaverLoginResult res = await FlutterNaverLogin.logIn();
+
     setState(() {
       n_name = res.account.name;
       n_email = res.account.email;
     });
   }
 
+  void _isLogin_naver() async {
+    NaverAccessToken res = await FlutterNaverLogin.currentAccessToken;
+    print(res.accessToken.isNotEmpty && res.accessToken != 'no token');
+    print(res);
+  }
+
   void _logout_naver() async {
-    FlutterNaverLogin.logOut();
+    FlutterNaverLogin.logOutAndDeleteToken();
     setState(() {
       n_name = "";
       n_email = "";
@@ -40,6 +47,12 @@ class _NaverLoginTestState extends State<NaverLoginTest> {
                 _login_naver();
               },
               child: Text("로그인"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                _isLogin_naver();
+              },
+              child: Text("테스트"),
             ),
             ElevatedButton(
               onPressed: () async {

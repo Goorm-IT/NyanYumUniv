@@ -1,4 +1,5 @@
 import 'package:deanora/screen/MyMenu.dart';
+import 'package:deanora/screen/yumScreen/naver_login_page.dart';
 import 'package:deanora/screen/yumScreen/naver_login_test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -44,8 +45,8 @@ class _MyAppState extends State<MyApp> {
         primaryColor: Colors.white,
       ),
       debugShowCheckedModeBanner: false,
-      // home: MyMenu(),
-      home: NaverLoginTest(),
+      home: MyMenu(),
+      // home: NaverLoginPage(),
     );
   }
 }

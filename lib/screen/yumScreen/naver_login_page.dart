@@ -3,80 +3,28 @@ import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/screen/yumScreen/MyYumMain.dart';
 import 'package:deanora/screen/MyYumNickRegist.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 
-class MyKakaoLogin extends StatefulWidget {
-  const MyKakaoLogin({Key? key}) : super(key: key);
+class NaverLoginPage extends StatefulWidget {
+  const NaverLoginPage({Key? key}) : super(key: key);
 
   @override
-  _MyKakaoLoginState createState() => _MyKakaoLoginState();
+  State<NaverLoginPage> createState() => _NaverLoginPageState();
 }
 
-class _MyKakaoLoginState extends State<MyKakaoLogin> {
-  bool _isKakaoInstalled = true;
-  void initState() {
-    super.initState();
-    _initKakaoTalkInstalled();
-  }
-
-  _initKakaoTalkInstalled() async {
-    final installed = await isKakaoTalkInstalled();
-    setState(() {
-      _isKakaoInstalled = installed;
-    });
-  }
-
-  kakaoLoginToggle() async {
-    try {
-      _isKakaoInstalled
-          ? await UserApi.instance.loginWithKakaoTalk()
-          : await UserApi.instance.loginWithKakaoAccount();
-    } catch (e) {
-      // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
-      // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
-      if (e is PlatformException && e.code == 'CANCELED') {
-        return;
-      }
-    }
-    // print('카카오계정으로 로그인 성공');
-
-    try {
-      User _user = await UserApi.instance.me();
-      String _kakaoNickName =
-          _user.kakaoAccount!.profile?.toJson()['nickname'].toString() ?? "";
-      var yumUserHttp = new YumUserHttp(_kakaoNickName);
-      var yumLogin = await yumUserHttp.yumLogin();
-      print(yumLogin);
-      if (yumLogin == 200) {
-        //로그인 성공
-        var yumInfo = await yumUserHttp.yumInfo();
-        print(yumInfo[0]["nickName"]);
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  MyYumMain(yumInfo[0]["nickName"], _kakaoNickName)),
-        );
-      } else if (yumLogin == 400) {
-        // 로그인 실패, 회원가입 으로
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MyYumNickRegist(_kakaoNickName)));
-      } else {
-        // 기타 에러
-        print(yumLogin);
-      }
-    } catch (e) {
-      if (e is PlatformException && e.code == 'CANCELED') {
-        return;
-      }
-    }
-  }
-
+class _NaverLoginPageState extends State<NaverLoginPage> {
   @override
+  Future<String> _login_naver() async {
+    NaverLoginResult res = await FlutterNaverLogin.logIn();
+    return res.account.email;
+  }
+
+  Future<bool> _isLogin_naver() async {
+    NaverAccessToken res = await FlutterNaverLogin.currentAccessToken;
+    bool isLogin = res.accessToken.isNotEmpty && res.accessToken != 'no token';
+    return isLogin;
+  }
+
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -120,7 +68,33 @@ class _MyKakaoLoginState extends State<MyKakaoLogin> {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: kakaoLoginToggle,
+                onPressed: () async {
+                  String nEmail = await _login_naver();
+                  bool isLogin = await _isLogin_naver();
+                  if (isLogin) {
+                    var yumUserHttp = new YumUserHttp(nEmail);
+                    var yumLogin = await yumUserHttp.yumLogin();
+                    if (yumLogin == 200) {
+                      var yumInfo = await yumUserHttp.yumInfo();
+                      print(yumInfo);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                MyYumMain(yumInfo[0]["userAlias"], nEmail)),
+                      );
+                    } else if (yumLogin == 400) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyYumNickRegist(nEmail),
+                        ),
+                      );
+                    } else {
+                      print(yumLogin);
+                    }
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(
@@ -136,17 +110,21 @@ class _MyKakaoLoginState extends State<MyKakaoLogin> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          '카카오 로그인하기   ',
+                        Text.rich(
+                          TextSpan(
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: 'N  ',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w900)),
+                              TextSpan(text: ' 네이버로 로그인하기'),
+                            ],
+                          ),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
                             fontFamily: 'NanumSquare_acB',
                           ),
-                        ),
-                        Image.asset(
-                          'assets/images/kakaologo.png',
-                          width: 16,
                         ),
                       ],
                     ),
