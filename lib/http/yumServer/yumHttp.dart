@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:deanora/http/customException.dart';
+import 'package:deanora/object/yum_user.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
 class YumUserHttp {
@@ -28,8 +31,8 @@ class YumUserHttp {
     // print(response.body);
   }
 
-  Future<int> yumUpdateNickName(_nickName) async {
-    final url = Uri.http(yumURL, '/nyu/user/alias', {"userAlias": _nickName});
+  Future<int> yumUpdateNickName(userAlias) async {
+    final url = Uri.http(yumURL, '/nyu/user/alias', {"userAlias": userAlias});
     var response = await http.put(url, headers: {'Cookie': _cookie});
     return response.statusCode;
   }
@@ -70,10 +73,19 @@ class YumUserHttp {
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
       _list = jsonDecode(responseBody);
+
+      GetIt.I.registerSingleton<YumUser>(YumUser(
+        uid: _list[0]["uid"],
+        userAlias: _list[0]["userAlias"],
+        userLevel: _list[0]["userLevel"],
+        imagePath: _list[0]["imagePath"],
+        registerDate: _list[0]["registerDate"],
+      ));
+      return _list;
     } else {
       print('Request failed with status: ${response.statusCode}.');
+      throw new CustomException(300, 'Cookie has Expired2');
     }
-    return _list;
   }
 }
 

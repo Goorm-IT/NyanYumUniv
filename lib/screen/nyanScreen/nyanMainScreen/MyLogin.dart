@@ -2,7 +2,7 @@ import 'package:custom_check_box/custom_check_box.dart';
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/http/crawl/crawl.dart';
-import 'package:deanora/http/crawl/customException.dart';
+import 'package:deanora/http/customException.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/myClass.dart';
 
 import 'package:flutter/material.dart';
@@ -27,6 +27,12 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
     super.initState();
     _animationController = new AnimationController(
         vsync: this, duration: Duration(milliseconds: 200));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   Widget build(BuildContext context) {

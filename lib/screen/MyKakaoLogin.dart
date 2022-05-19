@@ -1,7 +1,7 @@
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/screen/yumScreen/MyYumMain.dart';
-import 'package:deanora/screen/MyYumNickRegist.dart';
+import 'package:deanora/screen/yumScreen/MyYumNickRegist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';

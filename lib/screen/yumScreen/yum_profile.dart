@@ -18,9 +18,26 @@ class MyProfileImg extends StatefulWidget {
   State<MyProfileImg> createState() => _MyProfileImgState();
 }
 
-class _MyProfileImgState extends State<MyProfileImg> {
+class _MyProfileImgState extends State<MyProfileImg>
+    with SingleTickerProviderStateMixin {
   _MyProfileImgState();
   File? myimage;
+  late AnimationController _animationController;
+  bool _visible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 200));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final yumUserhttp = YumUserHttp(widget.nEmail);
@@ -115,16 +132,29 @@ class _MyProfileImgState extends State<MyProfileImg> {
                     Center(
                       child: ElevatedButton(
                         onPressed: () async {
-                          final getpath =
-                              await yumUserhttp.yumProfileImg(myimage?.path);
-                          print(getpath);
-                          if (getpath == 200) {
-                            final newInfo = await yumUserhttp.yumInfo();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        MyYumMain(newInfo[0], widget.nEmail)));
+                          if (myimage?.path == null) {
+                            if (!_visible) {
+                              _animationController.forward();
+                              _visible = !_visible;
+                            } else {
+                              _animationController.reverse();
+                              Future.delayed(const Duration(milliseconds: 200),
+                                  () {
+                                _animationController.forward();
+                              });
+                            }
+                          } else {
+                            final getpath =
+                                await yumUserhttp.yumProfileImg(myimage?.path);
+                            print(getpath);
+                            if (getpath == 200) {
+                              final newInfo = await yumUserhttp.yumInfo();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyYumMain(
+                                          newInfo[0], widget.nEmail)));
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -168,9 +198,20 @@ class _MyProfileImgState extends State<MyProfileImg> {
                             TextStyle(fontSize: 12, color: Color(0xff707070)),
                       ),
                     ),
+                    FadeTransition(
+                      opacity: _animationController,
+                      child: Center(
+                          child: Text(
+                        "사진을 설정하거나 스킵해주세요.",
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12),
+                      )),
+                    ),
                     GestureDetector(
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => MyYumMain(
@@ -227,6 +268,7 @@ class _MyProfileImgState extends State<MyProfileImg> {
                     ),
                     onTap: () {
                       getImage(ImageSource.camera);
+                      _animationController.reverse();
                       return Navigator.of(context).pop();
                     },
                   ),
@@ -237,6 +279,7 @@ class _MyProfileImgState extends State<MyProfileImg> {
                         child: Text("갤러리")),
                     onTap: () {
                       getImage(ImageSource.gallery);
+                      _animationController.reverse();
                       return Navigator.of(context).pop();
                     },
                   )

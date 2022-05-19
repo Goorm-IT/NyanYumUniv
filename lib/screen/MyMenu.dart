@@ -5,11 +5,11 @@ import 'package:deanora/screen/nyanScreen/nyanMainScreen/myClass.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/Tutorial.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/http/crawl/crawl.dart';
-import 'package:deanora/http/crawl/customException.dart';
+import 'package:deanora/http/customException.dart';
 import 'package:deanora/main.dart';
 import 'package:deanora/screen/MyKakaoLogin.dart';
 import 'package:deanora/screen/yumScreen/MyYumMain.dart';
-import 'package:deanora/screen/MyYumNickRegist.dart';
+import 'package:deanora/screen/yumScreen/MyYumNickRegist.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/MyLogin.dart';
 import 'package:deanora/screen/yumScreen/naver_login_page.dart';
 import 'package:flutter/material.dart';
@@ -193,16 +193,19 @@ class _MyMenuState extends State<MyMenu> {
     return res.account.email;
   }
 
+  Future<String> _get_user() async {
+    NaverAccountResult res = await FlutterNaverLogin.currentAccount();
+    return res.email;
+  }
+
   Future<void> isYumLogin() async {
     bool isLogin_naver = await _isLogin_naver();
+    print(isLogin_naver);
     String nEmail = "";
     if (isLogin_naver == true) {
-      try {
-        nEmail = await _login_naver();
-      } catch (e) {
-        await _logout_naver();
-        nEmail = await _login_naver();
-      }
+      // nEmail = await _login_naver();
+      nEmail = await _get_user();
+
       try {
         var yumUserHttp = new YumUserHttp(nEmail);
         var yumLogin = await yumUserHttp.yumLogin();

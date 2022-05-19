@@ -1,7 +1,7 @@
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/screen/yumScreen/MyYumMain.dart';
-import 'package:deanora/screen/MyYumNickRegist.dart';
+import 'package:deanora/screen/yumScreen/MyYumNickRegist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 
@@ -23,6 +23,10 @@ class _NaverLoginPageState extends State<NaverLoginPage> {
     NaverAccessToken res = await FlutterNaverLogin.currentAccessToken;
     bool isLogin = res.accessToken.isNotEmpty && res.accessToken != 'no token';
     return isLogin;
+  }
+
+  Future<void> _logout_naver() async {
+    await FlutterNaverLogin.logOutAndDeleteToken();
   }
 
   Widget build(BuildContext context) {
@@ -69,14 +73,21 @@ class _NaverLoginPageState extends State<NaverLoginPage> {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  String nEmail = await _login_naver();
+                  String nEmail = "";
+                  try {
+                    nEmail = await _login_naver();
+                  } catch (e) {
+                    await _logout_naver();
+                    nEmail = await _login_naver();
+                  }
+
                   bool isLogin = await _isLogin_naver();
                   if (isLogin) {
                     var yumUserHttp = new YumUserHttp(nEmail);
                     var yumLogin = await yumUserHttp.yumLogin();
                     if (yumLogin == 200) {
                       var yumInfo = await yumUserHttp.yumInfo();
-                      print(yumInfo);
+
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
