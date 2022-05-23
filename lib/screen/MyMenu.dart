@@ -1,18 +1,21 @@
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
+import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/object/lecture.dart';
 import 'package:deanora/object/user.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/myClass.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/Tutorial.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/http/crawl/crawl.dart';
-import 'package:deanora/http/crawl/customException.dart';
+import 'package:deanora/http/customException.dart';
 import 'package:deanora/main.dart';
 import 'package:deanora/screen/MyKakaoLogin.dart';
-import 'package:deanora/screen/MyYumMain.dart';
-import 'package:deanora/screen/MyYumNickRegist.dart';
+import 'package:deanora/screen/yumScreen/MyYumMain.dart';
+import 'package:deanora/screen/yumScreen/MyYumNickRegist.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/MyLogin.dart';
+import 'package:deanora/screen/yumScreen/naver_login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get_it/get_it.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:page_transition/page_transition.dart';
@@ -29,6 +32,8 @@ class _MyMenuState extends State<MyMenu> {
   NyanUser userInfo = NyanUser('', '');
   List<Lecture> classesInfo = [];
   String saved_id = "", saved_pw = "";
+  bool _loadingVisible = false;
+
   @override
   void initState() {
     super.initState();
@@ -87,103 +92,65 @@ class _MyMenuState extends State<MyMenu> {
   }
 
   Widget build(BuildContext context) {
-    var windowHeight = MediaQuery.of(context).size.height;
-    var windowWidth = MediaQuery.of(context).size.width;
-
-    Widget contentsMenu(_ontapcontroller, image, title, descrition) {
-      return InkWell(
-        onTap: () async {
-          await _ontapcontroller();
-        },
-        child: Center(
-          child: Container(
-            width: windowWidth - 60,
-            child: Column(
-              children: [
-                Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      child: Image.asset('assets/images/$image.png'),
-                    )),
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(30),
-                              bottomRight: Radius.circular(30))),
-                      child: Container(
-                        padding: EdgeInsets.only(left: 20, top: 15, bottom: 14),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(
-                                title,
-                                style: TextStyle(fontWeight: FontWeight.w800),
-                              ),
-                              Text(descrition, style: TextStyle(fontSize: 13))
-                            ]),
-                      ),
-                    ))
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
     return MaterialApp(
       home: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Container(
-          color: Colors.black,
-          child: SafeArea(
-              bottom: false,
+        body: Stack(
+          children: [
+            Opacity(
+              opacity: _loadingVisible ? 0.9 : 1,
               child: Container(
-                margin: EdgeInsets.only(top: 30, left: 30, right: 30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Text("냥냠대 컨텐츠",
-                        style: TextStyle(color: Colors.white, fontSize: 25)),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Expanded(
-                      child: ListView(
+                color: Colors.black,
+                child: SafeArea(
+                    bottom: false,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 30, left: 30, right: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: 18,
+                            height: 15,
                           ),
-                          contentsMenu(nyanLogintest, "nyanTitle", "냥대 - 내 강의실",
-                              "각 과목의 과제 정보와 학사 일정을 확인"),
+                          Text("냥냠대 컨텐츠",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 25)),
                           SizedBox(
-                            height: 30,
+                            height: 15,
                           ),
-                          contentsMenu(isYumLogin, "yumTitle", "냠대 - 맛집 정보",
-                              "안양대생만의 숨은 꿀 맛집 정보를 공유"),
-                          SizedBox(
-                            height: 18,
+                          Expanded(
+                            child: ListView(
+                              children: [
+                                SizedBox(
+                                  height: 18,
+                                ),
+                                contentsMenu(nyanLogintest, "nyanTitle",
+                                    "냥대 - 내 강의실", "각 과목의 과제 정보와 학사 일정을 확인"),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                contentsMenu(isYumLogin, "yumTitle",
+                                    "냠대 - 맛집 정보", "안양대생만의 숨은 꿀 맛집 정보를 공유"),
+                                SizedBox(
+                                  height: 18,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              )),
+                    )),
+              ),
+            ),
+            _loadingVisible ? CustomLoadingImage() : Container(),
+          ],
         ),
       ),
     );
   }
 
-  nyanLogintest() async {
+  Future<void> nyanLogintest() async {
     var ctrl = new LoginDataCtrl();
+
     var assurance = await ctrl.loadLoginData();
     saved_id = assurance["user_id"] ?? "";
     saved_pw = assurance["user_pw"] ?? "";
@@ -194,13 +161,13 @@ class _MyMenuState extends State<MyMenu> {
       try {
         userInfo = GetIt.I<NyanUser>(instanceName: "userInfo");
         classesInfo = GetIt.I<List<Lecture>>(instanceName: "classesInfo");
-        print(userInfo);
       } catch (e) {
         await crawl.crawlUser();
         await crawl.crawlClasses();
         userInfo = GetIt.I<NyanUser>(instanceName: "userInfo");
         classesInfo = GetIt.I<List<Lecture>>(instanceName: "classesInfo");
       }
+
       Navigator.push(
           context,
           PageTransition(
@@ -224,49 +191,123 @@ class _MyMenuState extends State<MyMenu> {
     }
   }
 
-  isYumLogin() async {
-    if (await AuthApi.instance.hasToken()) {
-      print("여기는 바로 가능");
+  Future<bool> _isLogin_naver() async {
+    NaverAccessToken res = await FlutterNaverLogin.currentAccessToken;
+    bool isLogin = res.accessToken.isNotEmpty && res.accessToken != 'no token';
+    return isLogin;
+  }
+
+  Future<void> _logout_naver() async {
+    await FlutterNaverLogin.logOutAndDeleteToken();
+  }
+
+  Future<String> _login_naver() async {
+    NaverLoginResult res = await FlutterNaverLogin.logIn();
+    return res.account.email;
+  }
+
+  Future<String> _get_user() async {
+    NaverAccountResult res = await FlutterNaverLogin.currentAccount();
+    return res.email;
+  }
+
+  Future<void> isYumLogin() async {
+    setState(() {
+      _loadingVisible = !_loadingVisible;
+    });
+    bool isLogin_naver = await _isLogin_naver();
+    print(isLogin_naver);
+    String nEmail = "";
+    if (isLogin_naver == true) {
+      nEmail = await _get_user();
+
       try {
-        // await UserApi.instance.loginWithKakaoAccount();
-        print('카카오계정으로 로그인 성공');
-        User _user = await UserApi.instance.me();
-        String _email =
-            _user.kakaoAccount!.profile?.toJson()['nickname'].toString() ?? "";
-        var yumHttp = new YumUserHttp(_email);
-        var yumLogin = await yumHttp.yumLogin();
+        var yumUserHttp = new YumUserHttp(nEmail);
+        var yumLogin = await yumUserHttp.yumLogin();
         if (yumLogin == 200) {
-          //로그인 성공
-          var yumInfo = await yumHttp.yumInfo();
-          print(yumInfo);
+          var yumInfo = await yumUserHttp.yumInfo();
+          setState(() {
+            _loadingVisible = !_loadingVisible;
+          });
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    MyYumMain(yumInfo[0]["nickName"], _email)),
+                    MyYumMain(yumInfo[0]["userAlias"], nEmail)),
           );
         } else if (yumLogin == 400) {
-          // 로그인 실패, 회원가입 으로
-          print("닉네임 설정 해야함 토큰은 있음");
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => MyYumNickRegist(_email)));
+          setState(() {
+            _loadingVisible = !_loadingVisible;
+          });
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyYumNickRegist(nEmail),
+            ),
+          );
         } else {
-          // 기타 에러
           print(yumLogin);
         }
       } catch (e) {
-        if (e is KakaoException && e.isInvalidTokenError()) {
-          print('토큰 만료 $e');
-        } else {
-          print('토큰 정보 조회 실패 $e');
-        }
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MyKakaoLogin()));
+        print(e);
       }
     } else {
-      print("토큰 없음");
+      setState(() {
+        _loadingVisible = !_loadingVisible;
+      });
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MyKakaoLogin()));
+        context,
+        MaterialPageRoute(
+          builder: (context) => NaverLoginPage(),
+        ),
+      );
     }
+  }
+
+  Widget contentsMenu(_ontapcontroller, image, title, descrition) {
+    var windowHeight = MediaQuery.of(context).size.height;
+    var windowWidth = MediaQuery.of(context).size.width;
+    return InkWell(
+      onTap: () async {
+        await _ontapcontroller();
+      },
+      child: Center(
+        child: Container(
+          width: windowWidth - 60,
+          child: Column(
+            children: [
+              Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    child: Image.asset('assets/images/$image.png'),
+                  )),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30))),
+                    child: Container(
+                      padding: EdgeInsets.only(left: 20, top: 15, bottom: 14),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              title,
+                              style: TextStyle(fontWeight: FontWeight.w800),
+                            ),
+                            Text(descrition, style: TextStyle(fontSize: 13))
+                          ]),
+                    ),
+                  ))
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

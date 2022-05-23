@@ -57,6 +57,9 @@ dependencies:
   platform: ^3.0.0
   blur: ^3.1.0
 
+  flutter_naver_login: ^1.6.0
+
+  image_picker: ^0.8.4+11
 dependency_overrides:
   firebase_messaging_platform_interface: 3.2.1
 

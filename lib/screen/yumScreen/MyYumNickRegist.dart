@@ -1,24 +1,24 @@
 import 'package:deanora/http/yumServer/yumHttp.dart';
-import 'package:deanora/screen/MyYumMain.dart';
+import 'package:deanora/screen/yumScreen/MyYumMain.dart';
+import 'package:deanora/screen/yumScreen/yum_profile.dart';
 import 'package:flutter/material.dart';
 
 class MyYumNickRegist extends StatefulWidget {
-  final _kakaoNick;
-  MyYumNickRegist(this._kakaoNick);
+  final n_email;
+  MyYumNickRegist(this.n_email);
 
   @override
-  _MyYumNickRegistState createState() => _MyYumNickRegistState(this._kakaoNick);
+  _MyYumNickRegistState createState() => _MyYumNickRegistState();
 }
 
 class _MyYumNickRegistState extends State<MyYumNickRegist>
     with SingleTickerProviderStateMixin {
-  final _kakaoNick;
   final _nickNameController = TextEditingController();
   late FocusNode myFocusNode;
   bool _visible = false;
   late AnimationController _animationController;
   String errorMessage = "";
-  _MyYumNickRegistState(this._kakaoNick);
+  _MyYumNickRegistState();
 
   @override
   void initState() {
@@ -103,22 +103,19 @@ class _MyYumNickRegistState extends State<MyYumNickRegist>
                             });
                           }
                         } else {
-                          final _yumUid = _kakaoNick + _nickNameController.text;
-                          print('yumUid $_yumUid');
-                          var yumUserHttp = new YumUserHttp(_yumUid);
-                          print(_kakaoNick);
+                          var yumUserHttp = new YumUserHttp(widget.n_email);
                           var yumRegister = await yumUserHttp
                               .yumRegister(_nickNameController.text);
-                          print(yumRegister);
                           if (yumRegister == 200) {
                             var yumLogin = await yumUserHttp.yumLogin();
                             var yumInfo = await yumUserHttp.yumInfo();
-                            print(yumInfo[0]["nickName"]);
+                            print(yumInfo[0]["userAlias"]);
+                            print("asd");
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MyYumMain(
-                                      yumInfo[0]["nickName"], _kakaoNick)),
+                                  builder: (context) => MyProfileImg(
+                                      yumInfo[0]["userAlias"], widget.n_email)),
                             );
                           } else {
                             setState(() {

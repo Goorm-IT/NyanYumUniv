@@ -1,3 +1,4 @@
+import 'package:deanora/http/customException.dart';
 import 'package:deanora/object/assignment.dart';
 import 'package:deanora/object/lecture.dart';
 import 'package:deanora/object/user.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
-import 'customException.dart';
+import '../customException.dart';
 
 class Crawl with ChangeNotifier {
   String _cookie = '';

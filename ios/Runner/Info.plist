@@ -11,7 +11,7 @@
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
-		<string>deanora</string>
+		<string>냥냠대</string>
 		<key>CFBundleDisplayName</key>
 		<string>냥냠대</string>
 		<key>CFBundlePackageType</key>
@@ -20,10 +20,56 @@
 		<string>$(FLUTTER_BUILD_NAME)</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
+		<key>CFBundleURLTypes</key>
+		<array>
+      		<dict>
+         		<key>CFBundleTypeRole</key>
+         		<string>Editor</string>
+         		<key>CFBundleURLName</key>
+	     		<string>냥냠대</string>
+         		<key>CFBundleURLSchemes</key>
+         		<array>
+	        		<string>nyanyum</string>
+        		</array>
+      		</dict>
+   		</array>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>naversearchapp</string>
+			<string>naversearchthirdlogin</string>
+		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+		
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true/>
+			<key>NSExceptionDomains</key>
+			<dict>
+				<key>naver.com</key>
+				<dict>
+					<key>NSExceptionRequiresForwardSecrecy</key>
+					<false/>
+					<key>NSIncludesSubdomains</key>
+					<true/>
+				</dict>
+				<key>naver.net</key>
+				<dict>
+					<key>NSExceptionRequiresForwardSecrecy</key>
+					<false/>
+					<key>NSIncludesSubdomains</key>
+					<true/>
+				</dict>
+			</dict>
+		</dict>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>fetch</string>
+			<string>remote-notification</string>
+		</array>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>
@@ -49,5 +95,13 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>naverConsumerKey</key>
+		<string>_x_EKHpKcNechFeudcch</string>
+   		<key>naverConsumerSecret</key>
+		<string>TtNtDBjrGX</string>
+   		<key>naverServiceAppName</key>
+		<string>냥냠대</string>
+   		<key>naverServiceAppUrlScheme</key>
+		<string>nyanyum</string>
 	</dict>
 </plist>
