@@ -85,8 +85,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.16.0"
-<<<<<<< HEAD
-=======
   convert:
     dependency: transitive
     description:
@@ -108,7 +106,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
->>>>>>> develop
   csslib:
     dependency: transitive
     description:
@@ -481,8 +478,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.4"
-<<<<<<< HEAD
-=======
   json_annotation:
     dependency: "direct main"
     description:
@@ -560,7 +555,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.2"
->>>>>>> develop
   matcher:
     dependency: transitive
     description:
@@ -896,9 +890,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-<<<<<<< HEAD
-  dart: ">=2.17.0-0 <3.0.0"
-=======
   dart: ">=2.17.0 <3.0.0"
->>>>>>> develop
   flutter: ">=2.8.0"
