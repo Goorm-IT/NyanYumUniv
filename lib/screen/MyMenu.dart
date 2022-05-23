@@ -1,4 +1,5 @@
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
+import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/object/lecture.dart';
 import 'package:deanora/object/user.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/myClass.dart';
@@ -31,6 +32,7 @@ class _MyMenuState extends State<MyMenu> {
   NyanUser userInfo = NyanUser('', '');
   List<Lecture> classesInfo = [];
   String saved_id = "", saved_pw = "";
+  bool _loadingVisible = false;
 
   @override
   void initState() {
@@ -93,45 +95,54 @@ class _MyMenuState extends State<MyMenu> {
     return MaterialApp(
       home: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Container(
-          color: Colors.black,
-          child: SafeArea(
-              bottom: false,
+        body: Stack(
+          children: [
+            Opacity(
+              opacity: _loadingVisible ? 0.9 : 1,
               child: Container(
-                margin: EdgeInsets.only(top: 30, left: 30, right: 30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Text("냥냠대 컨텐츠",
-                        style: TextStyle(color: Colors.white, fontSize: 25)),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Expanded(
-                      child: ListView(
+                color: Colors.black,
+                child: SafeArea(
+                    bottom: false,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 30, left: 30, right: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: 18,
+                            height: 15,
                           ),
-                          contentsMenu(nyanLogintest, "nyanTitle", "냥대 - 내 강의실",
-                              "각 과목의 과제 정보와 학사 일정을 확인"),
+                          Text("냥냠대 컨텐츠",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 25)),
                           SizedBox(
-                            height: 30,
+                            height: 15,
                           ),
-                          contentsMenu(isYumLogin, "yumTitle", "냠대 - 맛집 정보",
-                              "안양대생만의 숨은 꿀 맛집 정보를 공유"),
-                          SizedBox(
-                            height: 18,
+                          Expanded(
+                            child: ListView(
+                              children: [
+                                SizedBox(
+                                  height: 18,
+                                ),
+                                contentsMenu(nyanLogintest, "nyanTitle",
+                                    "냥대 - 내 강의실", "각 과목의 과제 정보와 학사 일정을 확인"),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                contentsMenu(isYumLogin, "yumTitle",
+                                    "냠대 - 맛집 정보", "안양대생만의 숨은 꿀 맛집 정보를 공유"),
+                                SizedBox(
+                                  height: 18,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              )),
+                    )),
+              ),
+            ),
+            _loadingVisible ? CustomLoadingImage() : Container(),
+          ],
         ),
       ),
     );
@@ -139,6 +150,7 @@ class _MyMenuState extends State<MyMenu> {
 
   Future<void> nyanLogintest() async {
     var ctrl = new LoginDataCtrl();
+
     var assurance = await ctrl.loadLoginData();
     saved_id = assurance["user_id"] ?? "";
     saved_pw = assurance["user_pw"] ?? "";
@@ -155,6 +167,7 @@ class _MyMenuState extends State<MyMenu> {
         userInfo = GetIt.I<NyanUser>(instanceName: "userInfo");
         classesInfo = GetIt.I<List<Lecture>>(instanceName: "classesInfo");
       }
+
       Navigator.push(
           context,
           PageTransition(
@@ -199,11 +212,13 @@ class _MyMenuState extends State<MyMenu> {
   }
 
   Future<void> isYumLogin() async {
+    setState(() {
+      _loadingVisible = !_loadingVisible;
+    });
     bool isLogin_naver = await _isLogin_naver();
     print(isLogin_naver);
     String nEmail = "";
     if (isLogin_naver == true) {
-      // nEmail = await _login_naver();
       nEmail = await _get_user();
 
       try {
@@ -211,6 +226,9 @@ class _MyMenuState extends State<MyMenu> {
         var yumLogin = await yumUserHttp.yumLogin();
         if (yumLogin == 200) {
           var yumInfo = await yumUserHttp.yumInfo();
+          setState(() {
+            _loadingVisible = !_loadingVisible;
+          });
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -218,6 +236,9 @@ class _MyMenuState extends State<MyMenu> {
                     MyYumMain(yumInfo[0]["userAlias"], nEmail)),
           );
         } else if (yumLogin == 400) {
+          setState(() {
+            _loadingVisible = !_loadingVisible;
+          });
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -231,6 +252,9 @@ class _MyMenuState extends State<MyMenu> {
         print(e);
       }
     } else {
+      setState(() {
+        _loadingVisible = !_loadingVisible;
+      });
       Navigator.push(
         context,
         MaterialPageRoute(
