@@ -36,19 +36,30 @@ dependencies:
   rxdart: ^0.27.3
   syncfusion_flutter_datepicker: ^19.4.55
   syncfusion_flutter_calendar: ^19.4.55
+  get_it: ^7.2.0
+  custom_refresh_indicator: ^1.1.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   firebase_analytics: ^9.1.2
   firebase_core: ^1.8.0
   firebase_messaging: ^11.2.7
-
   firebase_remote_config: ^2.0.0
   firebase_crashlytics: ^2.5.0
   firebase_dynamic_links: ^4.0.5
   firebase_auth: ^3.3.6
   firebase_auth_web: ^3.3.9
 
+  kakao_flutter_sdk: ^1.1.0
+  dio: ^4.0.0
+  json_annotation: ^4.0.1
+  package_info_plus: ^1.0.4
+  platform: ^3.0.0
+  blur: ^3.1.0
+
+  flutter_naver_login: ^1.6.0
+
+  image_picker: ^0.8.4+11
 dependency_overrides:
   firebase_messaging_platform_interface: 3.2.1
 
@@ -56,6 +67,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   change_app_package_name: ^1.0.0
+  flutter_native_splash: ^2.1.6
+
+flutter_native_splash:
+  color: "#6D6CEB"
+  image: assets/images/logoAndTitle.png
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -84,7 +100,16 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
+  fonts:
+    - family: Dohyeon
+      fonts:
+        - asset: fonts/BMDOHYEON.ttf
+    - family: NanumSquare_acB
+      fonts:
+        - asset: fonts/NanumSquare_acB.ttf
+    - family: NotoSansKR_Regular
+      fonts:
+        - asset: fonts/NotoSansKR-Regular.otf
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

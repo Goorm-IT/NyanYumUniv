@@ -18,10 +18,8 @@ class MenuTabBar extends StatefulWidget {
       this.colorMenuIconDefault = Colors.white,
       this.backgroundMenuIconActivated = Colors.white,
       this.backgroundMenuIconDefault = Colors.blue})
-      : assert(iconButtons != null &&
-            iconButtons.length > 1 &&
-            iconButtons.length % 2 == 0 &&
-            child != null);
+      : assert(iconButtons.length > 1 &&
+            iconButtons.length % 2 == 0);
 
   _MenuTabBar createState() => _MenuTabBar();
 }
@@ -289,8 +287,7 @@ class MenuTabBarItem extends StatelessWidget {
   final Text label;
   final void Function() onTap;
 
-  MenuTabBarItem({required this.label, required this.onTap})
-      : assert(label != null);
+  MenuTabBarItem({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

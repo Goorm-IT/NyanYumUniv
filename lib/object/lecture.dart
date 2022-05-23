@@ -1,7 +1,13 @@
 class Lecture {
+  String classId;
   String className;
   String profName;
-  String classId;
 
-  Lecture(this.className, this.profName, this.classId);
+  Lecture(
+    this.classId,
+    this.className,
+    this.profName,
+  );
+  @override
+  String toString() => '$classId, $className , $profName';
 }

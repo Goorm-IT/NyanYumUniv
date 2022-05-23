@@ -1,17 +1,15 @@
-import 'package:deanora/Widgets/Tutorial.dart';
-import 'package:deanora/Widgets/Widgets.dart';
-import 'package:deanora/crawl/crawl.dart';
-import 'package:deanora/crawl/customException.dart';
-import 'package:deanora/screen/MyLogin.dart';
-import 'package:deanora/screen/MyClass.dart';
+import 'package:deanora/screen/MyMenu.dart';
+import 'package:deanora/screen/yumScreen/naver_login_page.dart';
+import 'package:deanora/screen/yumScreen/naver_login_test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:get_it/get_it.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 int? isviewed;
 
@@ -22,10 +20,13 @@ Future<void> _messageHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+  GetIt.I.allowReassignment = true;
   await Firebase.initializeApp();
+  KakaoSdk.init(nativeAppKey: 'ce3fd3b2c65fa60fbe8029b59c6167b0');
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isviewed = prefs.getInt('Tutorial');
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
   runApp(MyApp());
 }
@@ -38,100 +39,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: '냥냠대',
-        theme: ThemeData(
-          brightness: Brightness.light,
-          primaryColor: Colors.black,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: Cover());
-  }
-}
-
-class Cover extends StatefulWidget {
-  const Cover({Key? key}) : super(key: key);
-  @override
-  _CoverState createState() => _CoverState();
-}
-
-String saved_id = "", saved_pw = "";
-
-class _CoverState extends State<Cover> {
-  Widget build(BuildContext context) {
-    var windowWidth = MediaQuery.of(context).size.width;
-    var windowHeight = MediaQuery.of(context).size.height;
-
-    return SafeArea(
-      child: Stack(
-        children: <Widget>[
-          Positioned(child: cover_Background()),
-          Positioned(
-            bottom: windowHeight / 2,
-            left: windowWidth / 2 - windowWidth * 0.3 / 2,
-            child: putimg(windowWidth * 0.3, windowWidth * 0.3, "coverLogo"),
-          ),
-          Positioned(
-            bottom: windowHeight / 2 - windowWidth * 0.3 * 0.416 - 50,
-            left: windowWidth / 2 - windowWidth * 0.3 / 2,
-            child: putimg(
-                windowWidth * 0.3, windowWidth * 0.3 * 0.416, "coverTitle"),
-          )
-        ],
+      title: '냥냠대',
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Colors.white,
       ),
+      debugShowCheckedModeBanner: false,
+      home: MyMenu(),
+      // home: NaverLoginPage(),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    logintest();
-    if (saved_id != 'null' && saved_pw != 'null') {
-    } else {
-      Timer(Duration(seconds: 1), () {
-        print('first_login');
-        Navigator.pushReplacement(
-          context,
-          PageTransition(
-            duration: Duration(milliseconds: 800),
-            type: PageTransitionType.fade,
-            alignment: Alignment.topCenter,
-            child: MyLogin(),
-          ),
-        );
-      });
-    }
-  }
-
-  logintest() async {
-    var ctrl = new LoginDataCtrl();
-    var assurance = await ctrl.loadLoginData();
-    saved_id = assurance["user_id"] ?? "";
-    saved_pw = assurance["user_pw"] ?? "";
-    var crawl = new Crawl(saved_id, saved_pw);
-
-    try {
-      var classes = await crawl.crawlClasses();
-      var user = await crawl.crawlUser();
-      print("Saved_login");
-      Navigator.pushReplacement(
-          context,
-          PageTransition(
-            duration: Duration(milliseconds: 250),
-            type: PageTransitionType.fade,
-            child: MyClass(saved_id, saved_pw, classes, user),
-          ));
-    } on CustomException catch (e) {
-      Timer(Duration(milliseconds: 1000), () {
-        Navigator.pushReplacement(
-          context,
-          PageTransition(
-            duration: Duration(milliseconds: 800),
-            type: PageTransitionType.fade,
-            alignment: Alignment.topCenter,
-            child: isviewed != 0 ? Tutorial() : MyLogin(),
-          ),
-        );
-      });
-    }
   }
 }

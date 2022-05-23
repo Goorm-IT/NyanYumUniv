@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "235369538704",
+    "firebase_url": "https://fcm-test3-6d114-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "fcm-test3-6d114",
     "storage_bucket": "fcm-test3-6d114.appspot.com"
   },
@@ -8,6 +9,80 @@
     {
       "client_info": {
         "mobilesdk_app_id": "1:235369538704:android:3dd6db1eeedcb6136b2415",
+        "android_client_info": {
+          "package_name": "com.example.deanora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "235369538704-mj860a7e1eimbfad6ncnjaab3oc8hhaf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD32kpp3pMdNOXVDkOimMX-WEcJ83sbv9w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "235369538704-mj860a7e1eimbfad6ncnjaab3oc8hhaf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "235369538704-8nb5aatua4i41cq3sdsv24ju92fba4sl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.goorm.it",
+                "app_store_id": "1588009201"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235369538704:android:bfa0d4a38a53bb496b2415",
+        "android_client_info": {
+          "package_name": "com.goorm.nyanyum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "235369538704-mj860a7e1eimbfad6ncnjaab3oc8hhaf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD32kpp3pMdNOXVDkOimMX-WEcJ83sbv9w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "235369538704-mj860a7e1eimbfad6ncnjaab3oc8hhaf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "235369538704-8nb5aatua4i41cq3sdsv24ju92fba4sl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.goorm.it",
+                "app_store_id": "1588009201"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235369538704:android:c1c4794ca33a535f6b2415",
         "android_client_info": {
           "package_name": "goorm.It"
         }
@@ -29,6 +104,14 @@
             {
               "client_id": "235369538704-mj860a7e1eimbfad6ncnjaab3oc8hhaf.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "235369538704-8nb5aatua4i41cq3sdsv24ju92fba4sl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.goorm.it",
+                "app_store_id": "1588009201"
+              }
             }
           ]
         }
