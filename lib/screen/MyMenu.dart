@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/object/lecture.dart';
@@ -39,9 +42,7 @@ class _MyMenuState extends State<MyMenu> {
     super.initState();
 
     messaging = FirebaseMessaging.instance;
-    messaging.getToken().then((value) {
-      print(value);
-    });
+    messaging.getToken().then((value) {});
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       print("message recieved");
       print(event.notification!.body);
@@ -97,51 +98,64 @@ class _MyMenuState extends State<MyMenu> {
         resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
-            Opacity(
-              opacity: _loadingVisible ? 0.9 : 1,
-              child: Container(
-                color: Colors.black,
-                child: SafeArea(
-                    bottom: false,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 30, left: 30, right: 30),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 15,
+            Container(
+              color: Colors.black,
+              child: SafeArea(
+                  bottom: false,
+                  child: Container(
+                    margin: EdgeInsets.only(top: 30, left: 30, right: 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Text("냥냠대 컨텐츠",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 25)),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              SizedBox(
+                                height: 18,
+                              ),
+                              contentsMenu(nyanLogintest, "nyanTitle",
+                                  "냥대 - 내 강의실", "각 과목의 과제 정보와 학사 일정을 확인"),
+                              SizedBox(
+                                height: 30,
+                              ),
+                              contentsMenu(isYumLogin, "yumTitle", "냠대 - 맛집 정보",
+                                  "안양대생만의 숨은 꿀 맛집 정보를 공유"),
+                              SizedBox(
+                                height: 18,
+                              ),
+                            ],
                           ),
-                          Text("냥냠대 컨텐츠",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 25)),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Expanded(
-                            child: ListView(
-                              children: [
-                                SizedBox(
-                                  height: 18,
-                                ),
-                                contentsMenu(nyanLogintest, "nyanTitle",
-                                    "냥대 - 내 강의실", "각 과목의 과제 정보와 학사 일정을 확인"),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                contentsMenu(isYumLogin, "yumTitle",
-                                    "냠대 - 맛집 정보", "안양대생만의 숨은 꿀 맛집 정보를 공유"),
-                                SizedBox(
-                                  height: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
-              ),
+                        ),
+                      ],
+                    ),
+                  )),
             ),
-            _loadingVisible ? CustomLoadingImage() : Container(),
+            _loadingVisible
+                ? Stack(
+                    children: [
+                      Opacity(
+                        opacity: 0.5,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          color: Colors.grey[50],
+                        ),
+                      ),
+                      Center(
+                        child: CustomLoadingImage(),
+                      ),
+                    ],
+                  )
+                : Container(),
           ],
         ),
       ),
@@ -193,6 +207,7 @@ class _MyMenuState extends State<MyMenu> {
 
   Future<bool> _isLogin_naver() async {
     NaverAccessToken res = await FlutterNaverLogin.currentAccessToken;
+
     bool isLogin = res.accessToken.isNotEmpty && res.accessToken != 'no token';
     return isLogin;
   }
@@ -203,6 +218,7 @@ class _MyMenuState extends State<MyMenu> {
 
   Future<String> _login_naver() async {
     NaverLoginResult res = await FlutterNaverLogin.logIn();
+
     return res.account.email;
   }
 
@@ -216,16 +232,21 @@ class _MyMenuState extends State<MyMenu> {
       _loadingVisible = !_loadingVisible;
     });
     bool isLogin_naver = await _isLogin_naver();
-    print(isLogin_naver);
+
     String nEmail = "";
     if (isLogin_naver == true) {
-      nEmail = await _get_user();
-
+      nEmail = await _get_user().timeout(const Duration(milliseconds: 2000),
+          onTimeout: () async {
+        print('_get_user 오류');
+        await _logout_naver();
+        return await _login_naver();
+      });
       try {
         var yumUserHttp = new YumUserHttp(nEmail);
         var yumLogin = await yumUserHttp.yumLogin();
         if (yumLogin == 200) {
           var yumInfo = await yumUserHttp.yumInfo();
+
           setState(() {
             _loadingVisible = !_loadingVisible;
           });
