@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
-import 'package:deanora/screen/yumScreen/MyYumMain.dart';
+import 'package:deanora/screen/yumScreen/MyYumMainTest.dart';
+import 'package:deanora/screen/yumScreen/yum_main.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -165,8 +166,7 @@ class _MyProfileImgState extends State<MyProfileImg>
                                     Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => MyYumMain(
-                                                newInfo[0], widget.nEmail)));
+                                            builder: (context) => YumMain()));
                                   }
                                 }
                               },
@@ -227,8 +227,7 @@ class _MyProfileImgState extends State<MyProfileImg>
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => MyYumMain(
-                                            widget._yumInfo, widget.nEmail)));
+                                        builder: (context) => YumMain()));
                               },
                               child: Text("Skip")),
                         ]),

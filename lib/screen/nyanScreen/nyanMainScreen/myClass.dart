@@ -45,7 +45,7 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
   late BehaviorSubject<int> backButtonToggle;
   List myclasses = [];
   List dncList = [];
-  int willpop = 1;
+  int willpop = 0;
   _MyClassState();
   late FirebaseMessaging messaging;
   @override

@@ -15,7 +15,7 @@ class _MyProfilePageState extends State<MyProfilePage>
   YumUser yumUser = GetIt.I<YumUser>();
   final _nicknameController = TextEditingController();
   late AnimationController _animationController;
-  String errorMessage = "a";
+  String errorMessage = "";
   Color errorMessageColor = Colors.red;
   bool _visible = false;
   @override
@@ -54,6 +54,7 @@ class _MyProfilePageState extends State<MyProfilePage>
         body: Container(
           color: Colors.white,
           child: SafeArea(
+            bottom: false,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Column(
@@ -65,7 +66,7 @@ class _MyProfilePageState extends State<MyProfilePage>
                   Text(
                     "마이페이지",
                     style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
                     height: 10.0,
@@ -73,14 +74,20 @@ class _MyProfilePageState extends State<MyProfilePage>
                   Container(
                     height: MediaQuery.of(context).size.height -
                         AppBar().preferredSize.height -
-                        MediaQuery.of(context).padding.top,
+                        MediaQuery.of(context).padding.top -
+                        30,
                     child: ListView(children: [
                       SizedBox(
                         height: 20.0,
                       ),
                       Center(
-                        child: Image.asset(
-                          'assets/images/defaultImg.png',
+                        // child: Image.asset(
+                        //   'assets/images/defaultImg.png',
+                        //   width: 100,
+                        // ),
+                        child: Image.network(
+                          yumUser.imagePath.toString(),
+                          fit: BoxFit.cover,
                           width: 100,
                         ),
                       ),

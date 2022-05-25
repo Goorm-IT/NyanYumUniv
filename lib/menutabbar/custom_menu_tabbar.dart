@@ -356,8 +356,8 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                             colors: <Color>[
-                                              PRIMARY_COLOR_DEEP,
-                                              PRIMARY_COLOR_LIGHT,
+                                              Color(0xff6689F6),
+                                              Color(0xff7C40EF)
                                             ]),
                                       ),
                                     ),

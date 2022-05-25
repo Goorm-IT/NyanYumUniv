@@ -46,7 +46,8 @@ Container loginTextF(_controller, hintext, icon, obscure) {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     hintText: hintext,
-                    hintStyle: TextStyle(color: Colors.grey.withOpacity(0.5)),
+                    hintStyle:
+                        TextStyle(color: Color(0xffD6D6D6), fontSize: 13.0),
                     prefixIcon: Container(
                       margin: const EdgeInsets.all(0),
                       padding: const EdgeInsets.only(bottom: 8),
@@ -57,10 +58,6 @@ Container loginTextF(_controller, hintext, icon, obscure) {
               child: Container(
                 height: 1,
                 width: 250,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: <Color>[Color(0xff8C65EC), Color(0xff6D6CEB)]),
-                ),
               ),
             )
           ],

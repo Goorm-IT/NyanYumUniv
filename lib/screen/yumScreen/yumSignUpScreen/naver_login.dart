@@ -1,7 +1,8 @@
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
-import 'package:deanora/screen/yumScreen/MyYumMain.dart';
-import 'package:deanora/screen/yumScreen/MyYumNickRegist.dart';
+import 'package:deanora/screen/yumScreen/MyYumMainTest.dart';
+import 'package:deanora/screen/yumScreen/yumSignUpScreen/yum_alias_set.dart';
+import 'package:deanora/screen/yumScreen/yum_main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 
@@ -90,9 +91,7 @@ class _NaverLoginPageState extends State<NaverLoginPage> {
 
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                MyYumMain(yumInfo[0]["userAlias"], nEmail)),
+                        MaterialPageRoute(builder: (context) => YumMain()),
                       );
                     } else if (yumLogin == 400) {
                       Navigator.pushReplacement(
