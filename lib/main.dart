@@ -26,7 +26,7 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isviewed = prefs.getInt('Tutorial');
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
   runApp(MyApp());
 }

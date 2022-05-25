@@ -89,7 +89,6 @@ class _YumMainState extends State<YumMain> {
                               return Builder(
                                 builder: (BuildContext context) {
                                   return Container(
-                                    width: MediaQuery.of(context).size.width,
                                     margin: EdgeInsets.only(right: 15.0),
                                     child: ClipRRect(
                                         borderRadius:
@@ -100,9 +99,10 @@ class _YumMainState extends State<YumMain> {
                                                 fit: BoxFit.cover,
                                               )
                                             : Container(
-                                                height: 20,
+                                                width: 140,
                                                 child: Image.asset(
-                                                    'assets/images/defaultImg.png'),
+                                                  'assets/images/defaultImg.png',
+                                                ),
                                               )),
                                   );
                                 },

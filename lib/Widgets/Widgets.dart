@@ -27,43 +27,7 @@ Container putimg(w, h, name) {
 /// [icon] Input Icon
 /// [obscure] true or false //bool
 
-Container loginTextF(_controller, hintext, icon, obscure) {
-  return Container(
-    margin: const EdgeInsets.only(top: 10),
-    child: SizedBox(
-        height: 30,
-        width: 250,
-        child: Stack(
-          children: [
-            TextField(
-                controller: _controller,
-                obscureText: obscure,
-                decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    hintText: hintext,
-                    hintStyle:
-                        TextStyle(color: Color(0xffD6D6D6), fontSize: 13.0),
-                    prefixIcon: Container(
-                      margin: const EdgeInsets.all(0),
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: putimg(10.0, 10.0, icon),
-                    ))),
-            Positioned(
-              bottom: 0,
-              child: Container(
-                height: 1,
-                width: 250,
-              ),
-            )
-          ],
-        )),
-  );
-}
+
 
 // /// [props] crawl.crawlClasses(id.text, pw.text) //classPrpps
 // List classes(props) {

@@ -37,11 +37,17 @@ class _MyMenuState extends State<MyMenu> {
   List<Lecture> classesInfo = [];
   String saved_id = "", saved_pw = "";
   bool _loadingVisible = false;
+  getLoginSaveDate() async {
+    var ctrl = new LoginDataCtrl();
+    var assurance = await ctrl.loadLoginData();
+    saved_id = assurance["user_id"] ?? "";
+    saved_pw = assurance["user_pw"] ?? "";
+  }
 
   @override
   void initState() {
     super.initState();
-
+    getLoginSaveDate();
     messaging = FirebaseMessaging.instance;
     messaging.getToken().then((value) {});
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
@@ -166,14 +172,7 @@ class _MyMenuState extends State<MyMenu> {
   }
 
   Future<void> nyanLogintest() async {
-    var ctrl = new LoginDataCtrl();
-
-    var assurance = await ctrl.loadLoginData();
-    saved_id = assurance["user_id"] ?? "";
-    saved_pw = assurance["user_pw"] ?? "";
-    Crawl.id = saved_id;
-    Crawl.pw = saved_pw;
-    var crawl = new Crawl();
+    var crawl = new Crawl(id: saved_id, pw: saved_pw);
     try {
       try {
         userInfo = GetIt.I<NyanUser>(instanceName: "userInfo");

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/object/yum_user.dart';
 import 'package:flutter/material.dart';
@@ -72,10 +74,14 @@ class _MyProfilePageState extends State<MyProfilePage>
                     height: 10.0,
                   ),
                   Container(
-                    height: MediaQuery.of(context).size.height -
-                        AppBar().preferredSize.height -
-                        MediaQuery.of(context).padding.top -
-                        30,
+                    height: Platform.isIOS
+                        ? MediaQuery.of(context).size.height -
+                            AppBar().preferredSize.height -
+                            MediaQuery.of(context).padding.top -
+                            30
+                        : MediaQuery.of(context).size.height -
+                            AppBar().preferredSize.height -
+                            MediaQuery.of(context).padding.top,
                     child: ListView(children: [
                       SizedBox(
                         height: 20.0,
@@ -85,18 +91,24 @@ class _MyProfilePageState extends State<MyProfilePage>
                         //   'assets/images/defaultImg.png',
                         //   width: 100,
                         // ),
-                        child: Image.network(
-                          yumUser.imagePath.toString(),
-                          fit: BoxFit.cover,
-                          width: 100,
+                        child: ClipOval(
+                          child: Image.network(
+                            yumUser.imagePath.toString(),
+                            fit: BoxFit.cover,
+                            width: 110,
+                            height: 110,
+                          ),
                         ),
                       ),
                       SizedBox(
-                        height: 30,
+                        height: 19,
                       ),
                       Row(
                         children: [
-                          Text("닉네임"),
+                          Text(
+                            "닉네임",
+                            style: TextStyle(fontSize: 12.0),
+                          ),
                           SizedBox(
                             width: 10,
                           ),
@@ -107,7 +119,7 @@ class _MyProfilePageState extends State<MyProfilePage>
                               errorMessage,
                               style: TextStyle(
                                   color: errorMessageColor,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 12),
                             )),
                           )
@@ -168,7 +180,7 @@ class _MyProfilePageState extends State<MyProfilePage>
                                             BorderRadius.circular(10.0))),
                                 child: Ink(
                                   decoration: BoxDecoration(
-                                      color: Color(0xff794cdd),
+                                      color: Color(0xff6368E6),
                                       borderRadius:
                                           BorderRadius.circular(10.0)),
                                   child: Container(
@@ -184,22 +196,25 @@ class _MyProfilePageState extends State<MyProfilePage>
                       SizedBox(
                         height: 25,
                       ),
-                      Divider(color: Color(0xff707070), thickness: 0.5),
+                      Divider(color: Color(0xffD6D6D6), thickness: 0.5),
                       SizedBox(
                         height: 20,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _ProfileIcon(
-                              image: 'profile_review_icon', title: '내가 쓴 리뷰'),
-                          _ProfileIcon(
-                              image: 'profile_store_icon', title: '저장한 맛집'),
-                          _ProfileIcon(
-                              image: 'profile_like_icon', title: '좋아요한 맛집'),
-                          _ProfileIcon(
-                              image: 'profile_comment_icon', title: '댓글 내역')
-                        ],
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _ProfileIcon(
+                                image: 'profile_review_icon', title: '내가 쓴 리뷰'),
+                            _ProfileIcon(
+                                image: 'profile_store_icon', title: '저장한 맛집'),
+                            _ProfileIcon(
+                                image: 'profile_like_icon', title: '좋아요한 맛집'),
+                            // _ProfileIcon(
+                            //     image: 'profile_comment_icon', title: '댓글 내역')
+                          ],
+                        ),
                       ),
                       SizedBox(
                         height: 23,
@@ -217,28 +232,37 @@ class _MyProfilePageState extends State<MyProfilePage>
                             Container(
                                 width: 150,
                                 child: Divider(
-                                    color: Color(0xff707070), thickness: 0.5)),
+                                    color: Color(0xffD6D6D6), thickness: 0.5)),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
-                                child: Text("건의하기")),
+                                child: Text(
+                                  "건의하기",
+                                  style: TextStyle(fontSize: 11),
+                                )),
                             Container(
                                 width: 150,
                                 child: Divider(
-                                    color: Color(0xff707070), thickness: 0.5)),
+                                    color: Color(0xffD6D6D6), thickness: 0.5)),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
-                                child: Text("로그아웃")),
+                                child: Text(
+                                  "로그아웃",
+                                  style: TextStyle(fontSize: 11),
+                                )),
                             Container(
                                 width: 150,
                                 child: Divider(
-                                    color: Color(0xff707070), thickness: 0.5)),
+                                    color: Color(0xffD6D6D6), thickness: 0.5)),
                             Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
-                                child: Text("회원탈퇴")),
+                                child: Text(
+                                  "회원탈퇴",
+                                  style: TextStyle(fontSize: 11),
+                                )),
                             Container(
                                 width: 150,
                                 child: Divider(
-                                    color: Color(0xff707070), thickness: 0.5)),
+                                    color: Color(0xffD6D6D6), thickness: 0.5)),
                             GestureDetector(
                               onTap: () {
                                 showDialog(
@@ -302,12 +326,15 @@ class _MyProfilePageState extends State<MyProfilePage>
                               child: Container(
                                   margin:
                                       const EdgeInsets.symmetric(vertical: 5),
-                                  child: Text("로그인 정보")),
+                                  child: Text(
+                                    "로그인 정보",
+                                    style: TextStyle(fontSize: 11),
+                                  )),
                             ),
                             Container(
                                 width: 150,
                                 child: Divider(
-                                    color: Color(0xff707070), thickness: 0.5)),
+                                    color: Color(0xffD6D6D6), thickness: 0.5)),
                           ],
                         ),
                       ),
@@ -351,10 +378,13 @@ class _ProfileIcon extends StatelessWidget {
     return Column(
       children: [
         Container(
-            width: 30,
-            height: 30,
+            width: 35,
+            height: 35,
             child: Image.asset('assets/images/$image.png')),
-        Text(title),
+        Text(
+          title,
+          style: TextStyle(fontSize: 10.0),
+        ),
       ],
     );
   }

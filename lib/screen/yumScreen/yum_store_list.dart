@@ -121,7 +121,7 @@ class _YumStoreListState extends State<YumStoreList> {
                       height: 26,
                     ),
                     Container(
-                      height: 20,
+                      height: 25,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 25.0),
                         child: SingleChildScrollView(
