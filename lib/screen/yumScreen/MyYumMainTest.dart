@@ -1,6 +1,6 @@
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/object/yum_user.dart';
-import 'package:deanora/screen/yumScreen/my_profile_page.dart';
+import 'package:deanora/screen/yumScreen/yum_my_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get_it/get_it.dart';

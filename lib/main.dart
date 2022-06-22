@@ -1,5 +1,5 @@
 import 'package:deanora/screen/MyMenu.dart';
-import 'package:deanora/screen/yumScreen/naver_login_page.dart';
+import 'package:deanora/screen/yumScreen/yumSignUpScreen/naver_login.dart';
 import 'package:deanora/screen/yumScreen/naver_login_test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isviewed = prefs.getInt('Tutorial');
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
   runApp(MyApp());
 }

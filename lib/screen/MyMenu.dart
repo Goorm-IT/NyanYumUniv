@@ -12,10 +12,11 @@ import 'package:deanora/http/crawl/crawl.dart';
 import 'package:deanora/http/customException.dart';
 import 'package:deanora/main.dart';
 import 'package:deanora/screen/MyKakaoLogin.dart';
-import 'package:deanora/screen/yumScreen/MyYumMain.dart';
-import 'package:deanora/screen/yumScreen/MyYumNickRegist.dart';
+import 'package:deanora/screen/yumScreen/MyYumMainTest.dart';
+import 'package:deanora/screen/yumScreen/yumSignUpScreen/yum_alias_set.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/MyLogin.dart';
-import 'package:deanora/screen/yumScreen/naver_login_page.dart';
+import 'package:deanora/screen/yumScreen/yumSignUpScreen/naver_login.dart';
+import 'package:deanora/screen/yumScreen/yum_main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
@@ -36,11 +37,17 @@ class _MyMenuState extends State<MyMenu> {
   List<Lecture> classesInfo = [];
   String saved_id = "", saved_pw = "";
   bool _loadingVisible = false;
+  getLoginSaveDate() async {
+    var ctrl = new LoginDataCtrl();
+    var assurance = await ctrl.loadLoginData();
+    saved_id = assurance["user_id"] ?? "";
+    saved_pw = assurance["user_pw"] ?? "";
+  }
 
   @override
   void initState() {
     super.initState();
-
+    getLoginSaveDate();
     messaging = FirebaseMessaging.instance;
     messaging.getToken().then((value) {});
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
@@ -111,8 +118,10 @@ class _MyMenuState extends State<MyMenu> {
                           height: 15,
                         ),
                         Text("냥냠대 컨텐츠",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 25)),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w800)),
                         SizedBox(
                           height: 15,
                         ),
@@ -147,7 +156,7 @@ class _MyMenuState extends State<MyMenu> {
                         child: Container(
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height,
-                          color: Colors.grey[50],
+                          color: Colors.black,
                         ),
                       ),
                       Center(
@@ -163,14 +172,7 @@ class _MyMenuState extends State<MyMenu> {
   }
 
   Future<void> nyanLogintest() async {
-    var ctrl = new LoginDataCtrl();
-
-    var assurance = await ctrl.loadLoginData();
-    saved_id = assurance["user_id"] ?? "";
-    saved_pw = assurance["user_pw"] ?? "";
-    Crawl.id = saved_id;
-    Crawl.pw = saved_pw;
-    var crawl = new Crawl();
+    var crawl = new Crawl(id: saved_id, pw: saved_pw);
     try {
       try {
         userInfo = GetIt.I<NyanUser>(instanceName: "userInfo");
@@ -250,11 +252,10 @@ class _MyMenuState extends State<MyMenu> {
           setState(() {
             _loadingVisible = !_loadingVisible;
           });
+          print("여기");
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    MyYumMain(yumInfo[0]["userAlias"], nEmail)),
+            MaterialPageRoute(builder: (context) => YumMain()),
           );
         } else if (yumLogin == 400) {
           setState(() {
@@ -299,8 +300,20 @@ class _MyMenuState extends State<MyMenu> {
             children: [
               Align(
                   alignment: Alignment.topCenter,
-                  child: Container(
-                    child: Image.asset('assets/images/$image.png'),
+                  child: Stack(
+                    children: [
+                      Container(
+                        child: Image.asset('assets/images/$image.png'),
+                      ),
+                      Opacity(
+                        opacity: 0.1,
+                        child: Container(
+                          color: Colors.black,
+                          width: 500,
+                          height: 215,
+                        ),
+                      )
+                    ],
                   )),
               Align(
                   alignment: Alignment.bottomCenter,

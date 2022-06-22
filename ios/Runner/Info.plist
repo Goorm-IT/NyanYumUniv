@@ -103,5 +103,17 @@
 		<string>냥냠대</string>
    		<key>naverServiceAppUrlScheme</key>
 		<string>nyanyum</string>
+		  <key>NMFClientId</key>
+  		<string>n2d8s1sg7f</string>
+  		<key>io.flutter.embedded_views_preview</key>
+  		<true/>
+  		<key>NSAllowsArbitraryLoads</key>
+  		<true/>
+  		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+  		<string>Always and When In Use Usage</string>
+  		<key>NSLocationAlwaysUsageDescription</key>
+  		<string>Always</string>
+  		<key>NSLocationWhenInUseUsageDescription</key>
+  		<string>When In Use Usage</string>
 	</dict>
 </plist>

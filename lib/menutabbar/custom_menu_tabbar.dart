@@ -185,8 +185,8 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
     return StreamBuilder<Object>(
         stream: widget.backButtonToggle.stream,
         builder: (context, snapshot) {
-          print(
-              '_isActivated.stream.value: ${_isActivated.stream.value},snapshot.data: ${snapshot.data}');
+          // print(
+          //     '_isActivated.stream.value: ${_isActivated.stream.value},snapshot.data: ${snapshot.data}');
           if (_isActivated.stream.value == 1 && snapshot.data == 1) {
             _moveButtonDown();
           }
@@ -356,8 +356,8 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                             colors: <Color>[
-                                              PRIMARY_COLOR_DEEP,
-                                              PRIMARY_COLOR_LIGHT,
+                                              Color(0xff6689F6),
+                                              Color(0xff7C40EF)
                                             ]),
                                       ),
                                     ),

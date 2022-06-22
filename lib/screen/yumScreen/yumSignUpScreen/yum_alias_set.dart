@@ -1,6 +1,6 @@
 import 'package:deanora/http/yumServer/yumHttp.dart';
-import 'package:deanora/screen/yumScreen/MyYumMain.dart';
-import 'package:deanora/screen/yumScreen/yum_profile.dart';
+import 'package:deanora/screen/yumScreen/MyYumMainTest.dart';
+import 'package:deanora/screen/yumScreen/yumSignUpScreen/yum_image_set.dart';
 import 'package:flutter/material.dart';
 
 class MyYumNickRegist extends StatefulWidget {
@@ -110,7 +110,7 @@ class _MyYumNickRegistState extends State<MyYumNickRegist>
                             var yumLogin = await yumUserHttp.yumLogin();
                             var yumInfo = await yumUserHttp.yumInfo();
                             print(yumInfo[0]["userAlias"]);
-                            print("asd");
+
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(

@@ -10,7 +10,8 @@ import '../customException.dart';
 
 class Crawl with ChangeNotifier {
   String _cookie = '';
-  static String id = "", pw = "";
+  String id = "", pw = "";
+  Crawl({required this.id, required this.pw});
 
   Future<http.StreamedResponse> _getResponse(String method, String url,
       [Map<String, String> headers = const {},
@@ -34,7 +35,6 @@ class Crawl with ChangeNotifier {
       int index = rawCookie.indexOf(';');
       this._cookie = (index == -1) ? rawCookie : rawCookie.substring(0, index);
     }
-    print('$_cookie  쿠키시바라');
   }
 
   Future<Map<String, String>> crawlUser() async {

@@ -5,6 +5,9 @@ package="goorm.It">
         android:label="냥냠대"
         android:icon="@mipmap/ic_launcher">
         <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="n2d8s1sg7f" />
+        <meta-data
             android:name="com.naver.sdk.clientId"
             android:value="@string/client_id" />
         <meta-data

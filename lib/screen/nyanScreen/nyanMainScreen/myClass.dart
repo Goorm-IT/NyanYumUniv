@@ -29,10 +29,8 @@ class MyClass extends StatefulWidget {
 }
 
 class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
-  var id, pw, classProps, userProps;
   List names = [];
   List<dynamic> assignment = [];
-  String _searchText = "";
   List filteredNames = [];
   List fname = [];
   DateTime _refreshTime = DateTime.now();
@@ -45,9 +43,9 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
   late BehaviorSubject<int> backButtonToggle;
   List myclasses = [];
   List dncList = [];
-  int willpop = 1;
+  int willpop = 0;
   _MyClassState();
-  late FirebaseMessaging messaging;
+
   @override
   void initState() {
     super.initState();
@@ -58,57 +56,6 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
     //     duration: new Duration(milliseconds: 1000), vsync: this);
     // animationController.repeat();
     backButtonToggle = BehaviorSubject.seeded(-1);
-    messaging = FirebaseMessaging.instance;
-    messaging.getToken().then((value) {
-      print(value);
-    });
-    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      print("message recieved");
-      print(event.notification!.body);
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 24, horizontal: 40),
-              buttonPadding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 8),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(18))),
-              title: Center(
-                  child: Text(
-                event.notification!.title!,
-                style: TextStyle(fontWeight: FontWeight.w900),
-              )),
-              content: Container(
-                  child: Text(
-                event.notification!.body!,
-                textAlign: TextAlign.center,
-              )),
-              actions: [
-                Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      border: Border(
-                          top: BorderSide(
-                              color: Color(0xffd2d2d5), width: 1.0))),
-                  child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        child: Text(
-                          "확인",
-                          style: TextStyle(color: Color(0xff755FE7)),
-                        ),
-                      )),
-                )
-              ],
-            );
-          });
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('Message clicked!');
-    });
   }
 
   @override
@@ -124,7 +71,7 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
 
     var ctrl = new LoginDataCtrl();
     Future<List> requestAssignment(props) async {
-      var crawl = new Crawl();
+      var crawl = new Crawl(id: widget.id, pw: widget.pw);
       List<Assignment> assignments = [];
       List doneCnt = [];
 
@@ -333,9 +280,12 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                                     (BuildContext classContext,
                                                         int index) {
                                                   return _ClassList(
-                                                      context,
-                                                      myclasses[index],
-                                                      dncList[index]);
+                                                    context,
+                                                    myclasses[index],
+                                                    dncList[index],
+                                                    widget.id,
+                                                    widget.pw,
+                                                  );
                                                 })
                                             : ListView(children: [
                                                 Center(child: Text("강의가 없습니다"))
@@ -380,9 +330,10 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
   }
 
   Future<void> _refresh() async {
-    await Crawl().crawlClasses();
+    await Crawl(id: widget.id, pw: widget.pw).crawlClasses();
     for (int i = 0; i < myclasses.length; i++) {
-      await Crawl().crawlAssignments(myclasses[i].classId);
+      await Crawl(id: widget.id, pw: widget.pw)
+          .crawlAssignments(myclasses[i].classId);
     }
     Navigator.pushReplacement(
         context,
@@ -398,7 +349,10 @@ class _ClassList extends StatefulWidget {
   BuildContext pageContext;
   var props;
   var dnc;
-  _ClassList(this.pageContext, this.props, this.dnc);
+  String saved_id;
+  String saved_pw;
+  _ClassList(
+      this.pageContext, this.props, this.dnc, this.saved_id, this.saved_pw);
   @override
   _ClassListState createState() => _ClassListState();
 }
@@ -409,7 +363,7 @@ class _ClassListState extends State<_ClassList> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        var crawl = new Crawl();
+        var crawl = new Crawl(id: widget.saved_id, pw: widget.saved_pw);
         var _adssi = await crawl.crawlAssignments(widget.props.classId);
         Navigator.push(
             widget.pageContext,

@@ -49,6 +49,7 @@ dependencies:
   firebase_dynamic_links: ^4.0.5
   firebase_auth: ^3.3.6
   firebase_auth_web: ^3.3.9
+  async: ^2.3.0
 
   kakao_flutter_sdk: ^1.1.0
   dio: ^4.0.0
@@ -56,8 +57,11 @@ dependencies:
   package_info_plus: ^1.0.4
   platform: ^3.0.0
   blur: ^3.1.0
+  carousel_slider: ^4.0.0
 
   flutter_naver_login: ^1.6.0
+  naver_map_plugin:
+    git: https://github.com/LBSTECH/naver_map_plugin.git
 
   image_picker: ^0.8.4+11
 dependency_overrides:
