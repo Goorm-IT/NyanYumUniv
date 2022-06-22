@@ -23,7 +23,7 @@ packages:
     source: hosted
     version: "1.1.0"
   async:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: async
       url: "https://pub.dartlang.org"
@@ -583,6 +583,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+  naver_map_plugin:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: d6029c020e13c926ff5f94b445b4f65abb48b85f
+      url: "https://github.com/LBSTECH/naver_map_plugin.git"
+    source: git
+    version: "0.9.7"
   package_info_plus:
     dependency: "direct main"
     description:

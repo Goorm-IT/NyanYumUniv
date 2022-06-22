@@ -110,7 +110,7 @@ class _MyYumNickRegistState extends State<MyYumNickRegist>
                             var yumLogin = await yumUserHttp.yumLogin();
                             var yumInfo = await yumUserHttp.yumInfo();
                             print(yumInfo[0]["userAlias"]);
-                            print("asd");
+
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(

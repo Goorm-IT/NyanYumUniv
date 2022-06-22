@@ -42,7 +42,11 @@ class _StoreListItemState extends State<StoreListItem> {
                       widget.imagePath.toString(),
                       fit: BoxFit.cover,
                     )
-                  : Image.asset('assets/images/defaultImg.png')),
+                  : Container(
+                      color: Color(0xffF3F3F5),
+                      child: Center(
+                          child: Image.asset(
+                              'assets/images/default_nobackground.png')))),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

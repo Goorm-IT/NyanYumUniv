@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:deanora/Widgets/custom_loading_image.dart';
+import 'package:deanora/const/color.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
 import 'package:deanora/object/yum_category_type.dart';
@@ -29,10 +30,11 @@ class _YumMainState extends State<YumMain> {
   }
 
   Widget build(BuildContext context) {
+    final searchController = TextEditingController();
     final availableHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.top -
         MediaQuery.of(context).padding.bottom;
-    print(availableHeight);
+
     final yumStorehttp = YumStorehttp();
     return WillPopScope(
       onWillPop: () async {
@@ -47,19 +49,53 @@ class _YumMainState extends State<YumMain> {
       },
       child: MaterialApp(
           home: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(
+                  height: 5,
+                ),
                 SafeArea(
                   bottom: false,
                   left: false,
                   right: false,
-                  child: SizedBox(
-                    height: 55,
-                    child: Text("위치? 검색"),
-                  ),
+                  child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      height: 30,
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                              onPressed: () async {}, icon: Icon(Icons.place)),
+                          Container(
+                              width: MediaQuery.of(context).size.width - 140,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: PRIMARY_COLOR_DEEP),
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: PRIMARY_COLOR_DEEP),
+                                  ),
+                                ),
+                                controller: searchController,
+                              )),
+                          IconButton(
+                              onPressed: () async {
+                                var naverOpneApi = NaverOpneApi();
+                                List tmp = await naverOpneApi
+                                    .naverSearchLocal(searchController.text);
+                                print(tmp);
+                              },
+                              icon: Icon(Icons.search))
+                        ],
+                      )),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20),
@@ -123,12 +159,15 @@ class _YumMainState extends State<YumMain> {
                           SizedBox(
                             height: 15,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 18.0),
-                            child: Text(
-                              '${top5List[top5Idx]["storeAlias"]}',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w800),
+                          Container(
+                            height: 25,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 18.0),
+                              child: Text(
+                                '${top5List[top5Idx]["storeAlias"]}',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w800),
+                              ),
                             ),
                           ),
                           SizedBox(
@@ -150,7 +189,7 @@ class _YumMainState extends State<YumMain> {
                             child: Row(
                               children: [
                                 Container(
-                                  decoration: greyBorder(5.0),
+                                  decoration: greyBorder(5.0, false),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 2.0, vertical: 1.0),
@@ -167,7 +206,7 @@ class _YumMainState extends State<YumMain> {
                                   width: 5.0,
                                 ),
                                 Container(
-                                  decoration: greyBorder(5.0),
+                                  decoration: greyBorder(5.0, false),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 2.0, vertical: 1.0),
@@ -237,7 +276,10 @@ class _YumMainState extends State<YumMain> {
                                 child: Row(
                                   children: categorytype.map((e) {
                                     return YumCategory(
-                                        color: e.color, title: e.title);
+                                      color: e.color,
+                                      title: e.title,
+                                      isChecked: false,
+                                    );
                                   }).toList(),
                                 )),
                           ),

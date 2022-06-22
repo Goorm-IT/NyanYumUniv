@@ -185,8 +185,8 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
     return StreamBuilder<Object>(
         stream: widget.backButtonToggle.stream,
         builder: (context, snapshot) {
-          print(
-              '_isActivated.stream.value: ${_isActivated.stream.value},snapshot.data: ${snapshot.data}');
+          // print(
+          //     '_isActivated.stream.value: ${_isActivated.stream.value},snapshot.data: ${snapshot.data}');
           if (_isActivated.stream.value == 1 && snapshot.data == 1) {
             _moveButtonDown();
           }

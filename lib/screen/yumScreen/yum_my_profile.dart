@@ -1,8 +1,9 @@
 import 'dart:io';
-
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/object/yum_user.dart';
+import 'package:deanora/screen/MyMenu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get_it/get_it.dart';
 
 class MyProfilePage extends StatefulWidget {
@@ -20,6 +21,17 @@ class _MyProfilePageState extends State<MyProfilePage>
   String errorMessage = "";
   Color errorMessageColor = Colors.red;
   bool _visible = false;
+
+  void _logout_naver() async {
+    FlutterNaverLogin.logOutAndDeleteToken();
+  }
+
+  void _yum_delete() async {
+    var yumUserHttp = YumUserHttp(yumUser.uid);
+    await yumUserHttp.yumLogin();
+    await yumUserHttp.yumDelete();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -92,12 +104,18 @@ class _MyProfilePageState extends State<MyProfilePage>
                         //   width: 100,
                         // ),
                         child: ClipOval(
-                          child: Image.network(
-                            yumUser.imagePath.toString(),
-                            fit: BoxFit.cover,
-                            width: 110,
-                            height: 110,
-                          ),
+                          child: yumUser.imagePath != null
+                              ? Image.network(
+                                  yumUser.imagePath.toString(),
+                                  fit: BoxFit.cover,
+                                  width: 110,
+                                  height: 110,
+                                )
+                              : Image.asset(
+                                  'assets/images/defaultImg.png',
+                                  width: 110,
+                                  height: 110,
+                                ),
                         ),
                       ),
                       SizedBox(
@@ -243,12 +261,23 @@ class _MyProfilePageState extends State<MyProfilePage>
                                 width: 150,
                                 child: Divider(
                                     color: Color(0xffD6D6D6), thickness: 0.5)),
-                            Container(
-                                margin: const EdgeInsets.symmetric(vertical: 5),
-                                child: Text(
-                                  "로그아웃",
-                                  style: TextStyle(fontSize: 11),
-                                )),
+                            GestureDetector(
+                              onTap: () async {
+                                _logout_naver();
+                                _yum_delete();
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MyMenu()));
+                              },
+                              child: Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: Text(
+                                    "로그아웃",
+                                    style: TextStyle(fontSize: 11),
+                                  )),
+                            ),
                             Container(
                                 width: 150,
                                 child: Divider(

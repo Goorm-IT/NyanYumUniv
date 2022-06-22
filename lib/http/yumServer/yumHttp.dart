@@ -4,8 +4,9 @@ import 'package:deanora/object/yum_user.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
+late String _cookie;
+
 class YumUserHttp {
-  late String _cookie;
   String _uid;
   YumUserHttp(this._uid);
   String yumURL = '54.180.116.149:82';
@@ -106,20 +107,129 @@ class YumStorehttp {
     }
   }
 
-  Future<List<dynamic>> storeList(int startPageNo, int endPageNo) async {
+  Future<List<dynamic>> storeList(int startPageNo, int endPageNo,
+      [String category = '']) async {
     List<dynamic> _list = [];
-    final url = Uri.http(
-        yumURL,
-        '/nyu/stores',
-        {"startPageNo": startPageNo, "endPageNo": endPageNo}
-            .map((key, value) => MapEntry(key, value.toString())));
+    Map<String, dynamic> httpBody = category == ''
+        ? {
+            "startPageNo": startPageNo,
+            "endPageNo": endPageNo,
+          }
+        : {
+            "startPageNo": startPageNo,
+            "endPageNo": endPageNo,
+            "category": category,
+          };
+    final url = Uri.http(yumURL, '/nyu/stores',
+        httpBody.map((key, value) => MapEntry(key, value.toString())));
     var response = await http.get(url);
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
       _list = jsonDecode(responseBody)['storeList'];
+
       return _list;
     } else {
       print('Request failed with status(top5): ${response.statusCode}.');
+      return [];
+    }
+  }
+}
+
+class YumMenuhttp {
+  String yumURL = '54.180.116.149:82';
+  Future<List<dynamic>> menuByStore(String storeId) async {
+    List<dynamic> _list = [];
+    final url = Uri.http(yumURL, '/nyu/menu/store', {"storeId": storeId});
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+      _list = jsonDecode(responseBody)['MenuList'];
+      return _list;
+    } else {
+      print('Request failed with status(menuByStore): ${response.statusCode}.');
+      return [];
+    }
+  }
+}
+
+class YumReviewhttp {
+  String yumURL = '54.180.116.149:82';
+
+  Future<List<dynamic>> reviewByStore(String storeId) async {
+    List<dynamic> _list = [];
+    final url = Uri.http(yumURL, '/nyu/review/store', {"storeId": storeId});
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+      _list = jsonDecode(responseBody)['reviewList'];
+      return _list;
+    } else {
+      print(
+          'Request failed with status(reviewByStore): ${response.statusCode}.');
+      return [];
+    }
+  }
+
+  Future<List<dynamic>> commentByStore(String storeId) async {
+    List<dynamic> _list = [];
+    final url = Uri.http(yumURL, '/nyu/review/content', {"storeId": storeId});
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+      _list = jsonDecode(responseBody)['reviewList'];
+      return _list;
+    } else {
+      print('Request failed with status(top5): ${response.statusCode}.');
+      return [];
+    }
+  }
+
+  Future<int> writeReview(
+      String file, String content, int menuId, int score, int storeId,
+      [String propose = ""]) async {
+    var headers = {'Cookie': _cookie};
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            'http://54.180.116.149:82/nyu/review?content=$content&menuId=$menuId&score=$score&storeId=$storeId&propose=$propose'));
+    request.files.add(await http.MultipartFile.fromPath('file', file));
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
+    }
+    return response.statusCode;
+  }
+}
+
+class NaverOpneApi {
+  String naverUrl = "https://openapi.naver.com";
+  Future<List> naverSearchLocal(String title) async {
+    String _list;
+
+    var headers = {
+      'X-Naver-Client-Id': '_x_EKHpKcNechFeudcch',
+      'X-Naver-Client-Secret': 'TtNtDBjrGX'
+    };
+    var request = http.Request(
+        'GET',
+        Uri.parse(
+            'https://openapi.naver.com/v1/search/local.json?query=롯데리아 안양&display=5'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      _list = await response.stream.bytesToString();
+
+      return jsonDecode(_list)["items"];
+    } else {
+      print(response.reasonPhrase);
       return [];
     }
   }

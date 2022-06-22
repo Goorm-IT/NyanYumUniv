@@ -4,6 +4,7 @@ import 'package:deanora/object/yum_category_type.dart';
 import 'package:deanora/object/yum_store_list_composition.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_store_list_item.dart';
+import 'package:deanora/screen/yumScreen/yum_store_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -22,36 +23,76 @@ class _YumStoreListState extends State<YumStoreList> {
   List<StoreComposition> storeList = [];
   int initListLength = 10;
   double offset = 300.0;
+  bool categoryIsChecked = false;
+  String checkedCategory = "ALL";
   late BehaviorSubject<int> backButtonToggle;
   int willpop = 0;
   @override
   void initState() {
     super.initState();
+    // getinitStoreList();
+    for (int i = 0; i < categorytype.length; i++) {
+      if (i == 0) {
+        categorytype[i].isChecked = true;
+      } else {
+        categorytype[i].isChecked = false;
+      }
+    }
     backButtonToggle = BehaviorSubject.seeded(-1);
     _scrollController = ScrollController();
     _scrollController.addListener(() {
-      _scrollListener();
+      _scrollListener(checkedCategory);
     });
   }
 
-  _scrollListener() async {
+  _scrollListener([String category = '']) async {
     if (offset < _scrollController.offset) {
       offset += (widget.availableHeight - 112);
-      List tmp = await getStoreList(initListLength + 1, 5);
-      if (tmp.isNotEmpty) {
+      List addstoreList = await getStoreList(
+          initListLength + 1, 5, category == 'ALL' ? '' : category);
+
+      if (addstoreList.isNotEmpty) {
         setState(() {
-          for (int i = 0; i < tmp.length; i++) {
+          for (int i = 0; i < addstoreList.length; i++) {
             storeList.add(StoreComposition(
-              tmp[i]["imagePath"],
-              tmp[i]["storeAlias"],
-              tmp[i]["score"],
-              tmp[i]["commentId"],
+              addstoreList[i]["imagePath"],
+              addstoreList[i]["storeAlias"],
+              addstoreList[i]["score"],
+              addstoreList[i]["commentId"],
+              addstoreList[i]["category"],
+              addstoreList[i]["address"],
+              addstoreList[i]["storeId"],
             ));
           }
+
           initListLength += 5;
         });
       }
     }
+  }
+
+  changeCategory([String category = '']) async {
+    print(category);
+    initListLength = 10;
+    offset = 300.0;
+    storeList.clear();
+    List addstoreList = await getStoreList(1, initListLength, category);
+    if (addstoreList.isNotEmpty) {
+      setState(() {
+        for (int i = 0; i < addstoreList.length; i++) {
+          storeList.add(StoreComposition(
+            addstoreList[i]["imagePath"],
+            addstoreList[i]["storeAlias"],
+            addstoreList[i]["score"],
+            addstoreList[i]["commentId"],
+            addstoreList[i]["category"],
+            addstoreList[i]["address"],
+            addstoreList[i]["storeId"],
+          ));
+        }
+      });
+    }
+    print(storeList.length);
   }
 
   @override
@@ -130,11 +171,26 @@ class _YumStoreListState extends State<YumStoreList> {
                               children: categorytype.map((e) {
                                 return GestureDetector(
                                   onTap: () {
-                                    print(e.title);
+                                    checkedCategory = e.title;
+                                    for (int i = 0;
+                                        i < categorytype.length;
+                                        i++) {
+                                      setState(() {
+                                        if (e.title == categorytype[i].title) {
+                                          categorytype[i].isChecked = true;
+                                        } else {
+                                          categorytype[i].isChecked = false;
+                                        }
+                                      });
+                                    }
+                                    checkedCategory == 'ALL'
+                                        ? changeCategory()
+                                        : changeCategory(checkedCategory);
                                   },
                                   child: YumCategory(
                                     color: e.color,
                                     title: e.title,
+                                    isChecked: e.isChecked,
                                   ),
                                 );
                               }).toList(),
@@ -145,19 +201,25 @@ class _YumStoreListState extends State<YumStoreList> {
                       height: 26,
                     ),
                     FutureBuilder(
-                        future: getStoreList(1, initListLength),
-                        builder: (context, AsyncSnapshot snapshot) {
+                        future: storeList.isEmpty
+                            ? getStoreList(1, initListLength)
+                            : getStoreList2(),
+                        builder: (futureContext, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
-                            if (storeList.isEmpty) {
+                            if (storeList.isEmpty && checkedCategory == 'ALL') {
                               for (int i = 0; i < snapshot.data.length; i++) {
                                 storeList.add(StoreComposition(
                                   snapshot.data[i]["imagePath"],
                                   snapshot.data[i]["storeAlias"],
                                   snapshot.data[i]["score"],
                                   snapshot.data[i]["commentId"],
+                                  snapshot.data[i]["category"],
+                                  snapshot.data[i]["address"],
+                                  snapshot.data[i]["storeId"],
                                 ));
                               }
                             }
+
                             return Container(
                               height: widget.availableHeight - 180,
                               child: ListView.builder(
@@ -165,16 +227,31 @@ class _YumStoreListState extends State<YumStoreList> {
                                   itemCount: storeList.length,
                                   itemBuilder:
                                       (BuildContext listContext, int index) {
-                                    return Container(
-                                      height:
-                                          (widget.availableHeight - 112) / 5,
-                                      child: StoreListItem(
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                YumStoreDetail(
+                                              storeInfo: storeList[index],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
                                         height:
                                             (widget.availableHeight - 112) / 5,
-                                        imagePath: storeList[index].imagePath,
-                                        storeAlias: storeList[index].storeAlias,
-                                        score: storeList[index].score,
-                                        commentId: storeList[index].comment,
+                                        child: StoreListItem(
+                                          height:
+                                              (widget.availableHeight - 112) /
+                                                  5,
+                                          imagePath: storeList[index].imagePath,
+                                          storeAlias:
+                                              storeList[index].storeAlias,
+                                          score: storeList[index].score,
+                                          commentId: storeList[index].comment,
+                                        ),
                                       ),
                                     );
                                   }),
@@ -200,10 +277,36 @@ class _YumStoreListState extends State<YumStoreList> {
     );
   }
 
-  Future<List> getStoreList(int startPageNo, int endPageNo) async {
+  Future<void> getinitStoreList() async {
     final yumStorehttp = YumStorehttp();
-    final storeList = await yumStorehttp.storeList(startPageNo, endPageNo);
+    final addstoreList = await yumStorehttp.storeList(1, initListLength);
 
+    if (addstoreList.isNotEmpty) {
+      setState(() {
+        for (int i = 0; i < addstoreList.length; i++) {
+          storeList.add(StoreComposition(
+            addstoreList[i]["imagePath"],
+            addstoreList[i]["storeAlias"],
+            addstoreList[i]["score"],
+            addstoreList[i]["commentId"],
+            addstoreList[i]["category"],
+            addstoreList[i]["address"],
+            addstoreList[i]["storeId"],
+          ));
+        }
+      });
+    }
+  }
+
+  Future<List> getStoreList(int startPageNo, int endPageNo,
+      [String category = '']) async {
+    final yumStorehttp = YumStorehttp();
+    final storeList =
+        await yumStorehttp.storeList(startPageNo, endPageNo, category);
     return storeList;
+  }
+
+  Future<List> getStoreList2() async {
+    return [];
   }
 }
