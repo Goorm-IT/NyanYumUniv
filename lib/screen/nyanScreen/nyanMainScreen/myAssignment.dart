@@ -1,6 +1,6 @@
 import 'package:deanora/Widgets/MemoData.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
-import 'package:deanora/object/assignment.dart';
+import 'package:deanora/model/assignment.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';

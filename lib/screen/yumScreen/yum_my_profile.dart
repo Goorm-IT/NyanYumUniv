@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
-import 'package:deanora/object/yum_user.dart';
+import 'package:deanora/model/yum_user.dart';
 import 'package:deanora/screen/MyMenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
@@ -105,11 +106,20 @@ class _MyProfilePageState extends State<MyProfilePage>
                         // ),
                         child: ClipOval(
                           child: yumUser.imagePath != null
-                              ? Image.network(
-                                  yumUser.imagePath.toString(),
+                              ? CachedNetworkImage(
+                                  fadeInDuration:
+                                      const Duration(milliseconds: 100),
+                                  fadeOutDuration:
+                                      const Duration(milliseconds: 100),
+                                  imageUrl: yumUser.imagePath.toString(),
                                   fit: BoxFit.cover,
-                                  width: 110,
-                                  height: 110,
+                                  placeholder: (context, url) => Image.asset(
+                                    'assets/images/defaultImg.png',
+                                    width: 110,
+                                    height: 110,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
                                 )
                               : Image.asset(
                                   'assets/images/defaultImg.png',

@@ -1,9 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/const/color.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
-import 'package:deanora/object/yum_category_type.dart';
+import 'package:deanora/model/yum_category_type.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/star_score.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
 import 'package:deanora/screen/yumScreen/yum_my_profile.dart';
@@ -129,10 +130,26 @@ class _YumMainState extends State<YumMain> {
                                     child: ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(20.0),
-                                        child: e["path"] != null
-                                            ? Image.network(
-                                                e["path"],
-                                                fit: BoxFit.cover,
+                                        child: e["imagePath"] != null
+                                            ? Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: CachedNetworkImage(
+                                                  fadeInDuration:
+                                                      const Duration(
+                                                          milliseconds: 100),
+                                                  fadeOutDuration:
+                                                      const Duration(
+                                                          milliseconds: 100),
+                                                  imageUrl: e["imagePath"],
+                                                  fit: BoxFit.cover,
+                                                  placeholder: (context, url) =>
+                                                      CustomLoadingImage(),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Icon(Icons.error),
+                                                ),
                                               )
                                             : Container(
                                                 width: 140,

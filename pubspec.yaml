@@ -51,6 +51,10 @@ dependencies:
   firebase_auth_web: ^3.3.9
   async: ^2.3.0
 
+  cached_network_image: ^3.2.1
+
+  provider: ^6.0.3
+
   kakao_flutter_sdk: ^1.1.0
   dio: ^4.0.0
   json_annotation: ^4.0.1

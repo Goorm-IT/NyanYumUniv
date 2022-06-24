@@ -172,9 +172,12 @@ class _MyProfileImgState extends State<MyProfileImg>
                                     _loadingVisible = !_loadingVisible;
                                   });
                                   Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => YumMain()));
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MyYumMain(),
+                                      // builder: (context) => YumMain(),
+                                    ),
+                                  );
                                 }
                               }
                             },
@@ -230,9 +233,12 @@ class _MyProfileImgState extends State<MyProfileImg>
                         GestureDetector(
                             onTap: () {
                               Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => YumMain()));
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyYumMain(),
+                                  // builder: (context) => YumMain(),
+                                ),
+                              );
                             },
                             child: Center(
                                 child: Text(

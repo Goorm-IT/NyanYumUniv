@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/custom_loading_image.dart';
-import 'package:deanora/object/lecture.dart';
-import 'package:deanora/object/user.dart';
+import 'package:deanora/model/lecture.dart';
+import 'package:deanora/model/user.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/myClass.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/Tutorial.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
@@ -255,7 +255,10 @@ class _MyMenuState extends State<MyMenu> {
           print("여기");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => YumMain()),
+            MaterialPageRoute(
+              builder: (context) => MyYumMain(),
+              // builder: (context) => YumMain(),
+            ),
           );
         } else if (yumLogin == 400) {
           setState(() {

@@ -1,7 +1,7 @@
 import 'package:deanora/http/customException.dart';
-import 'package:deanora/object/assignment.dart';
-import 'package:deanora/object/lecture.dart';
-import 'package:deanora/object/user.dart';
+import 'package:deanora/model/assignment.dart';
+import 'package:deanora/model/lecture.dart';
+import 'package:deanora/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;

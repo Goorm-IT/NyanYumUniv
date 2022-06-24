@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class StarRating extends StatelessWidget {
   bool isChecked;
+
   StarRating({required this.isChecked, Key? key}) : super(key: key);
 
   @override

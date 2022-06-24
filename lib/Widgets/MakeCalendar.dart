@@ -1,4 +1,4 @@
-import 'package:deanora/object/AcademinCalendar.dart';
+import 'package:deanora/model/AcademinCalendar.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 
@@ -63,8 +63,7 @@ class CustomCalendar {
 
   List<Calendar> getMonthCalendar(int month, int year,
       {StartWeekDay startWeekDay = StartWeekDay.sunday}) {
-    if (month < 1 || month > 12)
-      throw ArgumentError('Invalid year or month');
+    if (month < 1 || month > 12) throw ArgumentError('Invalid year or month');
 
     List<Calendar> calendar = [];
     final List<Color> _colors = [

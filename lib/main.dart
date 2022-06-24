@@ -1,3 +1,4 @@
+import 'package:deanora/provider/storeInfo_provider.dart';
 import 'package:deanora/screen/MyMenu.dart';
 import 'package:deanora/screen/yumScreen/yumSignUpScreen/naver_login.dart';
 import 'package:deanora/screen/yumScreen/naver_login_test.dart';
@@ -5,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -28,7 +30,10 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
   // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
-  runApp(MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(
+        create: (BuildContext context) => StoreInfoProvider()),
+  ], child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {

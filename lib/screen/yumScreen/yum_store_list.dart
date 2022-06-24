@@ -1,7 +1,7 @@
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
-import 'package:deanora/object/yum_category_type.dart';
-import 'package:deanora/object/yum_store_list_composition.dart';
+import 'package:deanora/model/yum_category_type.dart';
+import 'package:deanora/model/yum_store_list_composition.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_store_list_item.dart';
 import 'package:deanora/screen/yumScreen/yum_store_detail.dart';
@@ -19,7 +19,6 @@ class YumStoreList extends StatefulWidget {
 
 class _YumStoreListState extends State<YumStoreList> {
   late ScrollController _scrollController;
-  List<Widget> asd = [];
   List<StoreComposition> storeList = [];
   int initListLength = 10;
   double offset = 300.0;
@@ -55,13 +54,13 @@ class _YumStoreListState extends State<YumStoreList> {
         setState(() {
           for (int i = 0; i < addstoreList.length; i++) {
             storeList.add(StoreComposition(
-              addstoreList[i]["imagePath"],
-              addstoreList[i]["storeAlias"],
-              addstoreList[i]["score"],
-              addstoreList[i]["commentId"],
-              addstoreList[i]["category"],
-              addstoreList[i]["address"],
-              addstoreList[i]["storeId"],
+              imagePath: addstoreList[i]["imagePath"],
+              storeAlias: addstoreList[i]["storeAlias"],
+              score: addstoreList[i]["score"],
+              commentId: addstoreList[i]["commentId"],
+              category: addstoreList[i]["category"],
+              address: addstoreList[i]["address"],
+              storeId: addstoreList[i]["storeId"],
             ));
           }
 
@@ -81,13 +80,13 @@ class _YumStoreListState extends State<YumStoreList> {
       setState(() {
         for (int i = 0; i < addstoreList.length; i++) {
           storeList.add(StoreComposition(
-            addstoreList[i]["imagePath"],
-            addstoreList[i]["storeAlias"],
-            addstoreList[i]["score"],
-            addstoreList[i]["commentId"],
-            addstoreList[i]["category"],
-            addstoreList[i]["address"],
-            addstoreList[i]["storeId"],
+            imagePath: addstoreList[i]["imagePath"],
+            storeAlias: addstoreList[i]["storeAlias"],
+            score: addstoreList[i]["score"],
+            commentId: addstoreList[i]["commentId"],
+            category: addstoreList[i]["category"],
+            address: addstoreList[i]["address"],
+            storeId: addstoreList[i]["storeId"],
           ));
         }
       });
@@ -209,13 +208,13 @@ class _YumStoreListState extends State<YumStoreList> {
                             if (storeList.isEmpty && checkedCategory == 'ALL') {
                               for (int i = 0; i < snapshot.data.length; i++) {
                                 storeList.add(StoreComposition(
-                                  snapshot.data[i]["imagePath"],
-                                  snapshot.data[i]["storeAlias"],
-                                  snapshot.data[i]["score"],
-                                  snapshot.data[i]["commentId"],
-                                  snapshot.data[i]["category"],
-                                  snapshot.data[i]["address"],
-                                  snapshot.data[i]["storeId"],
+                                  imagePath: snapshot.data[i]["imagePath"],
+                                  storeAlias: snapshot.data[i]["storeAlias"],
+                                  score: snapshot.data[i]["score"],
+                                  commentId: snapshot.data[i]["commentId"],
+                                  category: snapshot.data[i]["category"],
+                                  address: snapshot.data[i]["address"],
+                                  storeId: snapshot.data[i]["storeId"],
                                 ));
                               }
                             }
@@ -250,7 +249,7 @@ class _YumStoreListState extends State<YumStoreList> {
                                           storeAlias:
                                               storeList[index].storeAlias,
                                           score: storeList[index].score,
-                                          commentId: storeList[index].comment,
+                                          storeId: storeList[index].storeId,
                                         ),
                                       ),
                                     );
@@ -277,26 +276,26 @@ class _YumStoreListState extends State<YumStoreList> {
     );
   }
 
-  Future<void> getinitStoreList() async {
-    final yumStorehttp = YumStorehttp();
-    final addstoreList = await yumStorehttp.storeList(1, initListLength);
+  // Future<void> getinitStoreList() async {
+  //   final yumStorehttp = YumStorehttp();
+  //   final addstoreList = await yumStorehttp.storeList(1, initListLength);
 
-    if (addstoreList.isNotEmpty) {
-      setState(() {
-        for (int i = 0; i < addstoreList.length; i++) {
-          storeList.add(StoreComposition(
-            addstoreList[i]["imagePath"],
-            addstoreList[i]["storeAlias"],
-            addstoreList[i]["score"],
-            addstoreList[i]["commentId"],
-            addstoreList[i]["category"],
-            addstoreList[i]["address"],
-            addstoreList[i]["storeId"],
-          ));
-        }
-      });
-    }
-  }
+  //   if (addstoreList.isNotEmpty) {
+  //     setState(() {
+  //       for (int i = 0; i < addstoreList.length; i++) {
+  //         storeList.add(StoreComposition(
+  //           addstoreList[i]["imagePath"],
+  //           addstoreList[i]["storeAlias"],
+  //           addstoreList[i]["score"],
+  //           addstoreList[i]["commentId"],
+  //           addstoreList[i]["category"],
+  //           addstoreList[i]["address"],
+  //           addstoreList[i]["storeId"],
+  //         ));
+  //       }
+  //     });
+  //   }
+  // }
 
   Future<List> getStoreList(int startPageNo, int endPageNo,
       [String category = '']) async {

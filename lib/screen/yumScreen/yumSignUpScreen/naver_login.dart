@@ -101,7 +101,10 @@ class _NaverLoginPageState extends State<NaverLoginPage> {
 
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => YumMain()),
+                            MaterialPageRoute(
+                              builder: (context) => MyYumMain(),
+                              // builder: (context) => YumMain(),
+                            ),
                           );
                         } else if (yumLogin == 400) {
                           Navigator.pushReplacement(

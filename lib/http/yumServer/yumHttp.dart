@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:deanora/http/customException.dart';
-import 'package:deanora/object/yum_user.dart';
+import 'package:deanora/model/yum_store_list_composition.dart';
+import 'package:deanora/model/yum_user.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
@@ -128,6 +129,36 @@ class YumStorehttp {
       _list = jsonDecode(responseBody)['storeList'];
 
       return _list;
+    } else {
+      print('Request failed with status(top5): ${response.statusCode}.');
+      return [];
+    }
+  }
+
+  Future<List<StoreComposition>> storeList2(int startPageNo, int endPageNo,
+      [String category = '']) async {
+    List<dynamic> _list = [];
+    Map<String, dynamic> httpBody = category == ''
+        ? {
+            "startPageNo": startPageNo,
+            "endPageNo": endPageNo,
+          }
+        : {
+            "startPageNo": startPageNo,
+            "endPageNo": endPageNo,
+            "category": category,
+          };
+    final url = Uri.http(yumURL, '/nyu/stores',
+        httpBody.map((key, value) => MapEntry(key, value.toString())));
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+
+      _list = json.decode(responseBody)['storeList'];
+
+      return _list
+          .map<StoreComposition>((item) => StoreComposition.fromJson(item))
+          .toList();
     } else {
       print('Request failed with status(top5): ${response.statusCode}.');
       return [];
