@@ -75,6 +75,7 @@ class _MainImageState extends State<MainImage> {
           ),
         ),
         ThreeButton(
+          isBlack: false,
           isNull: false,
           menuList: widget.menuList,
           storeInfo: widget.storeInfo,

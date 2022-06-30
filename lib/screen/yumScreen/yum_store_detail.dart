@@ -98,6 +98,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                     fontSize: 20, fontWeight: FontWeight.w700),
                               ),
                               ThreeButton(
+                                isBlack: true,
                                 isNull: false,
                                 menuList: menuList,
                                 storeInfo: widget.storeInfo,

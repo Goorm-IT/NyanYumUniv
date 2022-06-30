@@ -2,10 +2,12 @@ import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
 import 'package:deanora/model/yum_category_type.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
+import 'package:deanora/provider/storeInfo_provider.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_store_list_item.dart';
 import 'package:deanora/screen/yumScreen/yum_store_detail.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class YumStoreList extends StatefulWidget {
@@ -23,13 +25,13 @@ class _YumStoreListState extends State<YumStoreList> {
   int initListLength = 10;
   double offset = 300.0;
   bool categoryIsChecked = false;
-  String checkedCategory = "ALL";
+  String checkedCategory = "";
   late BehaviorSubject<int> backButtonToggle;
   int willpop = 0;
   @override
   void initState() {
     super.initState();
-    // getinitStoreList();
+    checkedCategory = "ALL";
     for (int i = 0; i < categorytype.length; i++) {
       if (i == 0) {
         categorytype[i].isChecked = true;
@@ -47,51 +49,23 @@ class _YumStoreListState extends State<YumStoreList> {
   _scrollListener([String category = '']) async {
     if (offset < _scrollController.offset) {
       offset += (widget.availableHeight - 112);
-      List addstoreList = await getStoreList(
-          initListLength + 1, 5, category == 'ALL' ? '' : category);
 
-      if (addstoreList.isNotEmpty) {
-        setState(() {
-          for (int i = 0; i < addstoreList.length; i++) {
-            storeList.add(StoreComposition(
-              imagePath: addstoreList[i]["imagePath"],
-              storeAlias: addstoreList[i]["storeAlias"],
-              score: addstoreList[i]["score"],
-              commentId: addstoreList[i]["commentId"],
-              category: addstoreList[i]["category"],
-              address: addstoreList[i]["address"],
-              storeId: addstoreList[i]["storeId"],
-            ));
-          }
-
-          initListLength += 5;
-        });
-      }
+      _storeInfoProvider.loadStoreInfo(
+          1 + initListLength, 5, category == 'ALL' ? '' : category);
+      initListLength += 5;
     }
   }
 
   changeCategory([String category = '']) async {
-    print(category);
     initListLength = 10;
     offset = 300.0;
-    storeList.clear();
-    List addstoreList = await getStoreList(1, initListLength, category);
-    if (addstoreList.isNotEmpty) {
-      setState(() {
-        for (int i = 0; i < addstoreList.length; i++) {
-          storeList.add(StoreComposition(
-            imagePath: addstoreList[i]["imagePath"],
-            storeAlias: addstoreList[i]["storeAlias"],
-            score: addstoreList[i]["score"],
-            commentId: addstoreList[i]["commentId"],
-            category: addstoreList[i]["category"],
-            address: addstoreList[i]["address"],
-            storeId: addstoreList[i]["storeId"],
-          ));
-        }
-      });
-    }
-    print(storeList.length);
+    setState(() {
+      storeList.clear();
+      storeList = [];
+    });
+    _storeInfoProvider.loadStoreInfo(1, initListLength, category);
+
+    _scrollController.jumpTo(0);
   }
 
   @override
@@ -100,8 +74,14 @@ class _YumStoreListState extends State<YumStoreList> {
     super.dispose();
   }
 
+  late StoreInfoProvider _storeInfoProvider;
   @override
   Widget build(BuildContext context) {
+    _storeInfoProvider = Provider.of<StoreInfoProvider>(context, listen: false);
+    if (checkedCategory == "ALL") {
+      _storeInfoProvider.loadStoreInfo(1, 10);
+    }
+
     return WillPopScope(
       onWillPop: () async {
         print('willpop $willpop');
@@ -120,7 +100,6 @@ class _YumStoreListState extends State<YumStoreList> {
               SafeArea(
                 bottom: false,
                 left: false,
-                right: false,
                 child: Column(
                   children: [
                     SizedBox(
@@ -169,8 +148,10 @@ class _YumStoreListState extends State<YumStoreList> {
                             child: Row(
                               children: categorytype.map((e) {
                                 return GestureDetector(
-                                  onTap: () {
-                                    checkedCategory = e.title;
+                                  onTap: () async {
+                                    setState(() {
+                                      checkedCategory = e.title;
+                                    });
                                     for (int i = 0;
                                         i < categorytype.length;
                                         i++) {
@@ -183,8 +164,8 @@ class _YumStoreListState extends State<YumStoreList> {
                                       });
                                     }
                                     checkedCategory == 'ALL'
-                                        ? changeCategory()
-                                        : changeCategory(checkedCategory);
+                                        ? await changeCategory()
+                                        : await changeCategory(checkedCategory);
                                   },
                                   child: YumCategory(
                                     color: e.color,
@@ -199,66 +180,49 @@ class _YumStoreListState extends State<YumStoreList> {
                     SizedBox(
                       height: 26,
                     ),
-                    FutureBuilder(
-                        future: storeList.isEmpty
-                            ? getStoreList(1, initListLength)
-                            : getStoreList2(),
-                        builder: (futureContext, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            if (storeList.isEmpty && checkedCategory == 'ALL') {
-                              for (int i = 0; i < snapshot.data.length; i++) {
-                                storeList.add(StoreComposition(
-                                  imagePath: snapshot.data[i]["imagePath"],
-                                  storeAlias: snapshot.data[i]["storeAlias"],
-                                  score: snapshot.data[i]["score"],
-                                  commentId: snapshot.data[i]["commentId"],
-                                  category: snapshot.data[i]["category"],
-                                  address: snapshot.data[i]["address"],
-                                  storeId: snapshot.data[i]["storeId"],
-                                ));
-                              }
-                            }
-
-                            return Container(
-                              height: widget.availableHeight - 180,
-                              child: ListView.builder(
-                                  controller: _scrollController,
-                                  itemCount: storeList.length,
-                                  itemBuilder:
-                                      (BuildContext listContext, int index) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                YumStoreDetail(
-                                              storeInfo: storeList[index],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        height:
-                                            (widget.availableHeight - 112) / 5,
-                                        child: StoreListItem(
-                                          height:
-                                              (widget.availableHeight - 112) /
-                                                  5,
-                                          imagePath: storeList[index].imagePath,
-                                          storeAlias:
-                                              storeList[index].storeAlias,
-                                          score: storeList[index].score,
-                                          storeId: storeList[index].storeId,
+                    Consumer<StoreInfoProvider>(
+                        builder: (providercontext, provider, widgets) {
+                      if (provider.storeInfo == [] &&
+                          provider.storeInfo.length < 0) {
+                        return CircularProgressIndicator();
+                      } else {
+                        return Container(
+                          height: widget.availableHeight - 180,
+                          child: ListView.builder(
+                              controller: _scrollController,
+                              itemCount: provider.storeInfo.length,
+                              itemBuilder:
+                                  (BuildContext listContext, int index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => YumStoreDetail(
+                                          storeInfo: provider.storeInfo[index],
                                         ),
                                       ),
                                     );
-                                  }),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        })
+                                  },
+                                  child: Container(
+                                    height: (widget.availableHeight - 112) / 5,
+                                    child: StoreListItem(
+                                      height:
+                                          (widget.availableHeight - 112) / 5,
+                                      imagePath:
+                                          provider.storeInfo[index].imagePath,
+                                      storeAlias:
+                                          provider.storeInfo[index].storeAlias,
+                                      score: provider.storeInfo[index].score,
+                                      storeId:
+                                          provider.storeInfo[index].storeId,
+                                    ),
+                                  ),
+                                );
+                              }),
+                        );
+                      }
+                    })
                   ],
                 ),
               ),
@@ -276,36 +240,11 @@ class _YumStoreListState extends State<YumStoreList> {
     );
   }
 
-  // Future<void> getinitStoreList() async {
-  //   final yumStorehttp = YumStorehttp();
-  //   final addstoreList = await yumStorehttp.storeList(1, initListLength);
-
-  //   if (addstoreList.isNotEmpty) {
-  //     setState(() {
-  //       for (int i = 0; i < addstoreList.length; i++) {
-  //         storeList.add(StoreComposition(
-  //           addstoreList[i]["imagePath"],
-  //           addstoreList[i]["storeAlias"],
-  //           addstoreList[i]["score"],
-  //           addstoreList[i]["commentId"],
-  //           addstoreList[i]["category"],
-  //           addstoreList[i]["address"],
-  //           addstoreList[i]["storeId"],
-  //         ));
-  //       }
-  //     });
-  //   }
-  // }
-
   Future<List> getStoreList(int startPageNo, int endPageNo,
       [String category = '']) async {
     final yumStorehttp = YumStorehttp();
     final storeList =
         await yumStorehttp.storeList(startPageNo, endPageNo, category);
     return storeList;
-  }
-
-  Future<List> getStoreList2() async {
-    return [];
   }
 }

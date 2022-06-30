@@ -174,8 +174,7 @@ class _MyProfileImgState extends State<MyProfileImg>
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => MyYumMain(),
-                                      // builder: (context) => YumMain(),
+                                      builder: (context) => YumMain(),
                                     ),
                                   );
                                 }
@@ -235,8 +234,7 @@ class _MyProfileImgState extends State<MyProfileImg>
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => MyYumMain(),
-                                  // builder: (context) => YumMain(),
+                                  builder: (context) => YumMain(),
                                 ),
                               );
                             },

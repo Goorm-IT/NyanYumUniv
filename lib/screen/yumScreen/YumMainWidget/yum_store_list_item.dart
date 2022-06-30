@@ -2,9 +2,11 @@ import 'dart:ffi';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
+import 'package:deanora/provider/comment_provider.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/gery_border.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/star_score.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class StoreListItem extends StatefulWidget {
   final double height;
@@ -27,15 +29,16 @@ class StoreListItem extends StatefulWidget {
 }
 
 class _StoreListItemState extends State<StoreListItem> {
-  String firstComment = " ";
   @override
   void initState() {
     super.initState();
-    getStoreReview(widget.storeId.toString());
   }
 
+  late CommentProvider _commentProvider;
   @override
   Widget build(BuildContext context) {
+    _commentProvider = Provider.of<CommentProvider>(context, listen: false);
+    _commentProvider.getCommentByStore(widget.storeId.toString());
     return Scaffold(
         body: Row(
       children: [
@@ -85,13 +88,21 @@ class _StoreListItemState extends State<StoreListItem> {
                   StarScore(score: widget.score),
                 ],
               ),
-              Container(
-                margin: const EdgeInsets.only(right: 20.0),
-                child: Text(
-                  '${firstComment}',
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+              FutureBuilder<Object>(
+                  future: getStoreReview(widget.storeId.toString()),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Container(
+                        margin: const EdgeInsets.only(right: 20.0),
+                        child: Text(
+                          snapshot.data.toString(),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
               Container(
                 padding: const EdgeInsets.all(3.0),
                 decoration: greyBorder(5.0),
@@ -107,15 +118,13 @@ class _StoreListItemState extends State<StoreListItem> {
     ));
   }
 
-  Future<void> getStoreReview(String storeId) async {
+  Future<String> getStoreReview(String storeId) async {
     final yumReviewhttp = YumReviewhttp();
     final _list = await yumReviewhttp.commentByStore(storeId);
-    if (mounted) {
-      setState(() {
-        if (_list.isNotEmpty) {
-          firstComment = _list[0]["content"] ?? "";
-        }
-      });
+    if (_list[0].reviewId == -1) {
+      return " ";
+    } else {
+      return _list[0].content;
     }
   }
 }

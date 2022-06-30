@@ -15,11 +15,13 @@ class ThreeButton extends StatefulWidget {
   bool isNull;
   String imagePath;
   List<MenuByStore> menuList;
+  bool isBlack;
   final StoreComposition storeInfo;
   ThreeButton(
       {required this.isNull,
       required this.menuList,
       required this.storeInfo,
+      required this.isBlack,
       this.imagePath = "",
       Key? key})
       : super(key: key);
@@ -388,7 +390,8 @@ class _ThreeButtonState extends State<ThreeButton> {
                 context: context,
               );
             },
-            child: putimg(20.0, 20.0, 'detail_review'),
+            child: putimg(20.0, 20.0,
+                widget.isBlack ? 'detail_review_black' : 'detail_review'),
             style: ElevatedButton.styleFrom(
               primary: Colors.transparent,
               padding: const EdgeInsets.all(0.0),
@@ -403,7 +406,8 @@ class _ThreeButtonState extends State<ThreeButton> {
             onPressed: () {
               print("리뷰");
             },
-            child: putimg(20.0, 20.0, 'detail_like'),
+            child: putimg(20.0, 20.0,
+                widget.isBlack ? 'detail_like_black' : 'detail_like'),
             style: ElevatedButton.styleFrom(
               primary: Colors.transparent,
               padding: const EdgeInsets.all(0.0),
@@ -418,7 +422,8 @@ class _ThreeButtonState extends State<ThreeButton> {
             onPressed: () {
               print("리뷰");
             },
-            child: putimg(20.0, 20.0, 'detail_store'),
+            child: putimg(20.0, 20.0,
+                widget.isBlack ? 'detail_store_black' : 'detail_store'),
             style: ElevatedButton.styleFrom(
               primary: Colors.transparent,
               padding: const EdgeInsets.all(0.0),
