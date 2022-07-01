@@ -256,8 +256,7 @@ class _MyMenuState extends State<MyMenu> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MyYumMain(),
-              // builder: (context) => YumMain(),
+              builder: (context) => YumMain(),
             ),
           );
         } else if (yumLogin == 400) {

@@ -26,7 +26,7 @@ class _NaverMapInDetailState extends State<NaverMapInDetail> {
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(20.0)),
       child: Container(
-        height: 150,
+        height: 180,
         width: MediaQuery.of(context).size.width,
         child: NaverMap(
           onMapCreated: _onMapCreated,

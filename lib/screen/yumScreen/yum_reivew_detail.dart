@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:deanora/Widgets/star_rating.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/review_by_store.dart';
+import 'package:deanora/screen/yumScreen/yum_review_total.dart';
 import 'package:flutter/material.dart';
 
 class YumReviewDetail extends StatefulWidget {
@@ -41,13 +42,36 @@ class _YumReviewDetailState extends State<YumReviewDetail> {
         });
       }
     }
+    for (int i = 0; i < widget.reviewList.length; i++) {
+      print(widget.reviewList[i].content);
+      print(widget.reviewList[i].imagePath);
+    }
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("포토리뷰"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("포토리뷰"),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => YumReviewTotal(
+                          reviewList: widget.reviewList,
+                          menuList: widget.menuList,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text("전체 보기"),
+                ),
+              ],
+            ),
             Stack(
               children: [
                 CarouselSlider(
@@ -58,7 +82,7 @@ class _YumReviewDetailState extends State<YumReviewDetail> {
                       child: CachedNetworkImage(
                         fadeInDuration: const Duration(milliseconds: 1),
                         fadeOutDuration: const Duration(milliseconds: 1),
-                        imageUrl: e.imagePath,
+                        imageUrl: e.imagePath ?? "",
                         fit: BoxFit.fill,
                         placeholder: (context, url) =>
                             Container(color: Colors.grey[20]),

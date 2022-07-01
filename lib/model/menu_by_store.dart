@@ -6,6 +6,21 @@ class MenuByStore<double, String> {
   final double storeId;
   final double cost;
   final double choiceCount;
-  MenuByStore(
-      this.menuId, this.menuAlias, this.storeId, this.cost, this.choiceCount);
+  MenuByStore({
+    required this.menuId,
+    required this.menuAlias,
+    required this.storeId,
+    required this.cost,
+    required this.choiceCount,
+  });
+
+  factory MenuByStore.fromJson(Map<String, dynamic> json) {
+    return MenuByStore(
+      menuId: json["menuId"] as double,
+      menuAlias: json["menuAlias"] as String,
+      storeId: json["storeId"] as double,
+      cost: json["cost"] as double,
+      choiceCount: json["choiceCount"] as double,
+    );
+  }
 }

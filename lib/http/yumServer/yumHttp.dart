@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:deanora/http/customException.dart';
+import 'package:deanora/model/comment_by_store.dart';
+import 'package:deanora/model/menu_by_store.dart';
+import 'package:deanora/model/review_by_store.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
 import 'package:deanora/model/yum_user.dart';
 import 'package:get_it/get_it.dart';
@@ -130,7 +133,7 @@ class YumStorehttp {
 
       return _list;
     } else {
-      print('Request failed with status(top5): ${response.statusCode}.');
+      print('Request failed with status(storeList1): ${response.statusCode}.');
       return [];
     }
   }
@@ -160,7 +163,7 @@ class YumStorehttp {
           .map<StoreComposition>((item) => StoreComposition.fromJson(item))
           .toList();
     } else {
-      print('Request failed with status(top5): ${response.statusCode}.');
+      print('Request failed with status(storeList2): ${response.statusCode}.');
       return [];
     }
   }
@@ -168,14 +171,17 @@ class YumStorehttp {
 
 class YumMenuhttp {
   String yumURL = '54.180.116.149:82';
-  Future<List<dynamic>> menuByStore(String storeId) async {
+  Future<List<MenuByStore>> menuByStore(String storeId) async {
     List<dynamic> _list = [];
     final url = Uri.http(yumURL, '/nyu/menu/store', {"storeId": storeId});
     var response = await http.get(url);
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
       _list = jsonDecode(responseBody)['MenuList'];
-      return _list;
+
+      return _list
+          .map<MenuByStore>((item) => MenuByStore.fromJson(item))
+          .toList();
     } else {
       print('Request failed with status(menuByStore): ${response.statusCode}.');
       return [];
@@ -186,14 +192,17 @@ class YumMenuhttp {
 class YumReviewhttp {
   String yumURL = '54.180.116.149:82';
 
-  Future<List<dynamic>> reviewByStore(String storeId) async {
+  Future<List<ReviewByStore>> reviewByStore(String storeId) async {
     List<dynamic> _list = [];
     final url = Uri.http(yumURL, '/nyu/review/store', {"storeId": storeId});
     var response = await http.get(url);
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
       _list = jsonDecode(responseBody)['reviewList'];
-      return _list;
+
+      return _list
+          .map<ReviewByStore>((item) => ReviewByStore.fromJson(item))
+          .toList();
     } else {
       print(
           'Request failed with status(reviewByStore): ${response.statusCode}.');
@@ -201,17 +210,25 @@ class YumReviewhttp {
     }
   }
 
-  Future<List<dynamic>> commentByStore(String storeId) async {
+  Future<List<CommentByStore>> commentByStore(String storeId) async {
     List<dynamic> _list = [];
     final url = Uri.http(yumURL, '/nyu/review/content', {"storeId": storeId});
     var response = await http.get(url);
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
       _list = jsonDecode(responseBody)['reviewList'];
-      return _list;
+      return _list
+          .map<CommentByStore>((item) => CommentByStore.fromJson(item))
+          .toList();
     } else {
-      print('Request failed with status(top5): ${response.statusCode}.');
-      return [];
+      print(
+          'Request failed with status(commentByStore): ${response.statusCode}.');
+      return [
+        CommentByStore(
+          content: "-1",
+          reviewId: -1,
+        )
+      ];
     }
   }
 

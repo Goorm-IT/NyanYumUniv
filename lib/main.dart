@@ -1,3 +1,6 @@
+import 'package:deanora/provider/comment_provider.dart';
+import 'package:deanora/provider/menu_provider.dart';
+import 'package:deanora/provider/review_provider.dart';
 import 'package:deanora/provider/storeInfo_provider.dart';
 import 'package:deanora/screen/MyMenu.dart';
 import 'package:deanora/screen/yumScreen/yumSignUpScreen/naver_login.dart';
@@ -32,7 +35,17 @@ void main() async {
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
-        create: (BuildContext context) => StoreInfoProvider()),
+      create: (BuildContext context) => StoreInfoProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (BuildContext context) => ReviewProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (BuildContext context) => MenuProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (BuildContext context) => CommentProvider(),
+    ),
   ], child: MyApp()));
 }
 
