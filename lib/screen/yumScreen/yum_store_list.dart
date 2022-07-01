@@ -1,7 +1,10 @@
+import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
 import 'package:deanora/model/yum_category_type.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
+import 'package:deanora/provider/menu_provider.dart';
+import 'package:deanora/provider/review_provider.dart';
 import 'package:deanora/provider/storeInfo_provider.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_store_list_item.dart';
@@ -26,6 +29,7 @@ class _YumStoreListState extends State<YumStoreList> {
   double offset = 300.0;
   bool categoryIsChecked = false;
   String checkedCategory = "";
+  bool _isLoading = false;
   late BehaviorSubject<int> backButtonToggle;
   int willpop = 0;
   @override
@@ -74,10 +78,14 @@ class _YumStoreListState extends State<YumStoreList> {
     super.dispose();
   }
 
+  late MenuProvider _menuProvider;
+  late ReviewProvider _reviewProvider;
   late StoreInfoProvider _storeInfoProvider;
   @override
   Widget build(BuildContext context) {
     _storeInfoProvider = Provider.of<StoreInfoProvider>(context, listen: false);
+    _reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
+    _menuProvider = Provider.of<MenuProvider>(context, listen: false);
     if (checkedCategory == "ALL") {
       _storeInfoProvider.loadStoreInfo(1, 10);
     }
@@ -129,9 +137,8 @@ class _YumStoreListState extends State<YumStoreList> {
                               ),
                             ),
                           ),
-                          Icon(
-                            Icons.close,
-                            color: Colors.black,
+                          Container(
+                            width: 10,
                           ),
                         ],
                       ),
@@ -194,7 +201,19 @@ class _YumStoreListState extends State<YumStoreList> {
                               itemBuilder:
                                   (BuildContext listContext, int index) {
                                 return GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                    await _menuProvider.getMenubyStore(provider
+                                        .storeInfo[index].storeId
+                                        .toString());
+                                    await _reviewProvider.getReviewByStore(
+                                        provider.storeInfo[index].storeId
+                                            .toString());
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -233,6 +252,23 @@ class _YumStoreListState extends State<YumStoreList> {
                 backButtonToggle: backButtonToggle,
                 parentsContext: context,
               ),
+              _isLoading
+                  ? Stack(
+                      children: [
+                        Opacity(
+                          opacity: 0.5,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Center(
+                          child: CustomLoadingImage(),
+                        ),
+                      ],
+                    )
+                  : Container(),
             ],
           ),
         ),

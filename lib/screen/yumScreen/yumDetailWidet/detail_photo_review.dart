@@ -21,11 +21,25 @@ class PhotoReViewIndetail extends StatefulWidget {
 }
 
 class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
+  List<String> imagePathLists = [];
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      for (int i = 0; i < widget.reviewList.length; i++) {
+        if (widget.reviewList[i].imagePath != null) {
+          imagePathLists.add(widget.reviewList[i].imagePath);
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: widget.imagePathList.length > 5
+        children: imagePathLists.length > 5
             ? [0, 1, 2, 3, 4].map((e) {
                 if (e != 4) {
                   return GestureDetector(
@@ -47,7 +61,7 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                       child: CachedNetworkImage(
                         fadeInDuration: const Duration(milliseconds: 100),
                         fadeOutDuration: const Duration(milliseconds: 100),
-                        imageUrl: widget.imagePathList[e],
+                        imageUrl: imagePathLists[e],
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Image.asset(
                           'assets/images/defaultImg.png',
@@ -67,7 +81,7 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                         child: CachedNetworkImage(
                           fadeInDuration: const Duration(milliseconds: 100),
                           fadeOutDuration: const Duration(milliseconds: 100),
-                          imageUrl: widget.imagePathList[e],
+                          imageUrl: imagePathLists[e],
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Image.asset(
                             'assets/images/defaultImg.png',
@@ -108,8 +122,8 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                   );
                 }
               }).toList()
-            : widget.imagePathList.length == 5
-                ? widget.imagePathList.asMap().entries.map((e) {
+            : imagePathLists.length == 5
+                ? imagePathLists.asMap().entries.map((e) {
                     int idx = e.key;
                     String val = e.value;
                     return GestureDetector(
@@ -145,7 +159,7 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                     );
                   }).toList()
                 : [0, 1, 2, 3, 4].map((e) {
-                    if (widget.imagePathList.length > e) {
+                    if (imagePathLists.length > e) {
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -165,7 +179,7 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                           child: CachedNetworkImage(
                             fadeInDuration: const Duration(milliseconds: 100),
                             fadeOutDuration: const Duration(milliseconds: 100),
-                            imageUrl: widget.imagePathList[e],
+                            imageUrl: imagePathLists[e],
                             fit: BoxFit.cover,
                             placeholder: (context, url) => Image.asset(
                               'assets/images/defaultImg.png',
