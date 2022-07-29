@@ -6,6 +6,7 @@ import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/gery_border.dart';
+import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +38,7 @@ class _ThreeButtonState extends State<ThreeButton> {
   int isChecked = 0;
   int _menuId = -1;
   int writeResult = -1;
+  List<bool> isMenuChecked = [];
   void _scrollToTop() {
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
@@ -50,6 +52,9 @@ class _ThreeButtonState extends State<ThreeButton> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {});
+    for (int i = 0; i < widget.menuList.length; i++) {
+      isMenuChecked.add(false);
+    }
   }
 
   @override
@@ -64,7 +69,7 @@ class _ThreeButtonState extends State<ThreeButton> {
             onPressed: () {
               bool isLoading = false;
               isChecked = 0;
-
+              myimage = null;
               showModalBottomSheet(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -201,7 +206,7 @@ class _ThreeButtonState extends State<ThreeButton> {
                                               alignment: Alignment.centerRight,
                                               child: InkWell(
                                                 onTap: () {
-                                                  print("변경추가");
+                                                  showBottomSheet(context);
                                                 },
                                                 child: Material(
                                                   color: Colors.transparent,
@@ -219,7 +224,7 @@ class _ThreeButtonState extends State<ThreeButton> {
                                                       ),
                                                     ),
                                                     child: Text(
-                                                      "사진 변경 / 추가",
+                                                      "사진 변경",
                                                       style: TextStyle(
                                                           color:
                                                               Color(0xff707070),
@@ -274,12 +279,31 @@ class _ThreeButtonState extends State<ThreeButton> {
                                             ),
                                             Text("메뉴 추천"),
                                             Wrap(
-                                              children:
-                                                  widget.menuList.map((e) {
+                                              children: widget.menuList
+                                                  .asMap()
+                                                  .entries
+                                                  .map((e) {
+                                                var val = e.value;
+                                                int idx = e.key;
                                                 return GestureDetector(
                                                   onTap: () {
-                                                    setState(() {
-                                                      _menuId = e.menuId;
+                                                    setModalState(() {
+                                                      _menuId = val.menuId;
+                                                      for (int i = 0;
+                                                          i <
+                                                              isMenuChecked
+                                                                  .length;
+                                                          i++) {
+                                                        setModalState(() {
+                                                          if (idx == i) {
+                                                            isMenuChecked[i] =
+                                                                true;
+                                                          } else {
+                                                            isMenuChecked[i] =
+                                                                false;
+                                                          }
+                                                        });
+                                                      }
                                                     });
                                                   },
                                                   child: Container(
@@ -291,21 +315,23 @@ class _ThreeButtonState extends State<ThreeButton> {
                                                             .symmetric(
                                                         horizontal: 5),
                                                     decoration:
-                                                        greyBorder(10.0),
+                                                        greyBorderNChangeColor(
+                                                            10.0,
+                                                            isMenuChecked[idx]),
                                                     child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .center,
                                                       children: [
                                                         Text(
-                                                          e.menuAlias,
+                                                          val.menuAlias,
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style: TextStyle(
                                                               fontSize: 12),
                                                         ),
                                                         Text(
-                                                          '${e.cost.toString()}원',
+                                                          '${val.cost.toString()}원',
                                                           style: TextStyle(
                                                               fontSize: 7),
                                                         ),

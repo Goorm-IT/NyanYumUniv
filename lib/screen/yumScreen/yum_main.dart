@@ -5,11 +5,21 @@ import 'package:deanora/const/color.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
 import 'package:deanora/model/yum_category_type.dart';
+import 'package:deanora/model/yum_store_list_composition.dart';
+import 'package:deanora/model/yum_top_5.dart';
+import 'package:deanora/provider/menu_provider.dart';
+import 'package:deanora/provider/review_provider.dart';
+import 'package:deanora/provider/storeInfo_provider.dart';
+import 'package:deanora/screen/yumScreen/YumMainWidget/gery_border.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/star_score.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
+import 'package:deanora/screen/yumScreen/YumMainWidget/yum_store_list_item.dart';
 import 'package:deanora/screen/yumScreen/yum_my_profile.dart';
+import 'package:deanora/screen/yumScreen/yum_store_detail.dart';
 import 'package:deanora/screen/yumScreen/yum_store_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class YumMain extends StatefulWidget {
@@ -23,20 +33,41 @@ class _YumMainState extends State<YumMain> {
   var top5Idx = 0;
   late BehaviorSubject<int> backButtonToggle;
   int willpop = 0;
-
+  bool _isLoading = false;
+  String checkedCategory = "";
   @override
   void initState() {
     super.initState();
+    checkedCategory = "ALL";
+    for (int i = 0; i < categorytype.length; i++) {
+      if (i == 0) {
+        categorytype[i].isChecked = true;
+      } else {
+        categorytype[i].isChecked = false;
+      }
+    }
     backButtonToggle = BehaviorSubject.seeded(-1);
   }
 
+  changeCategory([String category = '']) async {
+    _storeInfoProvider.loadStoreInfo(1, 1, category);
+  }
+
+  late ReviewProvider _reviewProvider;
+  late MenuProvider _menuProvider;
+  late StoreInfoProvider _storeInfoProvider;
   Widget build(BuildContext context) {
+    _reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
+    _storeInfoProvider = Provider.of<StoreInfoProvider>(context, listen: false);
+    _menuProvider = Provider.of<MenuProvider>(context, listen: false);
     final searchController = TextEditingController();
     final availableHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.top -
         MediaQuery.of(context).padding.bottom;
-
     final yumStorehttp = YumStorehttp();
+    if (checkedCategory == "ALL") {
+      _storeInfoProvider.loadStoreInfo(1, 10);
+    }
     return WillPopScope(
       onWillPop: () async {
         print('willpop $willpop');
@@ -98,6 +129,9 @@ class _YumMainState extends State<YumMain> {
                         ],
                       )),
                 ),
+                SizedBox(
+                  height: 20,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20),
                   child: Text(
@@ -110,53 +144,78 @@ class _YumMainState extends State<YumMain> {
                 ),
                 FutureBuilder(
                     future: yumStorehttp.storeTop5(),
-                    builder: (futerContext, AsyncSnapshot<List<dynamic>> snap) {
+                    builder: (futerContext,
+                        AsyncSnapshot<List<StoreComposition>> snap) {
                       if (!snap.hasData) {
                         return CustomLoadingImage();
                       }
                       if (snap.hasData && snap.data!.isEmpty) {
                         return Center(child: Text("가게 정보가 없습니다."));
                       }
-                      List top5List = snap.data as List;
+                      List<StoreComposition>? top5List = snap.data;
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CarouselSlider(
-                            items: top5List.map((e) {
+                            items: top5List!.map((e) {
                               return Builder(
-                                builder: (BuildContext context) {
+                                builder: (BuildContext carouselSlidercontext) {
                                   return Container(
                                     margin: EdgeInsets.only(right: 15.0),
-                                    child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                        child: e["imagePath"] != null
-                                            ? Container(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                child: CachedNetworkImage(
-                                                  fadeInDuration:
-                                                      const Duration(
-                                                          milliseconds: 100),
-                                                  fadeOutDuration:
-                                                      const Duration(
-                                                          milliseconds: 100),
-                                                  imageUrl: e["imagePath"],
-                                                  fit: BoxFit.cover,
-                                                  placeholder: (context, url) =>
-                                                      CustomLoadingImage(),
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                          Icon(Icons.error),
-                                                ),
-                                              )
-                                            : Container(
-                                                width: 140,
-                                                child: Image.asset(
-                                                  'assets/images/defaultImg.png',
-                                                ),
-                                              )),
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        setState(() {
+                                          _isLoading = true;
+                                        });
+                                        await _menuProvider.getMenubyStore(
+                                            e.storeId.toString());
+                                        await _reviewProvider.getReviewByStore(
+                                            e.storeId.toString());
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                YumStoreDetail(
+                                              storeInfo: e,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                          child: e.imagePath != null
+                                              ? Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  child: CachedNetworkImage(
+                                                    fadeInDuration:
+                                                        const Duration(
+                                                            milliseconds: 100),
+                                                    fadeOutDuration:
+                                                        const Duration(
+                                                            milliseconds: 100),
+                                                    imageUrl: e.imagePath,
+                                                    fit: BoxFit.cover,
+                                                    placeholder: (context,
+                                                            url) =>
+                                                        CustomLoadingImage(),
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Icon(Icons.error),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  width: 140,
+                                                  child: Image.asset(
+                                                    'assets/images/defaultImg.png',
+                                                  ),
+                                                )),
+                                    ),
                                   );
                                 },
                               );
@@ -181,7 +240,7 @@ class _YumMainState extends State<YumMain> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 18.0),
                               child: Text(
-                                '${top5List[top5Idx]["storeAlias"]}',
+                                '${top5List[top5Idx].storeAlias}',
                                 style: TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.w800),
                               ),
@@ -192,11 +251,23 @@ class _YumMainState extends State<YumMain> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 18.0),
-                            child:
-                                Text('${top5List[top5Idx]["storeAlias"]} 의 한줄평',
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                    )),
+                            child: FutureBuilder<Object>(
+                                future: getStoreReview(
+                                    top5List[top5Idx].storeId.toString()),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return Container(
+                                      margin:
+                                          const EdgeInsets.only(right: 20.0),
+                                      child: Text(
+                                        snapshot.data.toString(),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                }),
                           ),
                           SizedBox(
                             height: 10,
@@ -206,7 +277,7 @@ class _YumMainState extends State<YumMain> {
                             child: Row(
                               children: [
                                 Container(
-                                  decoration: greyBorder(5.0, false),
+                                  decoration: greyBorder(5.0),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 2.0, vertical: 1.0),
@@ -223,12 +294,12 @@ class _YumMainState extends State<YumMain> {
                                   width: 5.0,
                                 ),
                                 Container(
-                                  decoration: greyBorder(5.0, false),
+                                  decoration: greyBorder(5.0),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 2.0, vertical: 1.0),
                                     child: StarScore(
-                                      score: top5List[top5Idx]["score"],
+                                      score: top5List[top5Idx].score,
                                     ),
                                   ),
                                 ),
@@ -286,29 +357,94 @@ class _YumMainState extends State<YumMain> {
                             ),
                           ),
                           SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 18),
-                            child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: categorytype.map((e) {
-                                    return YumCategory(
-                                      color: e.color,
-                                      title: e.title,
-                                      isChecked: false,
-                                    );
-                                  }).toList(),
-                                )),
+                          Container(
+                            height: 25,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 25.0),
+                              child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: categorytype.map((e) {
+                                      return GestureDetector(
+                                        onTap: () async {
+                                          setState(() {
+                                            checkedCategory = e.title;
+                                          });
+                                          for (int i = 0;
+                                              i < categorytype.length;
+                                              i++) {
+                                            setState(() {
+                                              if (e.title ==
+                                                  categorytype[i].title) {
+                                                categorytype[i].isChecked =
+                                                    true;
+                                              } else {
+                                                categorytype[i].isChecked =
+                                                    false;
+                                              }
+                                            });
+                                          }
+                                          checkedCategory == 'ALL'
+                                              ? await changeCategory()
+                                              : await changeCategory(
+                                                  checkedCategory);
+                                        },
+                                        child: YumCategory(
+                                          color: e.color,
+                                          title: e.title,
+                                          isChecked: e.isChecked,
+                                        ),
+                                      );
+                                    }).toList(),
+                                  )),
+                            ),
                           ),
-                          Text("여기 리스트는 어캐 만드는거지..?"),
-                          ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MyProfilePage()));
-                              },
-                              child: Text("임시 마이페이지 버튼"))
+                          SizedBox(height: 20),
+                          Consumer<StoreInfoProvider>(
+                            builder: (providercontext, provider, widgets) {
+                              if (provider.storeInfo != [] &&
+                                  provider.storeInfo.length > 0) {
+                                return GestureDetector(
+                                  onTap: () async {
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                    await _menuProvider.getMenubyStore(provider
+                                        .storeInfo[0].storeId
+                                        .toString());
+                                    await _reviewProvider.getReviewByStore(
+                                        provider.storeInfo[0].storeId
+                                            .toString());
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => YumStoreDetail(
+                                          storeInfo: provider.storeInfo[0],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: (availableHeight - 112) / 5,
+                                    child: StoreListItem(
+                                      height: (availableHeight - 112) / 5,
+                                      imagePath:
+                                          provider.storeInfo[0].imagePath,
+                                      storeAlias:
+                                          provider.storeInfo[0].storeAlias,
+                                      score: provider.storeInfo[0].score,
+                                      storeId: provider.storeInfo[0].storeId,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return Container();
+                              }
+                            },
+                          ),
                         ],
                       );
                     })
@@ -321,9 +457,36 @@ class _YumMainState extends State<YumMain> {
               backButtonToggle: backButtonToggle,
               parentsContext: context,
             ),
+            _isLoading
+                ? Stack(
+                    children: [
+                      Opacity(
+                        opacity: 0.5,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      Center(
+                        child: CustomLoadingImage(),
+                      ),
+                    ],
+                  )
+                : Container(),
           ],
         ),
       )),
     );
+  }
+
+  Future<String> getStoreReview(String storeId) async {
+    final yumReviewhttp = YumReviewhttp();
+    final _list = await yumReviewhttp.commentByStore(storeId);
+    if (_list[0].reviewId == -1) {
+      return "아직 리뷰가 없습니다.";
+    } else {
+      return _list[0].content;
+    }
   }
 }

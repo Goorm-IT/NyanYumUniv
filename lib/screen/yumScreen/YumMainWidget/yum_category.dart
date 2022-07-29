@@ -18,7 +18,7 @@ class YumCategory extends StatelessWidget {
     return Container(
       height: 25,
       margin: const EdgeInsets.only(right: 5.0),
-      decoration: greyBorder(20.0, isChecked),
+      decoration: greyBorderNChangeColor(20.0, isChecked),
       child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -52,7 +52,7 @@ class YumCategory extends StatelessWidget {
   }
 }
 
-BoxDecoration greyBorder(double _radius, bool _isChecked) {
+BoxDecoration greyBorderNChangeColor(double _radius, bool _isChecked) {
   return BoxDecoration(
     borderRadius: BorderRadius.circular(_radius),
     color: _isChecked ? Color(0xffF3F3F5) : Colors.transparent,

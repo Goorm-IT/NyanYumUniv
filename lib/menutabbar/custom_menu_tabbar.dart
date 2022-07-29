@@ -1,6 +1,7 @@
 import 'package:blur/blur.dart';
 import 'package:deanora/const/color.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/MyCalendar.dart';
+import 'package:deanora/screen/yumScreen/yum_my_profile.dart';
 
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -92,6 +93,7 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
     ));
     foodList.add(menuList(
       "마이페이지",
+      MyProfilePage(),
     ));
     foodList.add(menuList(
       "리뷰 작성",
@@ -521,27 +523,6 @@ class _ContainerClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) {
     return true;
-  }
-}
-
-class _MenuList extends StatelessWidget {
-  final String name;
-  final nav;
-  const _MenuList({required this.name, this.nav, Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (nav != null) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => nav));
-        }
-      },
-      child: new Container(
-          child: new Text(name,
-              style: TextStyle(color: Colors.black, fontSize: 18)),
-          margin: EdgeInsets.all(15)),
-    );
   }
 }
 

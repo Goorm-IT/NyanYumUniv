@@ -104,28 +104,32 @@ class _MyProfilePageState extends State<MyProfilePage>
                         //   'assets/images/defaultImg.png',
                         //   width: 100,
                         // ),
-                        child: ClipOval(
-                          child: yumUser.imagePath != null
-                              ? CachedNetworkImage(
-                                  fadeInDuration:
-                                      const Duration(milliseconds: 100),
-                                  fadeOutDuration:
-                                      const Duration(milliseconds: 100),
-                                  imageUrl: yumUser.imagePath.toString(),
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Image.asset(
+                        child: Container(
+                          width: 150,
+                          height: 150,
+                          child: ClipOval(
+                            child: yumUser.imagePath != null
+                                ? CachedNetworkImage(
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 100),
+                                    fadeOutDuration:
+                                        const Duration(milliseconds: 100),
+                                    imageUrl: yumUser.imagePath.toString(),
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Image.asset(
+                                      'assets/images/defaultImg.png',
+                                      width: 110,
+                                      height: 110,
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  )
+                                : Image.asset(
                                     'assets/images/defaultImg.png',
                                     width: 110,
                                     height: 110,
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
-                                )
-                              : Image.asset(
-                                  'assets/images/defaultImg.png',
-                                  width: 110,
-                                  height: 110,
-                                ),
+                          ),
                         ),
                       ),
                       SizedBox(

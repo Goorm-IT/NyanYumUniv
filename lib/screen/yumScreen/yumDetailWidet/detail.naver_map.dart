@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:deanora/model/yum_store_list_composition.dart';
 import 'package:flutter/material.dart';
+
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 
 class NaverMapInDetail extends StatefulWidget {

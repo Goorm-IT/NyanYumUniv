@@ -4,6 +4,7 @@ import 'package:deanora/model/comment_by_store.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/review_by_store.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
+import 'package:deanora/model/yum_top_5.dart';
 import 'package:deanora/model/yum_user.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
@@ -97,14 +98,16 @@ class YumUserHttp {
 class YumStorehttp {
   String yumURL = '54.180.116.149:82';
 
-  Future<List<dynamic>> storeTop5() async {
+  Future<List<StoreComposition>> storeTop5() async {
     List<dynamic> _list = [];
     final url = Uri.http(yumURL, '/nyu/store/monthly');
     var response = await http.get(url);
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
       _list = jsonDecode(responseBody)['storeList'];
-      return _list;
+      return _list
+          .map<StoreComposition>((item) => StoreComposition.fromJson(item))
+          .toList();
     } else {
       print('Request failed with status(top5): ${response.statusCode}.');
       return [];
