@@ -211,6 +211,7 @@ class _YumStoreListState extends State<YumStoreList> {
                                     await _reviewProvider.getReviewByStore(
                                         provider.storeInfo[index].storeId
                                             .toString());
+
                                     setState(() {
                                       _isLoading = false;
                                     });

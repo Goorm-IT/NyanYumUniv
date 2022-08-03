@@ -14,10 +14,12 @@ import 'package:deanora/screen/yumScreen/yumDetailWidet/detail_three_button.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'YumMainWidget/gery_border.dart';
 
 class YumStoreDetail extends StatefulWidget {
   final StoreComposition storeInfo;
+
   const YumStoreDetail({required this.storeInfo, Key? key}) : super(key: key);
 
   @override
@@ -25,7 +27,7 @@ class YumStoreDetail extends StatefulWidget {
 }
 
 class _YumStoreDetailState extends State<YumStoreDetail> {
-  final AsyncMemoizer _memoizer = AsyncMemoizer();
+  late BehaviorSubject<int> _isLike;
   List<ReviewByStore> reviewList = [];
   List<MenuByStore> menuList = [];
   List<MenuByStore> recommendList = [];
@@ -52,6 +54,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {});
+    _isLike = BehaviorSubject.seeded(0);
   }
 
   @override
@@ -97,6 +100,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                               isNull: false,
                               menuList: menuProvider.menu,
                               storeInfo: widget.storeInfo,
+                              isLike: _isLike,
                             ),
                           ],
                         ),
@@ -115,12 +119,14 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                   isNull: true,
                                   menuList: menuProvider.menu,
                                   storeInfo: widget.storeInfo,
+                                  isLike: _isLike,
                                 )
                               : MainImage(
                                   isNull: false,
                                   menuList: menuProvider.menu,
                                   storeInfo: widget.storeInfo,
                                   imagePath: widget.storeInfo.imagePath,
+                                  isLike: _isLike,
                                 ),
                           SizedBox(
                             height: 30,

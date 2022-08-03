@@ -3,16 +3,20 @@ import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
 import 'package:deanora/screen/yumScreen/yumDetailWidet/detail_three_button.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class MainImage extends StatefulWidget {
   bool isNull;
+
   String imagePath;
   List<MenuByStore> menuList;
+  BehaviorSubject<int> isLike;
   final StoreComposition storeInfo;
   MainImage(
       {required this.isNull,
       required this.menuList,
       required this.storeInfo,
+      required this.isLike,
       this.imagePath = "",
       Key? key})
       : super(key: key);
@@ -79,6 +83,7 @@ class _MainImageState extends State<MainImage> {
           isNull: false,
           menuList: widget.menuList,
           storeInfo: widget.storeInfo,
+          isLike: widget.isLike,
         ),
       ],
     );
