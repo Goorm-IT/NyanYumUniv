@@ -171,6 +171,7 @@ class _YumMainState extends State<YumMain> {
                                             e.storeId.toString());
                                         await _reviewProvider.getReviewByStore(
                                             e.storeId.toString());
+
                                         setState(() {
                                           _isLoading = false;
                                         });
@@ -415,6 +416,7 @@ class _YumMainState extends State<YumMain> {
                                     await _reviewProvider.getReviewByStore(
                                         provider.storeInfo[0].storeId
                                             .toString());
+
                                     setState(() {
                                       _isLoading = false;
                                     });

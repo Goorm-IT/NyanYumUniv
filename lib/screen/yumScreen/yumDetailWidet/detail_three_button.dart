@@ -1,7 +1,8 @@
 import 'dart:io';
-
+import 'package:async/async.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/Widgets/star_rating.dart';
+import 'package:deanora/const/color.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
@@ -11,18 +12,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ThreeButton extends StatefulWidget {
   bool isNull;
+
   String imagePath;
   List<MenuByStore> menuList;
   bool isBlack;
+  BehaviorSubject<int> isLike;
   final StoreComposition storeInfo;
   ThreeButton(
       {required this.isNull,
       required this.menuList,
       required this.storeInfo,
       required this.isBlack,
+      required this.isLike,
       this.imagePath = "",
       Key? key})
       : super(key: key);
@@ -31,13 +36,22 @@ class ThreeButton extends StatefulWidget {
   State<ThreeButton> createState() => _ThreeButtonState();
 }
 
-class _ThreeButtonState extends State<ThreeButton> {
+class _ThreeButtonState extends State<ThreeButton>
+    with SingleTickerProviderStateMixin {
+  final AsyncMemoizer<int> _memoizer1 = AsyncMemoizer();
+  final AsyncMemoizer<int> _memoizer2 = AsyncMemoizer();
+
   final ScrollController _scrollController = ScrollController();
   final _content = TextEditingController();
   File? myimage;
   int isChecked = 0;
   int _menuId = -1;
   int writeResult = -1;
+  bool isLikeLoading = false;
+  bool isSaveLoading = false;
+  late AnimationController isLikeAnimationController;
+
+  late BehaviorSubject<int> _isSave;
   List<bool> isMenuChecked = [];
   void _scrollToTop() {
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -49,8 +63,40 @@ class _ThreeButtonState extends State<ThreeButton> {
   }
 
   @override
+  void dispose() {
+    isLikeAnimationController.dispose();
+    widget.isLike.close();
+    _isSave.close();
+    super.dispose();
+  }
+
+  getlikeinit() {
+    return this._memoizer1.runOnce(() async {
+      LikeApi likeApi = LikeApi();
+      int tmp = await likeApi.checkLike(widget.storeInfo.storeId.toString());
+      widget.isLike.sink.add(tmp);
+      return tmp;
+    });
+  }
+
+  getsaveinit() {
+    return this._memoizer2.runOnce(() async {
+      LikeApi likeApi = LikeApi();
+      int tmp = await likeApi.checkLike(widget.storeInfo.storeId.toString());
+      _isSave.sink.add(tmp);
+      return tmp;
+    });
+  }
+
+  @override
   void initState() {
     super.initState();
+
+    _isSave = BehaviorSubject.seeded(0);
+    isLikeAnimationController =
+        AnimationController(duration: new Duration(seconds: 2), vsync: this);
+    isLikeAnimationController.repeat(reverse: true);
+
     _scrollController.addListener(() {});
     for (int i = 0; i < widget.menuList.length; i++) {
       isMenuChecked.add(false);
@@ -425,38 +471,114 @@ class _ThreeButtonState extends State<ThreeButton> {
             ),
           ),
         ),
-        Container(
-          width: 28,
-          height: 40,
-          child: ElevatedButton(
-            onPressed: () {
-              print("리뷰");
-            },
-            child: putimg(20.0, 20.0,
-                widget.isBlack ? 'detail_like_black' : 'detail_like'),
-            style: ElevatedButton.styleFrom(
-              primary: Colors.transparent,
-              padding: const EdgeInsets.all(0.0),
-              shadowColor: Colors.transparent,
-            ),
-          ),
-        ),
-        Container(
-          width: 30,
-          height: 28,
-          child: ElevatedButton(
-            onPressed: () {
-              print("리뷰");
-            },
-            child: putimg(20.0, 20.0,
-                widget.isBlack ? 'detail_store_black' : 'detail_store'),
-            style: ElevatedButton.styleFrom(
-              primary: Colors.transparent,
-              padding: const EdgeInsets.all(0.0),
-              shadowColor: Colors.transparent,
-            ),
-          ),
-        ),
+        FutureBuilder(
+            future: getlikeinit(),
+            builder: (futurecontext, AsyncSnapshot<int> futuresnapshot) {
+              if (futuresnapshot.hasData) {
+                return StreamBuilder(
+                    stream: widget.isLike.stream,
+                    builder: (context, snapshot) {
+                      return Container(
+                        width: 28,
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            isLikeLoading = true;
+                            LikeApi likeApi = LikeApi();
+                            await likeApi
+                                .likeOnOff(widget.storeInfo.storeId.toString());
+                            int tmp = await likeApi
+                                .checkLike(widget.storeInfo.storeId.toString());
+                            widget.isLike.sink.add(tmp);
+
+                            isLikeLoading = false;
+                          },
+                          child: isLikeLoading
+                              ? Container(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.0,
+                                    valueColor: isLikeAnimationController.drive(
+                                        ColorTween(
+                                            begin: PRIMARY_COLOR_DEEP,
+                                            end: Colors.red)),
+                                  ),
+                                )
+                              : putimg(
+                                  20.0,
+                                  20.0,
+                                  widget.isLike.value == 1
+                                      ? 'detail_like_color'
+                                      : widget.isBlack
+                                          ? 'detail_like_black'
+                                          : 'detail_like'),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.transparent,
+                            padding: const EdgeInsets.all(0.0),
+                            shadowColor: Colors.transparent,
+                          ),
+                        ),
+                      );
+                    });
+              } else {
+                return Container();
+              }
+            }),
+        // FutureBuilder(
+        //     future: getsaveinit(),
+        //     builder: (futurecontext, AsyncSnapshot<int> futuresnapshot) {
+        //       if (futuresnapshot.hasData) {
+        //         return StreamBuilder(
+        //             stream: _isSave.stream,
+        //             builder: (context, snapshot) {
+        //               return Container(
+        //                 width: 28,
+        //                 height: 40,
+        //                 child: ElevatedButton(
+        //                   onPressed: () async {
+        //                     isSaveLoading = true;
+        //                     LikeApi likeApi = LikeApi();
+        //                     await likeApi
+        //                         .likeOnOff(widget.storeInfo.storeId.toString());
+        //                     int tmp = await likeApi
+        //                         .checkLike(widget.storeInfo.storeId.toString());
+        //                     _isSave.sink.add(tmp);
+
+        //                     isSaveLoading = false;
+        //                   },
+        //                   child: isSaveLoading
+        //                       ? Container(
+        //                           width: 20,
+        //                           height: 20,
+        //                           child: CircularProgressIndicator(
+        //                             strokeWidth: 2.0,
+        //                             valueColor: isLikeAnimationController.drive(
+        //                                 ColorTween(
+        //                                     begin: PRIMARY_COLOR_DEEP,
+        //                                     end: Colors.red)),
+        //                           ),
+        //                         )
+        //                       : putimg(
+        //                           20.0,
+        //                           20.0,
+        //                           _isSave.value == 1
+        //                               ? 'detail_store_color'
+        //                               : widget.isBlack
+        //                                   ? 'detail_store_black'
+        //                                   : 'detail_store'),
+        //                   style: ElevatedButton.styleFrom(
+        //                     primary: Colors.transparent,
+        //                     padding: const EdgeInsets.all(0.0),
+        //                     shadowColor: Colors.transparent,
+        //                   ),
+        //                 ),
+        //               );
+        //             });
+        //       } else {
+        //         return Container();
+        //       }
+        //     }),
       ],
     );
   }

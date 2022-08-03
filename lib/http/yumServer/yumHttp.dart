@@ -257,6 +257,38 @@ class YumReviewhttp {
   }
 }
 
+class LikeApi {
+  String yumURL = '54.180.116.149:82';
+
+  Future<int> likeOnOff(String storeId) async {
+    final url = Uri.http(yumURL, '/nyu/like', {"storeId": storeId});
+    var response = await http.put(url, headers: {'Cookie': _cookie});
+    return (jsonDecode(response.body)["status"]);
+  }
+
+  Future<int> checkLike(String storeId) async {
+    final url = Uri.http(yumURL, '/nyu/like', {"storeId": storeId});
+    var response = await http.get(url, headers: {'Cookie': _cookie});
+    return (jsonDecode(response.body)["show"]);
+  }
+}
+
+class SaveApi {
+  String yumURL = '54.180.116.149:82';
+
+  Future<int> saveOnOff(String storeId) async {
+    final url = Uri.http(yumURL, '/nyu/save', {"storeId": storeId});
+    var response = await http.put(url, headers: {'Cookie': _cookie});
+    return (jsonDecode(response.body)["status"]);
+  }
+
+  Future<int> checkSave(String storeId) async {
+    final url = Uri.http(yumURL, '/nyu/save', {"storeId": storeId});
+    var response = await http.get(url, headers: {'Cookie': _cookie});
+    return (jsonDecode(response.body)["show"]);
+  }
+}
+
 class NaverOpneApi {
   String naverUrl = "https://openapi.naver.com";
   Future<List> naverSearchLocal(String title) async {
