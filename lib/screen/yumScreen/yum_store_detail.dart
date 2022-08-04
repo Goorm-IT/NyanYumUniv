@@ -11,7 +11,9 @@ import 'package:deanora/screen/yumScreen/yumDetailWidet/detail_comment_list.dart
 import 'package:deanora/screen/yumScreen/yumDetailWidet/detail_main_image.dart';
 import 'package:deanora/screen/yumScreen/yumDetailWidet/detail_photo_review.dart';
 import 'package:deanora/screen/yumScreen/yumDetailWidet/detail_three_button.dart';
+import 'package:deanora/screen/yumScreen/yum_review_notify.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -48,6 +50,13 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
       _scrollController.animateTo(335,
           duration: Duration(milliseconds: 200), curve: Curves.ease);
     });
+  }
+
+  @override
+  void dispose() {
+    _isLike.close();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -175,7 +184,34 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                     SizedBox(
                                       height: 12,
                                     ),
-                                    subTitle("한줄평"),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        subTitle("한줄평"),
+                                        SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            YumReviewNotify()));
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                  padding:
+                                                      const EdgeInsets.all(0),
+                                                  shadowColor:
+                                                      Colors.transparent,
+                                                  onPrimary: Colors.grey,
+                                                  primary: Colors.transparent),
+                                              child: putimg(
+                                                  15.0, 15.0, 'notifyButton')),
+                                        ),
+                                      ],
+                                    ),
                                     SizedBox(
                                       height: 12,
                                     ),
