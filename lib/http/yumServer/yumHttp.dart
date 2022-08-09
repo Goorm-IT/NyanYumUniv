@@ -190,6 +190,28 @@ class YumMenuhttp {
       return [];
     }
   }
+
+  Future<int> addMenu(
+      {required int cost,
+      required String menuAlias,
+      required String storeId}) async {
+    var headers = {'Cookie': _cookie};
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            'http://54.180.116.149:82/nyu/menu?cost=$cost&menuAlias=$menuAlias&storeId=$storeId'));
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
+    }
+    return response.statusCode;
+  }
 }
 
 class YumReviewhttp {

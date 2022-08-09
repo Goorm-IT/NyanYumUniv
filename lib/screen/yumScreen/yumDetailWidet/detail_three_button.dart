@@ -44,6 +44,8 @@ class _ThreeButtonState extends State<ThreeButton>
 
   final ScrollController _scrollController = ScrollController();
   final _content = TextEditingController();
+  TextEditingController addMenuAlias = TextEditingController();
+  TextEditingController addMenuCost = TextEditingController();
   File? myimage;
   int isChecked = 0;
   int _menuId = -1;
@@ -51,7 +53,6 @@ class _ThreeButtonState extends State<ThreeButton>
   bool isLikeLoading = false;
   bool isSaveLoading = false;
   late AnimationController isLikeAnimationController;
-
   late BehaviorSubject<int> _isSave;
   List<bool> isMenuChecked = [];
   void _scrollToTop() {
@@ -66,6 +67,8 @@ class _ThreeButtonState extends State<ThreeButton>
   @override
   void dispose() {
     isLikeAnimationController.dispose();
+    addMenuAlias.dispose();
+    addMenuCost.dispose();
     _isSave.close();
     super.dispose();
   }
@@ -105,6 +108,37 @@ class _ThreeButtonState extends State<ThreeButton>
 
   @override
   Widget build(BuildContext context) {
+    List<DropdownMenuItem<String>> items = [];
+    String? dropinit = "";
+    if (widget.menuList.length > 3) {
+      items.clear();
+      for (int i = 0; i < widget.menuList.length; i++) {
+        items.add(DropdownMenuItem(
+          child: Container(
+            width: 80,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  widget.menuList[i].menuAlias,
+                  style: TextStyle(fontSize: 12),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  '${widget.menuList[i].cost.toString()}원',
+                  style: TextStyle(fontSize: 7),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                )
+              ],
+            ),
+          ),
+          value: i.toString(),
+        ));
+      }
+      dropinit = items[0].value.toString();
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -166,363 +200,633 @@ class _ThreeButtonState extends State<ThreeButton>
                       );
                     }
 
-                    return !isLoading
-                        ? GestureDetector(
-                            onTap: () => FocusScope.of(context).unfocus(),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(top: 35),
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.85,
-                                  padding: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context)
-                                          .viewInsets
-                                          .bottom),
-                                  child: SingleChildScrollView(
-                                      controller: _scrollController,
-                                      child: Container(
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 25.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.centerRight,
-                                              child: IconButton(
-                                                padding:
-                                                    const EdgeInsets.all(0.0),
-                                                splashRadius: 20.0,
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                icon: Icon(Icons.close_sharp),
-                                              ),
-                                            ),
-                                            Align(
-                                              alignment: Alignment.topCenter,
-                                              child: Text(
-                                                "리뷰하기",
-                                                style: TextStyle(fontSize: 23),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 25,
-                                            ),
-                                            Container(
-                                              child: Center(
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    putimg(18.0, 18.0,
-                                                        "write_review_location"),
-                                                    Text(
-                                                      "  가게 찾기",
-                                                      style: TextStyle(
-                                                          color:
-                                                              Color(0xff707070),
-                                                          fontSize: 12.0),
-                                                    ),
-                                                  ],
+                    if (!isLoading) {
+                      return GestureDetector(
+                        onTap: () => FocusScope.of(context).unfocus(),
+                        child: Stack(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(top: 35),
+                              height: MediaQuery.of(context).size.height * 0.85,
+                              padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
+                              child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 25.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: IconButton(
+                                            padding: const EdgeInsets.all(0.0),
+                                            splashRadius: 20.0,
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            icon: Icon(Icons.close_sharp),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.topCenter,
+                                          child: Text(
+                                            "리뷰하기",
+                                            style: TextStyle(fontSize: 23),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 25,
+                                        ),
+                                        Container(
+                                          child: Center(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                putimg(18.0, 18.0,
+                                                    "write_review_location"),
+                                                Text(
+                                                  "  가게 찾기",
+                                                  style: TextStyle(
+                                                      color: Color(0xff707070),
+                                                      fontSize: 12.0),
                                                 ),
-                                              ),
-                                              height: 40.0,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              decoration: greyBorder(20.0),
+                                              ],
                                             ),
-                                            SizedBox(height: 15),
-                                            GestureDetector(
-                                              onTap: () {
-                                                showBottomSheet(context);
-                                              },
-                                              child: Container(
-                                                height: 310,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                decoration: greyBorder(15.0),
-                                                child: Center(
-                                                  child: myimage == null
-                                                      ? Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            putimg(25.0, 25.0,
-                                                                "write_review_photo"),
-                                                            SizedBox(
-                                                              height: 10,
-                                                            ),
-                                                            Text(
-                                                              "사진추가",
-                                                              style: TextStyle(
-                                                                  color: Color(
-                                                                      0xff707070),
-                                                                  fontSize:
-                                                                      12.0),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      15.0),
-                                                          child: Image.file(
-                                                            File(myimage!.path),
-                                                            width:
-                                                                MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width,
-                                                            height: 310,
-                                                            fit: BoxFit.cover,
-                                                          ),
-                                                        ),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(height: 5),
-                                            Align(
-                                              alignment: Alignment.centerRight,
-                                              child: InkWell(
-                                                onTap: () {
-                                                  showBottomSheet(context);
-                                                },
-                                                child: Material(
-                                                  color: Colors.transparent,
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            right: 15),
-                                                    decoration: BoxDecoration(
-                                                      border: Border(
-                                                        bottom: BorderSide(
-                                                          color:
-                                                              Color(0xff707070),
-                                                          width: 0.5,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    child: Text(
-                                                      "사진 변경",
-                                                      style: TextStyle(
-                                                          color:
-                                                              Color(0xff707070),
-                                                          fontSize: 12.0,
-                                                          letterSpacing: -0.5),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 15,
-                                            ),
-                                            Text(
-                                              "한줄평",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            SizedBox(
-                                              height: 16,
-                                            ),
-                                            SizedBox(
-                                              height: 95,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              child: TextField(
-                                                controller: _content,
-                                                onTap: () {
-                                                  _scrollToTop();
-                                                },
-                                                maxLines: 10,
-                                                decoration: InputDecoration(
-                                                  hintStyle: TextStyle(
-                                                      color: Color(0xffD6D6D6),
-                                                      fontSize: 13.0),
-                                                  hintText: "20자 이상 작성해주세요",
-                                                  enabledBorder:
-                                                      UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                      color: Color(0xfff4f4f6),
-                                                    ),
-                                                  ),
-                                                  focusedBorder:
-                                                      UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                      color: Color(0xfff4f4f6),
-                                                    ),
-                                                  ),
-                                                  fillColor: Color(0xfff4f4f6),
-                                                  filled: true,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 30,
-                                            ),
-                                            Text(
-                                              "메뉴 추천",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            SizedBox(
-                                              height: 15,
-                                            ),
-                                            Wrap(
-                                              children: widget.menuList
-                                                  .asMap()
-                                                  .entries
-                                                  .map((e) {
-                                                var val = e.value;
-                                                int idx = e.key;
-                                                return GestureDetector(
-                                                  onTap: () {
-                                                    setModalState(() {
-                                                      _menuId = val.menuId;
-                                                      for (int i = 0;
-                                                          i <
-                                                              isMenuChecked
-                                                                  .length;
-                                                          i++) {
-                                                        setModalState(() {
-                                                          if (idx == i) {
-                                                            isMenuChecked[i] =
-                                                                true;
-                                                          } else {
-                                                            isMenuChecked[i] =
-                                                                false;
-                                                          }
-                                                        });
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    height: 35,
-                                                    width: 90,
-                                                    margin:
-                                                        const EdgeInsets.all(5),
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 5),
-                                                    decoration:
-                                                        greyBorderNChangeColor(
-                                                            5.0,
-                                                            isMenuChecked[idx]),
-                                                    child: Column(
+                                          ),
+                                          height: 40.0,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          decoration: greyBorder(20.0),
+                                        ),
+                                        SizedBox(height: 15),
+                                        GestureDetector(
+                                          onTap: () {
+                                            showBottomSheet(context);
+                                          },
+                                          child: Container(
+                                            height: 310,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            decoration: greyBorder(15.0),
+                                            child: Center(
+                                              child: myimage == null
+                                                  ? Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .center,
                                                       children: [
-                                                        Text(
-                                                          val.menuAlias,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                              fontSize: 12),
+                                                        putimg(25.0, 25.0,
+                                                            "write_review_photo"),
+                                                        SizedBox(
+                                                          height: 10,
                                                         ),
                                                         Text(
-                                                          '${val.cost.toString()}원',
+                                                          "사진추가",
                                                           style: TextStyle(
-                                                              fontSize: 7),
+                                                              color: Color(
+                                                                  0xff707070),
+                                                              fontSize: 12.0),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15.0),
+                                                      child: Image.file(
+                                                        File(myimage!.path),
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                        height: 310,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Material(
+                                            child: InkWell(
+                                              onTap: () {
+                                                showBottomSheet(context);
+                                              },
+                                              child: Material(
+                                                color: Colors.transparent,
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      right: 15),
+                                                  decoration: BoxDecoration(
+                                                    border: Border(
+                                                      bottom: BorderSide(
+                                                        color:
+                                                            Color(0xff707070),
+                                                        width: 0.5,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    "사진 변경",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xff707070),
+                                                        fontSize: 12.0,
+                                                        letterSpacing: -0.5),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        Text(
+                                          "한줄평",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        SizedBox(
+                                          height: 95,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: TextField(
+                                            controller: _content,
+                                            onTap: () {
+                                              _scrollToTop();
+                                            },
+                                            maxLines: 10,
+                                            decoration: InputDecoration(
+                                              hintStyle: TextStyle(
+                                                  color: Color(0xffD6D6D6),
+                                                  fontSize: 13.0),
+                                              hintText: "20자 이상 작성해주세요",
+                                              enabledBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color(0xfff4f4f6),
+                                                ),
+                                              ),
+                                              focusedBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color(0xfff4f4f6),
+                                                ),
+                                              ),
+                                              fillColor: Color(0xfff4f4f6),
+                                              filled: true,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 30,
+                                        ),
+                                        Text(
+                                          "메뉴 추천",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        if (widget.menuList.length == 0)
+                                          Center(child: Text("등록된 메뉴가 없습니다"))
+                                        else if (widget.menuList.length <= 3)
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: widget.menuList
+                                                .asMap()
+                                                .entries
+                                                .map((e) {
+                                              var val = e.value;
+                                              int idx = e.key;
+
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  setModalState(() {
+                                                    _menuId = val.menuId;
+                                                    for (int i = 0;
+                                                        i <
+                                                            isMenuChecked
+                                                                .length;
+                                                        i++) {
+                                                      setModalState(() {
+                                                        if (idx == i) {
+                                                          isMenuChecked[i] =
+                                                              true;
+                                                        } else {
+                                                          isMenuChecked[i] =
+                                                              false;
+                                                        }
+                                                      });
+                                                    }
+                                                  });
+                                                },
+                                                child: Container(
+                                                  height: 35,
+                                                  width: 90,
+                                                  margin:
+                                                      const EdgeInsets.all(5),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(horizontal: 5),
+                                                  decoration:
+                                                      greyBorderNChangeColor(
+                                                          5.0,
+                                                          isMenuChecked[idx]),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        val.menuAlias,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: 12),
+                                                      ),
+                                                      Text(
+                                                        '${val.cost.toString()}원',
+                                                        style: TextStyle(
+                                                            fontSize: 7),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          )
+                                        else if (widget.menuList.length > 3)
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                height: 35,
+                                                width: 90,
+                                                margin: const EdgeInsets.all(5),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5),
+                                                decoration:
+                                                    greyBorderNChangeColor(
+                                                        5.0, isMenuChecked[0]),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      widget.menuList[0]
+                                                          .menuAlias,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                    Text(
+                                                      '${widget.menuList[0].cost.toString()}원',
+                                                      style: TextStyle(
+                                                          fontSize: 7),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                height: 35,
+                                                width: 90,
+                                                margin: const EdgeInsets.all(5),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5),
+                                                decoration:
+                                                    greyBorderNChangeColor(
+                                                        5.0, isMenuChecked[1]),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      widget.menuList[1]
+                                                          .menuAlias,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                    Text(
+                                                      '${widget.menuList[1].cost.toString()}원',
+                                                      style: TextStyle(
+                                                          fontSize: 7),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                height: 35,
+                                                decoration: greyBorder(5),
+                                                child: DropdownButton(
+                                                  value: dropinit,
+                                                  underline: SizedBox(),
+                                                  items: items,
+                                                  onChanged: (String? str) {
+                                                    setModalState(() {
+                                                      dropinit = str;
+                                                    });
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Material(
+                                          color: Color(0xffF3F3F5),
+                                          child: InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        AlertDialog(
+                                                  contentPadding:
+                                                      const EdgeInsets.only(
+                                                          top: 23, bottom: 10),
+                                                  buttonPadding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(0, 0, 0, 8),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  18))),
+                                                  content: Container(
+                                                    width: 300,
+                                                    height: 100,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: [
+                                                        Text("메뉴 추가"),
+                                                        SizedBox(
+                                                          height: 21,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Container(
+                                                                width: 100,
+                                                                child:
+                                                                    TextField(
+                                                                  controller:
+                                                                      addMenuAlias,
+                                                                  maxLines: 1,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  decoration:
+                                                                      InputDecoration(
+                                                                    hintStyle: TextStyle(
+                                                                        color: Color(
+                                                                            0xffD6D6D6),
+                                                                        fontSize:
+                                                                            13.0),
+                                                                    hintText:
+                                                                        "음식명",
+                                                                    enabledBorder:
+                                                                        UnderlineInputBorder(
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: Color(
+                                                                            0xfff4f4f6),
+                                                                      ),
+                                                                    ),
+                                                                    focusedBorder:
+                                                                        UnderlineInputBorder(
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: Color(
+                                                                            0xfff4f4f6),
+                                                                      ),
+                                                                    ),
+                                                                    fillColor:
+                                                                        Color(
+                                                                            0xfff4f4f6),
+                                                                    filled:
+                                                                        true,
+                                                                  ),
+                                                                )),
+                                                            SizedBox(
+                                                              width: 20,
+                                                            ),
+                                                            Container(
+                                                                width: 100,
+                                                                child:
+                                                                    TextField(
+                                                                  controller:
+                                                                      addMenuCost,
+                                                                  keyboardType:
+                                                                      TextInputType
+                                                                          .number,
+                                                                  maxLines: 1,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  decoration:
+                                                                      InputDecoration(
+                                                                    suffixText:
+                                                                        "원",
+                                                                    suffixStyle:
+                                                                        TextStyle(
+                                                                            color:
+                                                                                Colors.black),
+                                                                    hintStyle: TextStyle(
+                                                                        color: Color(
+                                                                            0xffD6D6D6),
+                                                                        fontSize:
+                                                                            13.0),
+                                                                    hintText:
+                                                                        "가격",
+                                                                    enabledBorder:
+                                                                        UnderlineInputBorder(
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: Color(
+                                                                            0xfff4f4f6),
+                                                                      ),
+                                                                    ),
+                                                                    focusedBorder:
+                                                                        UnderlineInputBorder(
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                        color: Color(
+                                                                            0xfff4f4f6),
+                                                                      ),
+                                                                    ),
+                                                                    fillColor:
+                                                                        Color(
+                                                                            0xfff4f4f6),
+                                                                    filled:
+                                                                        true,
+                                                                  ),
+                                                                )),
+                                                          ],
                                                         ),
                                                       ],
                                                     ),
                                                   ),
-                                                );
-                                              }).toList(),
-                                            ),
-                                            SizedBox(
+                                                  actions: [
+                                                    Center(
+                                                      child: ElevatedButton(
+                                                          onPressed: () async {
+                                                            if (addMenuCost
+                                                                        .text !=
+                                                                    "" &&
+                                                                addMenuAlias
+                                                                        .text !=
+                                                                    "") {
+                                                              YumMenuhttp
+                                                                  yumMenuhttp =
+                                                                  YumMenuhttp();
+
+                                                              int rst = await yumMenuhttp.addMenu(
+                                                                  cost: int.parse(
+                                                                      addMenuCost
+                                                                          .text),
+                                                                  menuAlias:
+                                                                      addMenuAlias
+                                                                          .text
+                                                                          .toString(),
+                                                                  storeId: widget
+                                                                      .storeInfo
+                                                                      .storeId
+                                                                      .toString());
+                                                              addMenuAlias
+                                                                  .clear();
+                                                              addMenuCost
+                                                                  .clear();
+                                                              Navigator.pop(
+                                                                  context);
+                                                              if (rst == 200) {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      AlertDialog(
+                                                                    content: Text(
+                                                                        '추가 완료'),
+                                                                    actions: [
+                                                                      ElevatedButton(
+                                                                          onPressed: () => Navigator.of(context)
+                                                                              .pop(),
+                                                                          child:
+                                                                              Text('확인')),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              }
+                                                            }
+                                                          },
+                                                          child: Text('추가')),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(),
                                               height: 36,
-                                              child: TextField(
-                                                maxLines: 1,
-                                                textAlign: TextAlign.center,
-                                                decoration: InputDecoration(
-                                                  hintStyle: TextStyle(
-                                                      color: Color(0xffD6D6D6),
-                                                      fontSize: 13.0),
-                                                  hintText: "메뉴  추가하기는 어캐하는거지?",
-                                                  enabledBorder:
-                                                      UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                      color: Color(0xfff4f4f6),
-                                                    ),
-                                                  ),
-                                                  focusedBorder:
-                                                      UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                      color: Color(0xfff4f4f6),
-                                                    ),
-                                                  ),
-                                                  fillColor: Color(0xfff4f4f6),
-                                                  filled: true,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              child: Center(
+                                                child: Text(
+                                                  "메뉴 추가하기",
+                                                  style: TextStyle(
+                                                      color: Color(0xffD6D6D6)),
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(
-                                              height: 24,
-                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 24,
+                                        ),
+                                        Row(
+                                          children: [
                                             Text(
                                               "별점",
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w600),
                                             ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children:
-                                                  [1, 2, 3, 4, 5].map((e) {
-                                                return GestureDetector(
-                                                  onTap: () {
-                                                    setModalState(() {
-                                                      isChecked = e;
-                                                    });
-                                                    print(isChecked);
-                                                  },
-                                                  child: StarRating(
-                                                    isChecked: e <= isChecked
-                                                        ? true
-                                                        : false,
-                                                  ),
-                                                );
-                                              }).toList(),
-                                            ),
-                                            Text(
-                                              "건의하기",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
                                           ],
                                         ),
-                                      )),
-                                ),
-                                Positioned(
-                                    right: 50,
-                                    bottom: 50 +
-                                        MediaQuery.of(context)
-                                            .viewInsets
-                                            .bottom,
-                                    child: SizedBox(
-                                        width: 45,
-                                        height: 45,
-                                        child: renderFloatingActionButton()))
-                              ],
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [1, 2, 3, 4, 5].map((e) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                setModalState(() {
+                                                  isChecked = e;
+                                                });
+                                                print(isChecked);
+                                              },
+                                              child: StarRating(
+                                                isChecked: e <= isChecked
+                                                    ? true
+                                                    : false,
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                        Text(
+                                          "건의하기",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
                             ),
-                          )
-                        : Container();
+                            Positioned(
+                                right: 50,
+                                bottom: 50 +
+                                    MediaQuery.of(context).viewInsets.bottom,
+                                child: SizedBox(
+                                    width: 45,
+                                    height: 45,
+                                    child: renderFloatingActionButton()))
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
                   });
                 },
                 context: context,
@@ -591,60 +895,6 @@ class _ThreeButtonState extends State<ThreeButton>
                 return Container();
               }
             }),
-        // FutureBuilder(
-        //     future: getsaveinit(),
-        //     builder: (futurecontext, AsyncSnapshot<int> futuresnapshot) {
-        //       if (futuresnapshot.hasData) {
-        //         return StreamBuilder(
-        //             stream: _isSave.stream,
-        //             builder: (context, snapshot) {
-        //               return Container(
-        //                 width: 28,
-        //                 height: 40,
-        //                 child: ElevatedButton(
-        //                   onPressed: () async {
-        //                     isSaveLoading = true;
-        //                     LikeApi likeApi = LikeApi();
-        //                     await likeApi
-        //                         .likeOnOff(widget.storeInfo.storeId.toString());
-        //                     int tmp = await likeApi
-        //                         .checkLike(widget.storeInfo.storeId.toString());
-        //                     _isSave.sink.add(tmp);
-
-        //                     isSaveLoading = false;
-        //                   },
-        //                   child: isSaveLoading
-        //                       ? Container(
-        //                           width: 20,
-        //                           height: 20,
-        //                           child: CircularProgressIndicator(
-        //                             strokeWidth: 2.0,
-        //                             valueColor: isLikeAnimationController.drive(
-        //                                 ColorTween(
-        //                                     begin: PRIMARY_COLOR_DEEP,
-        //                                     end: Colors.red)),
-        //                           ),
-        //                         )
-        //                       : putimg(
-        //                           20.0,
-        //                           20.0,
-        //                           _isSave.value == 1
-        //                               ? 'detail_store_color'
-        //                               : widget.isBlack
-        //                                   ? 'detail_store_black'
-        //                                   : 'detail_store'),
-        //                   style: ElevatedButton.styleFrom(
-        //                     primary: Colors.transparent,
-        //                     padding: const EdgeInsets.all(0.0),
-        //                     shadowColor: Colors.transparent,
-        //                   ),
-        //                 ),
-        //               );
-        //             });
-        //       } else {
-        //         return Container();
-        //       }
-        //     }),
       ],
     );
   }

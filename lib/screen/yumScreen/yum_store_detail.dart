@@ -55,7 +55,6 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
   @override
   void dispose() {
     _isLike.close();
-    _scrollController.dispose();
     super.dispose();
   }
 
