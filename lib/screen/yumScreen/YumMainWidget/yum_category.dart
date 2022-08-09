@@ -24,16 +24,16 @@ class YumCategory extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              title != "ALL"
-                  ? Container(
-                      width: 13,
-                      height: 13,
-                      decoration: BoxDecoration(
-                        color: isChecked ? Color(0xffFAFAFA) : color,
-                        shape: BoxShape.circle,
-                      ),
-                    )
-                  : Container(),
+              // title != "ALL"
+              //     ? Container(
+              //         width: 13,
+              //         height: 13,
+              //         decoration: BoxDecoration(
+              //           color: isChecked ? Color(0xffFAFAFA) : color,
+              //           shape: BoxShape.circle,
+              //         ),
+              //       )
+              //     : Container(),
               SizedBox(
                 width: 5.0,
               ),

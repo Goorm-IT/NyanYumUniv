@@ -198,7 +198,11 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
-                                                            YumReviewNotify()));
+                                                            YumReviewNotify(
+                                                              reviewList:
+                                                                  reviewprovider
+                                                                      .review,
+                                                            )));
                                               },
                                               style: ElevatedButton.styleFrom(
                                                   padding:

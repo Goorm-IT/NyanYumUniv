@@ -316,7 +316,7 @@ class _YumMainState extends State<YumMain> {
                                   "맛집 List",
                                   style: TextStyle(
                                       fontSize: 18.0,
-                                      fontWeight: FontWeight.w800),
+                                      fontWeight: FontWeight.w700),
                                 ),
                                 SizedBox(width: 20),
                                 Container(
