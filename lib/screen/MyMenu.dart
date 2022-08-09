@@ -109,6 +109,8 @@ class _MyMenuState extends State<MyMenu> {
               color: Colors.black,
               child: SafeArea(
                   bottom: false,
+                  left: false,
+                  right: false,
                   child: Container(
                     margin: EdgeInsets.only(top: 30, left: 30, right: 30),
                     child: Column(
@@ -120,7 +122,7 @@ class _MyMenuState extends State<MyMenu> {
                         Text("냥냠대 컨텐츠",
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 25,
+                                fontSize: 30,
                                 fontWeight: FontWeight.w800)),
                         SizedBox(
                           height: 15,
@@ -312,7 +314,7 @@ class _MyMenuState extends State<MyMenu> {
                         child: Container(
                           color: Colors.black,
                           width: 500,
-                          height: 215,
+                          height: 212,
                         ),
                       )
                     ],
@@ -324,8 +326,8 @@ class _MyMenuState extends State<MyMenu> {
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(30),
-                            bottomRight: Radius.circular(30))),
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15))),
                     child: Container(
                       padding: EdgeInsets.only(left: 20, top: 15, bottom: 14),
                       child: Column(
@@ -335,6 +337,9 @@ class _MyMenuState extends State<MyMenu> {
                             Text(
                               title,
                               style: TextStyle(fontWeight: FontWeight.w800),
+                            ),
+                            SizedBox(
+                              height: 4,
                             ),
                             Text(descrition, style: TextStyle(fontSize: 13))
                           ]),

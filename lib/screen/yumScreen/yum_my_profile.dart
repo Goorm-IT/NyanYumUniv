@@ -209,12 +209,11 @@ class _MyProfilePageState extends State<MyProfilePage>
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(10.0))),
+                                            BorderRadius.circular(5.0))),
                                 child: Ink(
                                   decoration: BoxDecoration(
                                       color: Color(0xff6368E6),
-                                      borderRadius:
-                                          BorderRadius.circular(10.0)),
+                                      borderRadius: BorderRadius.circular(5.0)),
                                   child: Container(
                                     width: 76,
                                     height: 54,
@@ -396,15 +395,15 @@ class _MyProfilePageState extends State<MyProfilePage>
     return InputDecoration(
       labelStyle: const TextStyle(color: Color(0xff707070)),
       focusedBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(9.0)),
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
         borderSide: BorderSide(width: 1, color: Color(0xff707070)),
       ),
       enabledBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(9.0)),
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
         borderSide: BorderSide(width: 1, color: Color(0xff707070)),
       ),
       border: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(9.0)),
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
       ),
     );
   }

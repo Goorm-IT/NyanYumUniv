@@ -321,8 +321,8 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                       color: Color(0xffD6D6D6),
                                     ),
                                     SizedBox(height: 24.0),
-                                    subTitle(
-                                        '별점 (추천)      ${widget.storeInfo.score}'),
+                                    subTitle('별점  ${widget.storeInfo.score}'),
+                                    SizedBox(height: 10.0),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20.0),

@@ -21,7 +21,7 @@ class YumCategory extends StatelessWidget {
       decoration: greyBorderNChangeColor(20.0, isChecked),
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
               // title != "ALL"
@@ -34,9 +34,6 @@ class YumCategory extends StatelessWidget {
               //         ),
               //       )
               //     : Container(),
-              SizedBox(
-                width: 5.0,
-              ),
               Text(
                 title,
                 style: TextStyle(

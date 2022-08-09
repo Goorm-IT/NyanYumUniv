@@ -211,7 +211,10 @@ class _YumMainState extends State<YumMain> {
                                                   ),
                                                 )
                                               : Container(
-                                                  width: 140,
+                                                  color: Color(0xffd6d6d6),
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
                                                   child: Image.asset(
                                                     'assets/images/defaultImg.png',
                                                   ),
@@ -278,15 +281,9 @@ class _YumMainState extends State<YumMain> {
                             child: Row(
                               children: [
                                 Container(
+                                  padding: const EdgeInsets.all(3.0),
                                   decoration: greyBorder(5.0),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 2.0, vertical: 1.0),
-                                    child: Text(
-                                      "추천 메뉴 & 가격",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ),
+                                  child: Text("추천메뉴 & 가격"),
                                 ),
                                 SizedBox(
                                   width: 5.0,
@@ -295,13 +292,10 @@ class _YumMainState extends State<YumMain> {
                                   width: 5.0,
                                 ),
                                 Container(
+                                  padding: const EdgeInsets.all(4.0),
                                   decoration: greyBorder(5.0),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 2.0, vertical: 1.0),
-                                    child: StarScore(
-                                      score: top5List[top5Idx].score,
-                                    ),
+                                  child: StarScore(
+                                    score: top5List[top5Idx].score,
                                   ),
                                 ),
                               ],

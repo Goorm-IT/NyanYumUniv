@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'package:async/async.dart';
 import 'package:deanora/Widgets/Widgets.dart';
@@ -173,7 +174,7 @@ class _ThreeButtonState extends State<ThreeButton>
                                 Container(
                                   margin: const EdgeInsets.only(top: 35),
                                   height:
-                                      MediaQuery.of(context).size.height * 0.9,
+                                      MediaQuery.of(context).size.height * 0.85,
                                   padding: EdgeInsets.only(
                                       bottom: MediaQuery.of(context)
                                           .viewInsets
@@ -184,21 +185,47 @@ class _ThreeButtonState extends State<ThreeButton>
                                         margin: EdgeInsets.symmetric(
                                             horizontal: 25.0),
                                         child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              "리뷰하기",
-                                              style: TextStyle(fontSize: 20),
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: IconButton(
+                                                padding:
+                                                    const EdgeInsets.all(0.0),
+                                                splashRadius: 20.0,
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                icon: Icon(Icons.close_sharp),
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: Alignment.topCenter,
+                                              child: Text(
+                                                "리뷰하기",
+                                                style: TextStyle(fontSize: 23),
+                                              ),
                                             ),
                                             SizedBox(
                                               height: 25,
                                             ),
                                             Container(
                                               child: Center(
-                                                child: Text(
-                                                  "가게 찾기",
-                                                  style: TextStyle(
-                                                      color: Color(0xff707070),
-                                                      fontSize: 12.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    putimg(18.0, 18.0,
+                                                        "write_review_location"),
+                                                    Text(
+                                                      "  가게 찾기",
+                                                      style: TextStyle(
+                                                          color:
+                                                              Color(0xff707070),
+                                                          fontSize: 12.0),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                               height: 40.0,
@@ -220,12 +247,25 @@ class _ThreeButtonState extends State<ThreeButton>
                                                 decoration: greyBorder(15.0),
                                                 child: Center(
                                                   child: myimage == null
-                                                      ? Text(
-                                                          "사진추가",
-                                                          style: TextStyle(
-                                                              color: Color(
-                                                                  0xff707070),
-                                                              fontSize: 12.0),
+                                                      ? Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            putimg(25.0, 25.0,
+                                                                "write_review_photo"),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Text(
+                                                              "사진추가",
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xff707070),
+                                                                  fontSize:
+                                                                      12.0),
+                                                            ),
+                                                          ],
                                                         )
                                                       : ClipRRect(
                                                           borderRadius:
@@ -280,11 +320,17 @@ class _ThreeButtonState extends State<ThreeButton>
                                                 ),
                                               ),
                                             ),
+                                            SizedBox(
+                                              height: 15,
+                                            ),
                                             Text(
                                               "한줄평",
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w600),
+                                            ),
+                                            SizedBox(
+                                              height: 16,
                                             ),
                                             SizedBox(
                                               height: 95,
@@ -320,9 +366,17 @@ class _ThreeButtonState extends State<ThreeButton>
                                               ),
                                             ),
                                             SizedBox(
-                                              height: 10,
+                                              height: 30,
                                             ),
-                                            Text("메뉴 추천"),
+                                            Text(
+                                              "메뉴 추천",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            SizedBox(
+                                              height: 15,
+                                            ),
                                             Wrap(
                                               children: widget.menuList
                                                   .asMap()
@@ -361,7 +415,7 @@ class _ThreeButtonState extends State<ThreeButton>
                                                         horizontal: 5),
                                                     decoration:
                                                         greyBorderNChangeColor(
-                                                            10.0,
+                                                            5.0,
                                                             isMenuChecked[idx]),
                                                     child: Column(
                                                       mainAxisAlignment:
@@ -416,7 +470,15 @@ class _ThreeButtonState extends State<ThreeButton>
                                             SizedBox(
                                               height: 24,
                                             ),
-                                            Text("별점"),
+                                            Text(
+                                              "별점",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
@@ -437,7 +499,12 @@ class _ThreeButtonState extends State<ThreeButton>
                                                 );
                                               }).toList(),
                                             ),
-                                            Text("건의하기"),
+                                            Text(
+                                              "건의하기",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
                                           ],
                                         ),
                                       )),

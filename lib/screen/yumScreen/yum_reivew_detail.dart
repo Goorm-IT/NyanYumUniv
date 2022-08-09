@@ -187,14 +187,6 @@ class _YumReviewDetailState extends State<YumReviewDetail> {
                               );
                             }).toList(),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              ' (${widget.reviewList[sliderIndex].score.toString()})',
-                              style: TextStyle(
-                                  color: Color(0xff707070), fontSize: 8),
-                            ),
-                          ),
                         ],
                       ),
                       Text(
