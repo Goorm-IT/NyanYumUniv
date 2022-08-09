@@ -65,7 +65,6 @@ class _ThreeButtonState extends State<ThreeButton>
   @override
   void dispose() {
     isLikeAnimationController.dispose();
-    widget.isLike.close();
     _isSave.close();
     super.dispose();
   }
