@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/provider/comment_provider.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/gery_border.dart';
@@ -94,6 +95,7 @@ class _StoreListItemState extends State<StoreListItem> {
                     if (snapshot.hasData) {
                       return Container(
                         margin: const EdgeInsets.only(right: 20.0),
+                        width: 150,
                         child: Text(
                           snapshot.data.toString(),
                           overflow: TextOverflow.ellipsis,
@@ -103,11 +105,34 @@ class _StoreListItemState extends State<StoreListItem> {
                       return Container();
                     }
                   }),
-              Container(
-                padding: const EdgeInsets.all(3.0),
-                decoration: greyBorder(5.0),
-                child: Text("추천메뉴 & 가격"),
-              ),
+              FutureBuilder<Object>(
+                  future: getStoreMenu(widget.storeId.toString()),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data == "아직 리뷰가 없습니다.") {
+                        return Container();
+                      }
+                      return Container(
+                        padding: const EdgeInsets.all(3.0),
+                        decoration: greyBorder(5.0),
+                        width: 75,
+                        child: Row(
+                          children: [
+                            putimg(14.0, 12.0, "thumbs"),
+                            Container(
+                              width: 46,
+                              child: Text(
+                                ' ${snapshot.data.toString()}',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
               SizedBox(
                 height: 10,
               )
@@ -116,6 +141,18 @@ class _StoreListItemState extends State<StoreListItem> {
         )
       ],
     ));
+  }
+
+  Future<String> getStoreMenu(String storeId) async {
+    final yumMenuhttp = YumMenuhttp();
+    final _list = await yumMenuhttp.menuByStore(storeId);
+    _list.sort((a, b) => b.choiceCount.compareTo(a.choiceCount));
+
+    if (_list.isEmpty) {
+      return "아직 리뷰가 없습니다.";
+    } else {
+      return _list[0].menuAlias;
+    }
   }
 
   Future<String> getStoreReview(String storeId) async {

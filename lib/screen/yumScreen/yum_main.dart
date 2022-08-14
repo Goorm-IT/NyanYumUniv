@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/const/color.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
@@ -232,7 +233,6 @@ class _YumMainState extends State<YumMain> {
                                 onPageChanged: (index, reason) {
                                   setState(() {
                                     top5Idx = index;
-                                    print(top5Idx);
                                   });
                                 }),
                           ),
@@ -280,11 +280,31 @@ class _YumMainState extends State<YumMain> {
                             padding: const EdgeInsets.only(left: 18.0),
                             child: Row(
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.all(3.0),
-                                  decoration: greyBorder(5.0),
-                                  child: Text("추천메뉴 & 가격"),
-                                ),
+                                FutureBuilder<Object>(
+                                    future: getStoreMenu(
+                                        top5List[top5Idx].storeId.toString()),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Container(
+                                          padding: const EdgeInsets.all(3.0),
+                                          decoration: greyBorder(5.0),
+                                          child: Row(
+                                            children: [
+                                              snapshot.data == "아직 리뷰가 없습니다."
+                                                  ? Container()
+                                                  : putimg(
+                                                      14.0, 12.0, "thumbs"),
+                                              Text(
+                                                ' ${snapshot.data.toString()}',
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    }),
                                 SizedBox(
                                   width: 5.0,
                                 ),
@@ -483,6 +503,18 @@ class _YumMainState extends State<YumMain> {
       return "아직 리뷰가 없습니다.";
     } else {
       return _list[0].content;
+    }
+  }
+
+  Future<String> getStoreMenu(String storeId) async {
+    final yumMenuhttp = YumMenuhttp();
+    final _list = await yumMenuhttp.menuByStore(storeId);
+    _list.sort((a, b) => b.choiceCount.compareTo(a.choiceCount));
+
+    if (_list.isEmpty) {
+      return "아직 리뷰가 없습니다.";
+    } else {
+      return _list[0].menuAlias;
     }
   }
 }
