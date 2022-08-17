@@ -1,3 +1,5 @@
+import 'package:deanora/Widgets/Widgets.dart';
+import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/model/review_by_store.dart';
 import 'package:deanora/screen/yumScreen/yumDetailWidet/detail_notify_list.dart';
 import 'package:flutter/material.dart';
@@ -10,15 +12,46 @@ class YumReviewNotify extends StatefulWidget {
   State<YumReviewNotify> createState() => _YumReviewNotifyState();
 }
 
-class _YumReviewNotifyState extends State<YumReviewNotify> {
+class _YumReviewNotifyState extends State<YumReviewNotify>
+    with SingleTickerProviderStateMixin {
   ScrollController _scrollController = ScrollController();
   TextEditingController _textEditingController = TextEditingController();
   int _notifyId = -1;
   FocusNode textFocus = FocusNode();
+  late AnimationController _animationController;
+  String errorMessage = "";
+  Color errorMessageColor = Colors.red;
+  bool _visible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 250));
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  fadeMessage(newerrorMessage, newerrorMessageColor) {
+    setState(() {
+      errorMessage = newerrorMessage;
+      errorMessageColor = newerrorMessageColor;
+    });
+    if (!_visible) {
+      _animationController.forward();
+      setState(() {
+        _visible = !_visible;
+      });
+    } else {
+      _animationController.reverse();
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _animationController.forward();
+      });
+    }
   }
 
   @override
@@ -56,13 +89,37 @@ class _YumReviewNotifyState extends State<YumReviewNotify> {
                       ),
                     ],
                   ),
+                  SizedBox(
+                    height: 15,
+                  ),
                   NotifyList(
-                      reviewList: widget.reviewList,
-                      notifyId: (int id) {
-                        setState(() {
-                          _notifyId = id;
-                        });
-                      }),
+                    reviewList: widget.reviewList,
+                    notifyId: (int id) {
+                      setState(() {
+                        _notifyId = id;
+                        _animationController.reverse();
+                        _visible = false;
+                      });
+                    },
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  SizedBox(
+                    height: 16,
+                    child: FadeTransition(
+                      opacity: _animationController,
+                      child: Center(
+                        child: Text(
+                          errorMessage,
+                          style: TextStyle(
+                              color: errorMessageColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12),
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(
                     height: 15,
                   ),
@@ -101,7 +158,28 @@ class _YumReviewNotifyState extends State<YumReviewNotify> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (_notifyId == -1) {
+                              fadeMessage("신고할 리뷰를 클릭해 주세요.", Colors.red);
+                            } else if (_textEditingController.text == "") {
+                              fadeMessage("신고 내용을 작성해주세요.", Colors.red);
+                            } else {
+                              ReportApi reportApi = ReportApi();
+                              await reportApi.yumreport(
+                                  _textEditingController.text,
+                                  _notifyId.toString());
+                              showdialog(
+                                context,
+                                "신고 되었습니다.",
+                              );
+                              _textEditingController.clear();
+                              _animationController.reverse();
+                              setState(() {
+                                _visible = false;
+                                _notifyId = -1;
+                              });
+                            }
+                          },
                           child: Text("등록"),
                           style: ElevatedButton.styleFrom(
                             primary: Color(0xff7D48D9),
@@ -110,8 +188,6 @@ class _YumReviewNotifyState extends State<YumReviewNotify> {
                       ),
                     ],
                   ),
-                  Text(_notifyId.toString()),
-                  Text(_textEditingController.text),
                   SizedBox(
                     height: MediaQuery.of(context).viewInsets.bottom,
                   ),

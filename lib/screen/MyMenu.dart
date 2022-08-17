@@ -5,6 +5,8 @@ import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/model/lecture.dart';
 import 'package:deanora/model/user.dart';
+import 'package:deanora/provider/category_selected_provider.dart';
+import 'package:deanora/provider/storeInfo_provider.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/myClass.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/Tutorial.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
@@ -23,6 +25,7 @@ import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get_it/get_it.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 class MyMenu extends StatefulWidget {
   const MyMenu({Key? key}) : super(key: key);
@@ -54,52 +57,57 @@ class _MyMenuState extends State<MyMenu> {
       print("message recieved");
       print(event.notification!.body);
       showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 24, horizontal: 40),
-              buttonPadding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 8),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(18))),
-              title: Center(
-                  child: Text(
-                event.notification!.title!,
-                style: TextStyle(fontWeight: FontWeight.w900),
-              )),
-              content: Container(
-                  child: Text(
-                event.notification!.body!,
-                textAlign: TextAlign.center,
-              )),
-              actions: [
-                Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      border: Border(
-                          top: BorderSide(
-                              color: Color(0xffd2d2d5), width: 1.0))),
-                  child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        child: Text(
-                          "확인",
-                          style: TextStyle(color: Color(0xff755FE7)),
-                        ),
-                      )),
-                )
-              ],
-            );
-          });
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 24, horizontal: 40),
+            buttonPadding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 8),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(18))),
+            title: Center(
+                child: Text(
+              event.notification!.title!,
+              style: TextStyle(fontWeight: FontWeight.w900),
+            )),
+            content: Container(
+                child: Text(
+              event.notification!.body!,
+              textAlign: TextAlign.center,
+            )),
+            actions: [
+              Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    border: Border(
+                        top: BorderSide(color: Color(0xffd2d2d5), width: 1.0))),
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      child: Text(
+                        "확인",
+                        style: TextStyle(color: Color(0xff755FE7)),
+                      ),
+                    )),
+              )
+            ],
+          );
+        },
+      );
     });
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('Message clicked!');
     });
   }
 
+  late StoreInfoProvider _storeInfoProvider;
+  late CategorySelectedProvider _categorySelectedProvider;
   Widget build(BuildContext context) {
+    _storeInfoProvider = Provider.of<StoreInfoProvider>(context, listen: false);
+    _categorySelectedProvider =
+        Provider.of<CategorySelectedProvider>(context, listen: false);
     return MaterialApp(
       home: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -254,7 +262,8 @@ class _MyMenuState extends State<MyMenu> {
           setState(() {
             _loadingVisible = !_loadingVisible;
           });
-          print("여기");
+          await _storeInfoProvider.loadStoreInfo(
+              1, 10, context.read<CategorySelectedProvider>().selected);
           Navigator.push(
             context,
             MaterialPageRoute(

@@ -65,7 +65,7 @@ class _NotifyListState extends State<NotifyList> {
     }
 
     return Container(
-      height: 200,
+      height: 180,
       child: SingleChildScrollView(
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

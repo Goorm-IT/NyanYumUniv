@@ -30,6 +30,7 @@ class YumStoreDetail extends StatefulWidget {
 
 class _YumStoreDetailState extends State<YumStoreDetail> {
   late BehaviorSubject<int> _isLike;
+  late BehaviorSubject<int> _isSave;
   List<ReviewByStore> reviewList = [];
   List<MenuByStore> menuList = [];
   List<MenuByStore> recommendList = [];
@@ -54,7 +55,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
 
   @override
   void dispose() {
-    _isLike.close();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -63,6 +64,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
     super.initState();
     _scrollController.addListener(() {});
     _isLike = BehaviorSubject.seeded(0);
+    _isSave = BehaviorSubject.seeded(0);
   }
 
   @override
@@ -109,6 +111,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                               menuList: menuProvider.menu,
                               storeInfo: widget.storeInfo,
                               isLike: _isLike,
+                              isSave: _isSave,
                             ),
                           ],
                         ),
@@ -128,6 +131,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                   menuList: menuProvider.menu,
                                   storeInfo: widget.storeInfo,
                                   isLike: _isLike,
+                                  isSave: _isSave,
                                 )
                               : MainImage(
                                   isNull: false,
@@ -135,6 +139,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                   storeInfo: widget.storeInfo,
                                   imagePath: widget.storeInfo.imagePath,
                                   isLike: _isLike,
+                                  isSave: _isSave,
                                 ),
                           SizedBox(
                             height: 30,

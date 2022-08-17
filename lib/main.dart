@@ -1,6 +1,8 @@
 import 'package:deanora/provider/comment_provider.dart';
+import 'package:deanora/provider/like_store_provider.dart';
 import 'package:deanora/provider/menu_provider.dart';
 import 'package:deanora/provider/review_provider.dart';
+import 'package:deanora/provider/save_store_provider.dart';
 import 'package:deanora/provider/storeInfo_provider.dart';
 import 'package:deanora/screen/MyMenu.dart';
 import 'package:deanora/screen/yumScreen/yumSignUpScreen/naver_login.dart';
@@ -15,6 +17,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+
+import 'provider/category_selected_provider.dart';
 
 int? isviewed;
 
@@ -45,6 +49,15 @@ void main() async {
     ),
     ChangeNotifierProvider(
       create: (BuildContext context) => CommentProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (BuildContext context) => LikeStoreProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (BuildContext context) => CategorySelectedProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (BuildContext context) => SaveStoreProvider(),
     ),
   ], child: MyApp()));
 }

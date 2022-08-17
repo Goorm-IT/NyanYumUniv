@@ -285,13 +285,36 @@ class LikeApi {
   Future<int> likeOnOff(String storeId) async {
     final url = Uri.http(yumURL, '/nyu/like', {"storeId": storeId});
     var response = await http.put(url, headers: {'Cookie': _cookie});
-    return (jsonDecode(response.body)["status"]);
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body)["status"]);
+    } else {
+      throw new CustomException(300, 'likeOnoff');
+    }
   }
 
   Future<int> checkLike(String storeId) async {
     final url = Uri.http(yumURL, '/nyu/like', {"storeId": storeId});
     var response = await http.get(url, headers: {'Cookie': _cookie});
-    return (jsonDecode(response.body)["show"]);
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body)["show"]);
+    } else {
+      throw new CustomException(300, 'checkLike');
+    }
+  }
+
+  Future<List<StoreComposition>> getLikeList() async {
+    final url = Uri.http(yumURL, '/nyu/like/user');
+    var response = await http.get(url, headers: {'Cookie': _cookie});
+    List<dynamic> _list = [];
+    String responseBody = utf8.decode(response.bodyBytes);
+    _list = jsonDecode(responseBody)['userLikeList'];
+    if (response.statusCode == 200) {
+      return _list
+          .map<StoreComposition>((item) => StoreComposition.fromJson(item))
+          .toList();
+    } else {
+      throw new CustomException(300, 'getLikeList');
+    }
   }
 }
 
@@ -301,13 +324,48 @@ class SaveApi {
   Future<int> saveOnOff(String storeId) async {
     final url = Uri.http(yumURL, '/nyu/save', {"storeId": storeId});
     var response = await http.put(url, headers: {'Cookie': _cookie});
-    return (jsonDecode(response.body)["status"]);
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body)["status"]);
+    } else {
+      throw new CustomException(300, 'SaveOnOff');
+    }
   }
 
   Future<int> checkSave(String storeId) async {
     final url = Uri.http(yumURL, '/nyu/save', {"storeId": storeId});
     var response = await http.get(url, headers: {'Cookie': _cookie});
-    return (jsonDecode(response.body)["show"]);
+
+    if (response.statusCode == 200) {
+      return (jsonDecode(response.body)["show"]);
+    } else {
+      throw new CustomException(300, 'checkSave');
+    }
+  }
+
+  Future<List<StoreComposition>> getSaveList() async {
+    final url = Uri.http(yumURL, '/nyu/save/user');
+    var response = await http.get(url, headers: {'Cookie': _cookie});
+    List<dynamic> _list = [];
+    String responseBody = utf8.decode(response.bodyBytes);
+    _list = jsonDecode(responseBody)['userSaveList'];
+    if (response.statusCode == 200) {
+      return _list
+          .map<StoreComposition>((item) => StoreComposition.fromJson(item))
+          .toList();
+    } else {
+      throw new CustomException(300, 'getSaveList');
+    }
+  }
+}
+
+class ReportApi {
+  String yumURL = '54.180.116.149:82';
+
+  Future<void> yumreport(String report, String reviewId) async {
+    final url = Uri.http(
+        yumURL, '/nyu/report', {"report": report, "reviewId": reviewId});
+    var response = await http.post(url, headers: {'Cookie': _cookie});
+    print(response.body);
   }
 }
 

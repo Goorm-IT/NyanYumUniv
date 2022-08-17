@@ -10,6 +10,26 @@ Container cover_Background() {
   );
 }
 
+Future<dynamic> showdialog(
+  BuildContext context,
+  String message,
+) {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      content: Text('$message '),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('확인'),
+        ),
+      ],
+    ),
+  );
+}
+
 /// [w] img width
 /// [h] img height
 /// [name] img just name not address

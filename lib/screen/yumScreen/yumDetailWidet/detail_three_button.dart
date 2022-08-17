@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'package:async/async.dart';
 import 'package:deanora/Widgets/Widgets.dart';
@@ -22,6 +21,7 @@ class ThreeButton extends StatefulWidget {
   List<MenuByStore> menuList;
   bool isBlack;
   BehaviorSubject<int> isLike;
+  BehaviorSubject<int> isSave;
   final StoreComposition storeInfo;
   ThreeButton(
       {required this.isNull,
@@ -29,6 +29,7 @@ class ThreeButton extends StatefulWidget {
       required this.storeInfo,
       required this.isBlack,
       required this.isLike,
+      required this.isSave,
       this.imagePath = "",
       Key? key})
       : super(key: key);
@@ -38,7 +39,7 @@ class ThreeButton extends StatefulWidget {
 }
 
 class _ThreeButtonState extends State<ThreeButton>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final AsyncMemoizer<int> _memoizer1 = AsyncMemoizer();
   final AsyncMemoizer<int> _memoizer2 = AsyncMemoizer();
 
@@ -53,7 +54,8 @@ class _ThreeButtonState extends State<ThreeButton>
   bool isLikeLoading = false;
   bool isSaveLoading = false;
   late AnimationController isLikeAnimationController;
-  late BehaviorSubject<int> _isSave;
+  late AnimationController isSaveAnimationController;
+
   List<bool> isMenuChecked = [];
   void _scrollToTop() {
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -67,9 +69,9 @@ class _ThreeButtonState extends State<ThreeButton>
   @override
   void dispose() {
     isLikeAnimationController.dispose();
+    isSaveAnimationController.dispose();
     addMenuAlias.dispose();
     addMenuCost.dispose();
-    _isSave.close();
     super.dispose();
   }
 
@@ -84,9 +86,9 @@ class _ThreeButtonState extends State<ThreeButton>
 
   getsaveinit() {
     return this._memoizer2.runOnce(() async {
-      LikeApi likeApi = LikeApi();
-      int tmp = await likeApi.checkLike(widget.storeInfo.storeId.toString());
-      _isSave.sink.add(tmp);
+      SaveApi saveApi = SaveApi();
+      int tmp = await saveApi.checkSave(widget.storeInfo.storeId.toString());
+      widget.isSave.sink.add(tmp);
       return tmp;
     });
   }
@@ -94,11 +96,12 @@ class _ThreeButtonState extends State<ThreeButton>
   @override
   void initState() {
     super.initState();
-
-    _isSave = BehaviorSubject.seeded(0);
     isLikeAnimationController =
         AnimationController(duration: new Duration(seconds: 2), vsync: this);
     isLikeAnimationController.repeat(reverse: true);
+    isSaveAnimationController =
+        AnimationController(duration: new Duration(seconds: 2), vsync: this);
+    isSaveAnimationController.repeat(reverse: true);
 
     _scrollController.addListener(() {});
     for (int i = 0; i < widget.menuList.length; i++) {
@@ -165,13 +168,25 @@ class _ThreeButtonState extends State<ThreeButton>
                       return FloatingActionButton(
                         onPressed: () async {
                           if (myimage == null) {
-                            _showdialog(context, "이미지");
+                            showdialog(
+                              context,
+                              "이미지",
+                            );
                           } else if (_content.text == "") {
-                            _showdialog(context, "한줄평");
+                            showdialog(
+                              context,
+                              "한줄평",
+                            );
                           } else if (_menuId == -1) {
-                            _showdialog(context, "메뉴");
+                            showdialog(
+                              context,
+                              "메뉴",
+                            );
                           } else if (isChecked == 0) {
-                            _showdialog(context, "점수");
+                            showdialog(
+                              context,
+                              "점수",
+                            );
                           } else {
                             setState(() {
                               isLoading = true;
@@ -189,7 +204,7 @@ class _ThreeButtonState extends State<ThreeButton>
                               _menuId = -1;
                               isChecked = 0;
                             });
-                            _showdialog(context, "리뷰 완료");
+                            showdialog(context, "리뷰 완료");
                           }
                         },
                         backgroundColor: Colors.black,
@@ -566,7 +581,7 @@ class _ThreeButtonState extends State<ThreeButton>
                                                         AlertDialog(
                                                   contentPadding:
                                                       const EdgeInsets.only(
-                                                          top: 23, bottom: 10),
+                                                          top: 0, bottom: 10),
                                                   buttonPadding:
                                                       const EdgeInsetsDirectional
                                                           .fromSTEB(0, 0, 0, 8),
@@ -576,16 +591,33 @@ class _ThreeButtonState extends State<ThreeButton>
                                                               Radius.circular(
                                                                   18))),
                                                   content: Container(
-                                                    width: 300,
-                                                    height: 100,
+                                                    height: 130,
+                                                    width: 400,
                                                     child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .spaceAround,
                                                       children: [
-                                                        Text("메뉴 추가"),
+                                                        IconButton(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(0),
+                                                            splashRadius: 15,
+                                                            onPressed: () {},
+                                                            icon: Icon(
+                                                                Icons.close)),
+                                                        Text(
+                                                          "메뉴 추가",
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontFamily:
+                                                                "NotoSansKR_Regular",
+                                                          ),
+                                                        ),
                                                         SizedBox(
-                                                          height: 21,
+                                                          height: 10,
                                                         ),
                                                         Row(
                                                           mainAxisAlignment:
@@ -610,7 +642,7 @@ class _ThreeButtonState extends State<ThreeButton>
                                                                         fontSize:
                                                                             13.0),
                                                                     hintText:
-                                                                        "음식명",
+                                                                        "메뉴명",
                                                                     enabledBorder:
                                                                         UnderlineInputBorder(
                                                                       borderSide:
@@ -694,59 +726,63 @@ class _ThreeButtonState extends State<ThreeButton>
                                                     ),
                                                   ),
                                                   actions: [
-                                                    Center(
-                                                      child: ElevatedButton(
-                                                          onPressed: () async {
-                                                            if (addMenuCost
-                                                                        .text !=
-                                                                    "" &&
-                                                                addMenuAlias
-                                                                        .text !=
-                                                                    "") {
-                                                              YumMenuhttp
-                                                                  yumMenuhttp =
-                                                                  YumMenuhttp();
+                                                    Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              bottom: 20),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 40),
+                                                        child: Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child:
+                                                                  ElevatedButton(
+                                                                      onPressed:
+                                                                          () async {
+                                                                        if (addMenuCost.text !=
+                                                                                "" &&
+                                                                            addMenuAlias.text !=
+                                                                                "") {
+                                                                          YumMenuhttp
+                                                                              yumMenuhttp =
+                                                                              YumMenuhttp();
 
-                                                              int rst = await yumMenuhttp.addMenu(
-                                                                  cost: int.parse(
-                                                                      addMenuCost
-                                                                          .text),
-                                                                  menuAlias:
-                                                                      addMenuAlias
-                                                                          .text
-                                                                          .toString(),
-                                                                  storeId: widget
-                                                                      .storeInfo
-                                                                      .storeId
-                                                                      .toString());
-                                                              addMenuAlias
-                                                                  .clear();
-                                                              addMenuCost
-                                                                  .clear();
-                                                              Navigator.pop(
-                                                                  context);
-                                                              if (rst == 200) {
-                                                                showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      AlertDialog(
-                                                                    content: Text(
-                                                                        '추가 완료'),
-                                                                    actions: [
-                                                                      ElevatedButton(
-                                                                          onPressed: () => Navigator.of(context)
-                                                                              .pop(),
-                                                                          child:
-                                                                              Text('확인')),
-                                                                    ],
-                                                                  ),
-                                                                );
-                                                              }
-                                                            }
-                                                          },
-                                                          child: Text('추가')),
+                                                                          int rst = await yumMenuhttp.addMenu(
+                                                                              cost: int.parse(addMenuCost.text),
+                                                                              menuAlias: addMenuAlias.text.toString(),
+                                                                              storeId: widget.storeInfo.storeId.toString());
+                                                                          addMenuAlias
+                                                                              .clear();
+                                                                          addMenuCost
+                                                                              .clear();
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                          if (rst ==
+                                                                              200) {
+                                                                            showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) => AlertDialog(
+                                                                                content: Text('추가 완료'),
+                                                                                actions: [
+                                                                                  ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: Text('확인')),
+                                                                                ],
+                                                                              ),
+                                                                            );
+                                                                          }
+                                                                        }
+                                                                      },
+                                                                      style: ElevatedButton.styleFrom(
+                                                                          primary: Color(
+                                                                              0xff7D48D9)),
+                                                                      child: Text(
+                                                                          '저장')),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -842,59 +878,115 @@ class _ThreeButtonState extends State<ThreeButton>
           ),
         ),
         FutureBuilder(
-            future: getlikeinit(),
-            builder: (futurecontext, AsyncSnapshot<int> futuresnapshot) {
-              if (futuresnapshot.hasData) {
-                return StreamBuilder(
-                    stream: widget.isLike.stream,
-                    builder: (context, snapshot) {
-                      return Container(
-                        width: 28,
-                        height: 40,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            isLikeLoading = true;
-                            LikeApi likeApi = LikeApi();
-                            await likeApi
-                                .likeOnOff(widget.storeInfo.storeId.toString());
-                            int tmp = await likeApi
-                                .checkLike(widget.storeInfo.storeId.toString());
-                            widget.isLike.sink.add(tmp);
+          future: getlikeinit(),
+          builder: (futurecontext, AsyncSnapshot<int> futuresnapshot) {
+            if (futuresnapshot.hasData) {
+              return StreamBuilder(
+                  stream: widget.isLike.stream,
+                  builder: (context, snapshot) {
+                    return Container(
+                      width: 28,
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          isLikeLoading = true;
+                          LikeApi likeApi = LikeApi();
+                          await likeApi
+                              .likeOnOff(widget.storeInfo.storeId.toString());
+                          int tmp = await likeApi
+                              .checkLike(widget.storeInfo.storeId.toString());
+                          widget.isLike.sink.add(tmp);
 
-                            isLikeLoading = false;
-                          },
-                          child: isLikeLoading
-                              ? Container(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.0,
-                                    valueColor: isLikeAnimationController.drive(
-                                        ColorTween(
-                                            begin: PRIMARY_COLOR_DEEP,
-                                            end: Colors.red)),
-                                  ),
-                                )
-                              : putimg(
-                                  20.0,
-                                  20.0,
-                                  widget.isLike.value == 1
-                                      ? 'detail_like_color'
-                                      : widget.isBlack
-                                          ? 'detail_like_black'
-                                          : 'detail_like'),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.transparent,
-                            padding: const EdgeInsets.all(0.0),
-                            shadowColor: Colors.transparent,
-                          ),
+                          isLikeLoading = false;
+                        },
+                        child: isLikeLoading
+                            ? Container(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0,
+                                  valueColor: isLikeAnimationController.drive(
+                                      ColorTween(
+                                          begin: PRIMARY_COLOR_DEEP,
+                                          end: Colors.red)),
+                                ),
+                              )
+                            : putimg(
+                                20.0,
+                                20.0,
+                                widget.isLike.value == 1
+                                    ? 'detail_like_color'
+                                    : widget.isBlack
+                                        ? 'detail_like_black'
+                                        : 'detail_like'),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.transparent,
+                          padding: const EdgeInsets.all(0.0),
+                          shadowColor: Colors.transparent,
                         ),
-                      );
-                    });
-              } else {
-                return Container();
-              }
-            }),
+                      ),
+                    );
+                  });
+            } else {
+              return Container();
+            }
+          },
+        ),
+        FutureBuilder(
+          future: getsaveinit(),
+          builder: (futurecontext, AsyncSnapshot<int> futuresnapshot) {
+            if (futuresnapshot.hasData) {
+              return StreamBuilder(
+                  stream: widget.isSave.stream,
+                  builder: (context, snapshot) {
+                    return Container(
+                      width: 28,
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          isSaveLoading = true;
+                          SaveApi saveApi = SaveApi();
+                          await saveApi
+                              .saveOnOff(widget.storeInfo.storeId.toString());
+                          int tmp = await saveApi
+                              .checkSave(widget.storeInfo.storeId.toString());
+                          widget.isSave.sink.add(tmp);
+
+                          isSaveLoading = false;
+                        },
+                        child: isSaveLoading
+                            ? Container(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0,
+                                  valueColor: isSaveAnimationController.drive(
+                                      ColorTween(
+                                          begin: PRIMARY_COLOR_DEEP,
+                                          end: Colors.red)),
+                                ),
+                              )
+                            : putimg(
+                                20.0,
+                                20.0,
+                                widget.isSave.value == 1
+                                    ? 'detail_save_color'
+                                    : widget.isBlack
+                                        ? 'detail_save_black'
+                                        : 'detail_save'),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.transparent,
+                          padding: const EdgeInsets.all(0.0),
+                          shadowColor: Colors.transparent,
+                        ),
+                      ),
+                    );
+                  });
+            } else {
+              return Container();
+            }
+          },
+        ),
       ],
     );
   }
@@ -978,17 +1070,4 @@ class _ThreeButtonState extends State<ThreeButton>
     writeResult =
         await yumReviewhttp.writeReview(file, content, menuId, score, storeId);
   }
-}
-
-Future<dynamic> _showdialog(BuildContext context, String message) {
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) => AlertDialog(
-      content: Text('$message 추가하세요'),
-      actions: [
-        ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(), child: Text('확인')),
-      ],
-    ),
-  );
 }

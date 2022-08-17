@@ -8,6 +8,7 @@ import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
 import 'package:deanora/model/yum_category_type.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
 import 'package:deanora/model/yum_top_5.dart';
+import 'package:deanora/provider/category_selected_provider.dart';
 import 'package:deanora/provider/menu_provider.dart';
 import 'package:deanora/provider/review_provider.dart';
 import 'package:deanora/provider/storeInfo_provider.dart';
@@ -35,18 +36,10 @@ class _YumMainState extends State<YumMain> {
   late BehaviorSubject<int> backButtonToggle;
   int willpop = 0;
   bool _isLoading = false;
-  String checkedCategory = "";
+
   @override
   void initState() {
     super.initState();
-    checkedCategory = "ALL";
-    for (int i = 0; i < categorytype.length; i++) {
-      if (i == 0) {
-        categorytype[i].isChecked = true;
-      } else {
-        categorytype[i].isChecked = false;
-      }
-    }
     backButtonToggle = BehaviorSubject.seeded(-1);
   }
 
@@ -57,18 +50,19 @@ class _YumMainState extends State<YumMain> {
   late ReviewProvider _reviewProvider;
   late MenuProvider _menuProvider;
   late StoreInfoProvider _storeInfoProvider;
+  late CategorySelectedProvider _categorySelectedProvider;
   Widget build(BuildContext context) {
     _reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
     _storeInfoProvider = Provider.of<StoreInfoProvider>(context, listen: false);
     _menuProvider = Provider.of<MenuProvider>(context, listen: false);
+    _categorySelectedProvider =
+        Provider.of<CategorySelectedProvider>(context, listen: false);
     final searchController = TextEditingController();
     final availableHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.top -
         MediaQuery.of(context).padding.bottom;
     final yumStorehttp = YumStorehttp();
-    if (checkedCategory == "ALL") {
-      _storeInfoProvider.loadStoreInfo(1, 10);
-    }
+
     return WillPopScope(
       onWillPop: () async {
         print('willpop $willpop');
@@ -337,7 +331,14 @@ class _YumMainState extends State<YumMain> {
                                   width: 18,
                                   height: 18,
                                   child: FloatingActionButton(
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      await _storeInfoProvider.loadStoreInfo(
+                                          1,
+                                          10,
+                                          context
+                                              .read<CategorySelectedProvider>()
+                                              .selected);
+
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -380,36 +381,40 @@ class _YumMainState extends State<YumMain> {
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     children: categorytype.map((e) {
-                                      return GestureDetector(
-                                        onTap: () async {
-                                          setState(() {
-                                            checkedCategory = e.title;
-                                          });
-                                          for (int i = 0;
-                                              i < categorytype.length;
-                                              i++) {
-                                            setState(() {
-                                              if (e.title ==
-                                                  categorytype[i].title) {
-                                                categorytype[i].isChecked =
-                                                    true;
-                                              } else {
-                                                categorytype[i].isChecked =
-                                                    false;
-                                              }
-                                            });
-                                          }
-                                          checkedCategory == 'ALL'
-                                              ? await changeCategory()
-                                              : await changeCategory(
-                                                  checkedCategory);
-                                        },
-                                        child: YumCategory(
-                                          color: e.color,
-                                          title: e.title,
-                                          isChecked: e.isChecked,
-                                        ),
-                                      );
+                                      return Consumer<CategorySelectedProvider>(
+                                          builder: (providercontext, provider,
+                                              widgets) {
+                                        return GestureDetector(
+                                          onTap: () async {
+                                            _categorySelectedProvider
+                                                .getSelectedCategory(e.title);
+
+                                            for (int i = 0;
+                                                i < categorytype.length;
+                                                i++) {
+                                              setState(() {
+                                                if (e.title ==
+                                                    categorytype[i].title) {
+                                                  categorytype[i].isChecked =
+                                                      true;
+                                                } else {
+                                                  categorytype[i].isChecked =
+                                                      false;
+                                                }
+                                              });
+                                            }
+                                            provider.selected == 'ALL'
+                                                ? await changeCategory()
+                                                : await changeCategory(
+                                                    provider.selected);
+                                          },
+                                          child: YumCategory(
+                                            color: e.color,
+                                            title: e.title,
+                                            isChecked: e.isChecked,
+                                          ),
+                                        );
+                                      });
                                     }).toList(),
                                   )),
                             ),

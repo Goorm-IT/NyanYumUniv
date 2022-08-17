@@ -2,10 +2,15 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/model/yum_user.dart';
+import 'package:deanora/provider/like_store_provider.dart';
+import 'package:deanora/provider/save_store_provider.dart';
 import 'package:deanora/screen/MyMenu.dart';
+import 'package:deanora/screen/yumScreen/yum_like_list.dart';
+import 'package:deanora/screen/yumScreen/yum_save_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({Key? key}) : super(key: key);
@@ -60,8 +65,12 @@ class _MyProfilePageState extends State<MyProfilePage>
     }
   }
 
+  late LikeStoreProvider _likeStoreProvider;
+  late SaveStoreProvider _saveStoreProvider;
   @override
   Widget build(BuildContext context) {
+    _likeStoreProvider = Provider.of<LikeStoreProvider>(context, listen: false);
+    _saveStoreProvider = Provider.of<SaveStoreProvider>(context, listen: false);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -147,13 +156,14 @@ class _MyProfilePageState extends State<MyProfilePage>
                           FadeTransition(
                             opacity: _animationController,
                             child: Center(
-                                child: Text(
-                              errorMessage,
-                              style: TextStyle(
-                                  color: errorMessageColor,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12),
-                            )),
+                              child: Text(
+                                errorMessage,
+                                style: TextStyle(
+                                    color: errorMessageColor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12),
+                              ),
+                            ),
                           )
                         ],
                       ),
@@ -238,10 +248,36 @@ class _MyProfilePageState extends State<MyProfilePage>
                           children: [
                             _ProfileIcon(
                                 image: 'profile_review_icon', title: '내가 쓴 리뷰'),
-                            _ProfileIcon(
-                                image: 'profile_store_icon', title: '저장한 맛집'),
-                            _ProfileIcon(
-                                image: 'profile_like_icon', title: '좋아요한 맛집'),
+                            Material(
+                              color: Colors.white,
+                              child: InkWell(
+                                onTap: () async {
+                                  await _saveStoreProvider.getSaveStore();
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => YumSaveList()));
+                                },
+                                child: _ProfileIcon(
+                                    image: 'profile_store_icon',
+                                    title: '저장한 맛집'),
+                              ),
+                            ),
+                            Material(
+                              color: Colors.white,
+                              child: InkWell(
+                                onTap: () async {
+                                  await _likeStoreProvider.getLikeStore();
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => YumLikeList()));
+                                },
+                                child: _ProfileIcon(
+                                    image: 'profile_like_icon',
+                                    title: '좋아요한 맛집'),
+                              ),
+                            ),
                             // _ProfileIcon(
                             //     image: 'profile_comment_icon', title: '댓글 내역')
                           ],

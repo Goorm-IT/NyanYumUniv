@@ -8,8 +8,10 @@ class StoreInfoProvider extends ChangeNotifier {
   List<StoreComposition> get storeInfo => _storeInfo;
 
   loadStoreInfo(int startPageNo, int endPageNo, [String category = ""]) async {
+    if (category == 'ALL') category = "";
     List<StoreComposition> storeInfoList =
         await yumStorehttp.storeList2(startPageNo, endPageNo, category);
+
     if (startPageNo == 1) {
       _storeInfo = storeInfoList;
     } else {

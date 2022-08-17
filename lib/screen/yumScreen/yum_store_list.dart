@@ -3,6 +3,7 @@ import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
 import 'package:deanora/model/yum_category_type.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
+import 'package:deanora/provider/category_selected_provider.dart';
 import 'package:deanora/provider/menu_provider.dart';
 import 'package:deanora/provider/review_provider.dart';
 import 'package:deanora/provider/storeInfo_provider.dart';
@@ -24,36 +25,27 @@ class YumStoreList extends StatefulWidget {
 
 class _YumStoreListState extends State<YumStoreList> {
   late ScrollController _scrollController;
-  List<StoreComposition> storeList = [];
+
   int initListLength = 10;
   double offset = 300.0;
   bool categoryIsChecked = false;
-  String checkedCategory = "";
   bool _isLoading = false;
   late BehaviorSubject<int> backButtonToggle;
   int willpop = 0;
   @override
   void initState() {
     super.initState();
-    checkedCategory = "ALL";
-    for (int i = 0; i < categorytype.length; i++) {
-      if (i == 0) {
-        categorytype[i].isChecked = true;
-      } else {
-        categorytype[i].isChecked = false;
-      }
-    }
+
     backButtonToggle = BehaviorSubject.seeded(-1);
     _scrollController = ScrollController();
     _scrollController.addListener(() {
-      _scrollListener(checkedCategory);
+      _scrollListener(context.read<CategorySelectedProvider>().selected);
     });
   }
 
   _scrollListener([String category = '']) async {
     if (offset < _scrollController.offset) {
-      offset += (widget.availableHeight - 112);
-
+      offset += (widget.availableHeight - 180);
       _storeInfoProvider.loadStoreInfo(
           1 + initListLength, 5, category == 'ALL' ? '' : category);
       initListLength += 5;
@@ -63,11 +55,7 @@ class _YumStoreListState extends State<YumStoreList> {
   changeCategory([String category = '']) async {
     initListLength = 10;
     offset = 300.0;
-    setState(() {
-      storeList.clear();
-      storeList = [];
-    });
-    _storeInfoProvider.loadStoreInfo(1, initListLength, category);
+    await _storeInfoProvider.loadStoreInfo(1, initListLength, category);
 
     _scrollController.jumpTo(0);
   }
@@ -78,6 +66,7 @@ class _YumStoreListState extends State<YumStoreList> {
     super.dispose();
   }
 
+  late CategorySelectedProvider _categorySelectedProvider;
   late MenuProvider _menuProvider;
   late ReviewProvider _reviewProvider;
   late StoreInfoProvider _storeInfoProvider;
@@ -86,9 +75,8 @@ class _YumStoreListState extends State<YumStoreList> {
     _storeInfoProvider = Provider.of<StoreInfoProvider>(context, listen: false);
     _reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
     _menuProvider = Provider.of<MenuProvider>(context, listen: false);
-    if (checkedCategory == "ALL") {
-      _storeInfoProvider.loadStoreInfo(1, 10);
-    }
+    _categorySelectedProvider =
+        Provider.of<CategorySelectedProvider>(context, listen: false);
 
     return WillPopScope(
       onWillPop: () async {
@@ -154,32 +142,38 @@ class _YumStoreListState extends State<YumStoreList> {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: categorytype.map((e) {
-                                return GestureDetector(
-                                  onTap: () async {
-                                    setState(() {
-                                      checkedCategory = e.title;
-                                    });
-                                    for (int i = 0;
-                                        i < categorytype.length;
-                                        i++) {
-                                      setState(() {
-                                        if (e.title == categorytype[i].title) {
-                                          categorytype[i].isChecked = true;
-                                        } else {
-                                          categorytype[i].isChecked = false;
-                                        }
-                                      });
-                                    }
-                                    checkedCategory == 'ALL'
-                                        ? await changeCategory()
-                                        : await changeCategory(checkedCategory);
-                                  },
-                                  child: YumCategory(
-                                    color: e.color,
-                                    title: e.title,
-                                    isChecked: e.isChecked,
-                                  ),
-                                );
+                                return Consumer<CategorySelectedProvider>(
+                                    builder:
+                                        (providercontext, provider, widgets) {
+                                  return GestureDetector(
+                                    onTap: () async {
+                                      _categorySelectedProvider
+                                          .getSelectedCategory(e.title);
+
+                                      for (int i = 0;
+                                          i < categorytype.length;
+                                          i++) {
+                                        setState(() {
+                                          if (e.title ==
+                                              categorytype[i].title) {
+                                            categorytype[i].isChecked = true;
+                                          } else {
+                                            categorytype[i].isChecked = false;
+                                          }
+                                        });
+                                      }
+                                      provider.selected == 'ALL'
+                                          ? await changeCategory()
+                                          : await changeCategory(
+                                              provider.selected);
+                                    },
+                                    child: YumCategory(
+                                      color: e.color,
+                                      title: e.title,
+                                      isChecked: e.isChecked,
+                                    ),
+                                  );
+                                });
                               }).toList(),
                             )),
                       ),
@@ -189,6 +183,7 @@ class _YumStoreListState extends State<YumStoreList> {
                     ),
                     Consumer<StoreInfoProvider>(
                         builder: (providercontext, provider, widgets) {
+                      print(provider.storeInfo);
                       if (provider.storeInfo == [] &&
                           provider.storeInfo.length < 0) {
                         return CircularProgressIndicator();
@@ -205,12 +200,16 @@ class _YumStoreListState extends State<YumStoreList> {
                                     setState(() {
                                       _isLoading = true;
                                     });
-                                    await _menuProvider.getMenubyStore(provider
-                                        .storeInfo[index].storeId
-                                        .toString());
-                                    await _reviewProvider.getReviewByStore(
-                                        provider.storeInfo[index].storeId
-                                            .toString());
+                                    try {
+                                      await _menuProvider.getMenubyStore(
+                                          provider.storeInfo[index].storeId
+                                              .toString());
+                                      await _reviewProvider.getReviewByStore(
+                                          provider.storeInfo[index].storeId
+                                              .toString());
+                                    } catch (e) {
+                                      print(e);
+                                    }
 
                                     setState(() {
                                       _isLoading = false;

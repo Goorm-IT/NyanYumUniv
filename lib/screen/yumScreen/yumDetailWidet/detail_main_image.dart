@@ -11,12 +11,14 @@ class MainImage extends StatefulWidget {
   String imagePath;
   List<MenuByStore> menuList;
   BehaviorSubject<int> isLike;
+  BehaviorSubject<int> isSave;
   final StoreComposition storeInfo;
   MainImage(
       {required this.isNull,
       required this.menuList,
       required this.storeInfo,
       required this.isLike,
+      required this.isSave,
       this.imagePath = "",
       Key? key})
       : super(key: key);
@@ -84,6 +86,7 @@ class _MainImageState extends State<MainImage> {
           menuList: widget.menuList,
           storeInfo: widget.storeInfo,
           isLike: widget.isLike,
+          isSave: widget.isSave,
         ),
       ],
     );
