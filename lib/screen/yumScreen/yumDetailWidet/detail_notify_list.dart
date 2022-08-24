@@ -20,7 +20,7 @@ class _NotifyListState extends State<NotifyList> {
     Widget listItem(ReviewByStore e, int index) {
       return GestureDetector(
         onTap: () {
-          widget.notifyId(e.reviewId);
+          widget.notifyId(int.parse(e.reviewId));
           setState(() {
             selected = index;
           });

@@ -86,7 +86,17 @@ class _StoreListItemState extends State<StoreListItem> {
                     '${widget.storeAlias}  ',
                     style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                   ),
-                  StarScore(score: widget.score),
+                  FutureBuilder<Object>(
+                      future: getScore(widget.storeId.toString()),
+                      builder: (context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          return StarScore(
+                              score: double.parse(
+                                  snapshot.data.toStringAsFixed(1)));
+                        } else {
+                          return StarScore(score: 0.0);
+                        }
+                      }),
                 ],
               ),
               FutureBuilder<Object>(
@@ -155,9 +165,26 @@ class _StoreListItemState extends State<StoreListItem> {
     }
   }
 
+  Future<double> getScore(String storeId) async {
+    final yumReviewhttp = YumReviewhttp();
+    final _list = await yumReviewhttp.reviewByStore(storeId);
+    double _tmp = 0;
+    for (int i = 0; i < _list.length; i++) {
+      _tmp += _list[i].score;
+    }
+    _tmp /= _list.length;
+
+    if (_list.isEmpty) {
+      return 0.0;
+    } else {
+      return _tmp;
+    }
+  }
+
   Future<String> getStoreReview(String storeId) async {
     final yumReviewhttp = YumReviewhttp();
     final _list = await yumReviewhttp.commentByStore(storeId);
+
     if (_list[0].reviewId == -1) {
       return " ";
     } else {

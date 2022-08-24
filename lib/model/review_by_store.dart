@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class ReviewByStore<String, double, bool> {
   final String reviewId;
   final String userAlias;

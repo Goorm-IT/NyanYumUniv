@@ -57,6 +57,7 @@ class _ThreeButtonState extends State<ThreeButton>
   late AnimationController isSaveAnimationController;
 
   List<bool> isMenuChecked = [];
+
   void _scrollToTop() {
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
@@ -115,7 +116,7 @@ class _ThreeButtonState extends State<ThreeButton>
     String? dropinit = "";
     if (widget.menuList.length > 3) {
       items.clear();
-      for (int i = 0; i < widget.menuList.length; i++) {
+      for (int i = 2; i < widget.menuList.length; i++) {
         items.add(DropdownMenuItem(
           child: Container(
             width: 80,
@@ -598,14 +599,29 @@ class _ThreeButtonState extends State<ThreeButton>
                                                           MainAxisAlignment
                                                               .spaceAround,
                                                       children: [
-                                                        IconButton(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(0),
-                                                            splashRadius: 15,
-                                                            onPressed: () {},
-                                                            icon: Icon(
-                                                                Icons.close)),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            Align(
+                                                              child: IconButton(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .all(
+                                                                          0),
+                                                                  splashRadius:
+                                                                      15,
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  icon: Icon(Icons
+                                                                      .close)),
+                                                            ),
+                                                          ],
+                                                        ),
                                                         Text(
                                                           "메뉴 추가",
                                                           style: TextStyle(
@@ -983,7 +999,8 @@ class _ThreeButtonState extends State<ThreeButton>
                     );
                   });
             } else {
-              return Container();
+              return Container(
+                  width: 28, height: 40, color: Colors.transparent);
             }
           },
         ),

@@ -262,8 +262,7 @@ class _MyMenuState extends State<MyMenu> {
           setState(() {
             _loadingVisible = !_loadingVisible;
           });
-          await _storeInfoProvider.loadStoreInfo(
-              1, 10, context.read<CategorySelectedProvider>().selected);
+          await _storeInfoProvider.loadStoreInfo(1, 10);
           Navigator.push(
             context,
             MaterialPageRoute(

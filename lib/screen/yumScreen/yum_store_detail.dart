@@ -1,6 +1,7 @@
 import 'package:async/async.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/Widgets/star_rating.dart';
+import 'package:deanora/Widgets/star_rating_demical.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/review_by_store.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
@@ -37,6 +38,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
   List<String> imagePathList = [];
   bool crossChange = true;
   bool _isLoading = false;
+  double totalScrore = 0;
   var priceFormat = NumberFormat('###,###,###,###');
   final ScrollController _scrollController = ScrollController();
   void _scrollToTop() {
@@ -65,6 +67,10 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
     _scrollController.addListener(() {});
     _isLike = BehaviorSubject.seeded(0);
     _isSave = BehaviorSubject.seeded(0);
+    for (int i = 0; i < context.read<ReviewProvider>().review.length; i++) {
+      totalScrore += context.read<ReviewProvider>().review[i].score;
+    }
+    totalScrore /= context.read<ReviewProvider>().review.length;
   }
 
   @override
@@ -325,7 +331,8 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                       color: Color(0xffD6D6D6),
                                     ),
                                     SizedBox(height: 24.0),
-                                    subTitle('별점  ${widget.storeInfo.score}'),
+                                    subTitle(
+                                        '별점  ${totalScrore.toStringAsFixed(1)}'),
                                     SizedBox(height: 10.0),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -335,18 +342,45 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                             MainAxisAlignment.spaceEvenly,
                                         children: [1, 2, 3, 4, 5].map((e) {
                                           bool _isChecked;
-                                          _isChecked =
-                                              widget.storeInfo.score >= e
-                                                  ? true
-                                                  : false;
+                                          bool _isDemical;
+                                          double _demical = 0.0;
+                                          if (totalScrore - e >= 0) {
+                                            _isChecked = true;
+                                            _isDemical = false;
+                                          } else if (-1 < totalScrore - e &&
+                                              totalScrore - e < 0) {
+                                            _isDemical = true;
+                                            _isChecked = true;
+                                            _demical = -1 * (totalScrore - e);
+                                          } else {
+                                            _isChecked = false;
+                                            _isDemical = false;
+                                          }
                                           return Container(
                                             width: 50,
-                                            child: StarRating(
+                                            child: StarRatingDemical(
                                               isChecked: _isChecked,
+                                              isDemical: _isDemical,
+                                              demical: _demical,
                                             ),
                                           );
                                         }).toList(),
                                       ),
+                                      // child: Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.spaceEvenly,
+                                      //   children: [1, 2, 3, 4, 5].map((e) {
+                                      //     bool _isChecked;
+                                      //     _isChecked =
+                                      //         totalScrore >= e ? true : false;
+                                      //     return Container(
+                                      //       width: 50,
+                                      //       child: StarRating(
+                                      //         isChecked: _isChecked,
+                                      //       ),
+                                      //     );
+                                      //   }).toList(),
+                                      // ),
                                     ),
                                     SizedBox(height: 13.0),
                                     Divider(

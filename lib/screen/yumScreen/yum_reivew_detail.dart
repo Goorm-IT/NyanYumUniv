@@ -42,10 +42,6 @@ class _YumReviewDetailState extends State<YumReviewDetail> {
         });
       }
     }
-    for (int i = 0; i < widget.reviewList.length; i++) {
-      print(widget.reviewList[i].content);
-      print(widget.reviewList[i].imagePath);
-    }
 
     return Scaffold(
       body: SafeArea(
@@ -189,6 +185,9 @@ class _YumReviewDetailState extends State<YumReviewDetail> {
                           ),
                         ],
                       ),
+                      Text(widget.reviewList[sliderIndex].score.toString(),
+                          style: TextStyle(
+                              color: Color(0xff707070), fontSize: 10)),
                       Text(
                           widget.reviewList[sliderIndex].registerDate
                               .toString(),

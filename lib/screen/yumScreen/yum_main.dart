@@ -308,9 +308,19 @@ class _YumMainState extends State<YumMain> {
                                 Container(
                                   padding: const EdgeInsets.all(4.0),
                                   decoration: greyBorder(5.0),
-                                  child: StarScore(
-                                    score: top5List[top5Idx].score,
-                                  ),
+                                  child: FutureBuilder<Object>(
+                                      future: getScore(
+                                          top5List[top5Idx].storeId.toString()),
+                                      builder:
+                                          (context, AsyncSnapshot snapshot) {
+                                        if (snapshot.hasData) {
+                                          return StarScore(
+                                              score: double.parse(snapshot.data
+                                                  .toStringAsFixed(1)));
+                                        } else {
+                                          return StarScore(score: 0.0);
+                                        }
+                                      }),
                                 ),
                               ],
                             ),
@@ -508,6 +518,22 @@ class _YumMainState extends State<YumMain> {
       return "아직 리뷰가 없습니다.";
     } else {
       return _list[0].content;
+    }
+  }
+
+  Future<double> getScore(String storeId) async {
+    final yumReviewhttp = YumReviewhttp();
+    final _list = await yumReviewhttp.reviewByStore(storeId);
+    double _tmp = 0;
+    for (int i = 0; i < _list.length; i++) {
+      _tmp += _list[i].score;
+    }
+    _tmp /= _list.length;
+
+    if (_list.isEmpty) {
+      return 0.0;
+    } else {
+      return _tmp;
     }
   }
 

@@ -1,9 +1,11 @@
 import 'package:blur/blur.dart';
 import 'package:deanora/const/color.dart';
+import 'package:deanora/provider/menutabbar_selected_provider.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/MyCalendar.dart';
 import 'package:deanora/screen/yumScreen/yum_my_profile.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 typedef MenuTabBarToggle = void Function(int);
@@ -44,8 +46,8 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
   @override
   initState() {
     super.initState();
-    radioModel.add(new RadioCustom(true, "onNyum", "offNyum", "내 강의실", 0));
-    radioModel.add(new RadioCustom(false, "onYum", "offYum", "맛집 찾기", 1));
+    radioModel.add(new RadioCustom(1, "onNyum", "offNyum", "내 강의실"));
+    radioModel.add(new RadioCustom(2, "onYum", "offYum", "맛집 찾기"));
     _animationControllerUp = new AnimationController(
         vsync: this, duration: Duration(milliseconds: 700));
     _animationControllerDown = new AnimationController(
@@ -109,7 +111,8 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
   void _updateButtonPosition(double dy) {
     if (dy == -2222) {
       //내려갈때
-      dy = radioModel[0].isSelected == true
+
+      dy = context.read<MenuTabBarSelectedProvider>().selected == 1
           ? MediaQuery.of(context).size.height - classList.length * 60
           : MediaQuery.of(context).size.height - foodList.length * 60;
     } else if (dy == -3333) dy = MediaQuery.of(context).size.height - 100;
@@ -121,7 +124,7 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
       _animationUp = Tween<double>(
               //Nyum
               begin: position,
-              end: radioModel[0].isSelected == true
+              end: context.read<MenuTabBarSelectedProvider>().selected == 1
                   ? classList.length * 60
                   : foodList.length * 60)
           .animate(new CurvedAnimation(
@@ -204,22 +207,12 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         _Radio(
-                          onOff: (bool boolean) {
-                            setState(() {
-                              radioModel[0].isSelected = boolean;
-                              radioModel[1].isSelected = !boolean;
-                            });
-                          },
                           onbutton: radioModel[0],
+                          selected: 1,
                         ),
                         _Radio(
-                          onOff: (bool boolean) {
-                            setState(() {
-                              radioModel[1].isSelected = boolean;
-                              radioModel[0].isSelected = !boolean;
-                            });
-                          },
                           onbutton: radioModel[1],
+                          selected: 2,
                         ),
                       ]),
                 ),
@@ -283,7 +276,10 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
                 //페이지 켜졌을때 리스트
                 opacity: _animationControllerFadeText,
                 child: Padding(
-                  padding: radioModel[0].isSelected == true
+                  padding: context
+                              .watch<MenuTabBarSelectedProvider>()
+                              .selected ==
+                          1
                       ? EdgeInsets.only(
                           top: MediaQuery.of(context).size.height -
                               classList.length * 60 -
@@ -300,7 +296,10 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
                           if (snapshot.data == 1) {
                             _animationControllerFadeText.forward();
                             return Column(
-                                children: (radioModel[0].isSelected == true)
+                                children: (context
+                                            .read<MenuTabBarSelectedProvider>()
+                                            .selected ==
+                                        1)
                                     ? classList
                                     : foodList);
                           } else {
@@ -402,12 +401,11 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
   }
 }
 
-typedef MenuOnOff = void Function(bool);
-
 class _Radio extends StatefulWidget {
   final RadioCustom onbutton;
-  final MenuOnOff onOff;
-  const _Radio({required this.onOff, required this.onbutton, Key? key})
+
+  final int selected;
+  _Radio({required this.onbutton, required this.selected, Key? key})
       : super(key: key);
 
   @override
@@ -416,16 +414,24 @@ class _Radio extends StatefulWidget {
 
 class _RadioState extends State<_Radio> {
   @override
+  late MenuTabBarSelectedProvider _menuTabBarSelectedProvider;
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width / 2,
-      child: GestureDetector(
-        onTap: () {
-          widget.onOff(true);
-        },
-        child: _RadioItem(widget.onbutton),
-      ),
-    );
+    _menuTabBarSelectedProvider =
+        Provider.of<MenuTabBarSelectedProvider>(context, listen: false);
+    return Consumer<MenuTabBarSelectedProvider>(
+        builder: (consumerContext, provider, consumerWidget) {
+      return Container(
+        width: MediaQuery.of(context).size.width / 2,
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              provider.getSelectedMenu(widget.selected);
+            });
+          },
+          child: _RadioItem(widget.onbutton),
+        ),
+      );
+    });
   }
 }
 
@@ -436,14 +442,15 @@ class _RadioItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: ClipPath(
-        clipper: _CustomPath(_item.idx),
+        clipper: _CustomPath(_item.isSelected),
         child: Container(
             width: MediaQuery.of(context).size.width / 2,
             color: Color(0xfff4f4f4),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _item.isSelected
+                _item.isSelected ==
+                        context.read<MenuTabBarSelectedProvider>().selected
                     ? Image.asset(
                         'assets/images/${_item.onIcon}.png',
                         width: 20,
@@ -457,8 +464,12 @@ class _RadioItem extends StatelessWidget {
                 Text(
                   _item.title,
                   style: TextStyle(
-                      color:
-                          _item.isSelected ? Colors.black : Color(0xffcccccc)),
+                      color: _item.isSelected ==
+                              context
+                                  .read<MenuTabBarSelectedProvider>()
+                                  .selected
+                          ? Colors.black
+                          : Color(0xffcccccc)),
                 ),
               ],
             )),
@@ -474,13 +485,13 @@ class _CustomPath extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    if (index == 0) {
+    if (index == 1) {
       path.lineTo(0.0, size.height);
       path.lineTo(size.width, size.height);
       path.lineTo(size.width, radius);
       path.arcToPoint(Offset(size.width - radius, 0.0),
           clockwise: true, radius: Radius.circular(radius));
-    } else if (index == 1) {
+    } else if (index == 2) {
       path.moveTo(radius, 0.0);
       path.arcToPoint(Offset(0.0, radius),
           clockwise: true, radius: Radius.circular(radius));
@@ -527,11 +538,10 @@ class _ContainerClipper extends CustomClipper<Path> {
 }
 
 class RadioCustom {
-  bool isSelected;
+  int isSelected;
   final String onIcon;
   final String offIcon;
   final String title;
-  final int idx;
 
-  RadioCustom(this.isSelected, this.onIcon, this.offIcon, this.title, this.idx);
+  RadioCustom(this.isSelected, this.onIcon, this.offIcon, this.title);
 }
