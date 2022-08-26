@@ -3,11 +3,13 @@ import 'package:deanora/http/customException.dart';
 import 'package:deanora/model/comment_by_store.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/review_by_store.dart';
+import 'package:deanora/model/yum_naver_search.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
 import 'package:deanora/model/yum_top_5.dart';
 import 'package:deanora/model/yum_user.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 late String _cookie;
 
@@ -142,9 +144,9 @@ class YumStorehttp {
   }
 
   Future<List<StoreComposition>> storeList2(int startPageNo, int endPageNo,
-      [String category = '']) async {
+      [String category = ""]) async {
     List<dynamic> _list = [];
-    Map<String, dynamic> httpBody = category == ''
+    Map<String, dynamic> httpBody = category == ""
         ? {
             "startPageNo": startPageNo,
             "endPageNo": endPageNo,
@@ -338,6 +340,7 @@ class SaveApi {
     if (response.statusCode == 200) {
       return (jsonDecode(response.body)["show"]);
     } else {
+      print(response.statusCode);
       throw new CustomException(300, 'checkSave');
     }
   }
@@ -370,29 +373,48 @@ class ReportApi {
 }
 
 class NaverOpneApi {
-  String naverUrl = "https://openapi.naver.com";
-  Future<List> naverSearchLocal(String title) async {
-    String _list;
+  Future<String> getNaverMapImage(
+      {required String x, required String y, required String title}) async {
+    String convertX = x;
+    String convertY = y;
+    if (x == "" || y == "") {
+      convertX = "304547";
+      convertY = "532687";
+      title = "안양대학교";
+    }
+    final url = Uri.parse(
+        'https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?crs=NHN:128&scale=2&format=png&w=310&h=170&markers=type:t|color:0xEE3A3A|pos:$convertX%20$convertY|label:$title');
+    var response = await http.get(url, headers: {
+      'X-NCP-APIGW-API-KEY-ID': 'n2d8s1sg7f',
+      'X-NCP-APIGW-API-KEY': '9jmceo48SwKcMGqVdhnci4G4mn7YkYPPiF19xFp7'
+    });
+    String str;
+    if (response.statusCode == 200) {
+      return Base64Encoder().convert(response.bodyBytes);
+    } else {
+      print(response.statusCode);
+      throw new CustomException(300, 'failLoadNaverMap');
+    }
+  }
 
-    var headers = {
+  Future<List<YumNaverSearch>> searchNaver(String search) async {
+    List<dynamic> _list = [];
+    final url = Uri.parse(
+        'https://openapi.naver.com/v1/search/local.json?query=안양 $search&display=5');
+    var response = await http.get(url, headers: {
       'X-Naver-Client-Id': '_x_EKHpKcNechFeudcch',
       'X-Naver-Client-Secret': 'TtNtDBjrGX'
-    };
-    var request = http.Request(
-        'GET',
-        Uri.parse(
-            'https://openapi.naver.com/v1/search/local.json?query=롯데리아 안양&display=5'));
-
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
+    });
+    print(response.statusCode);
 
     if (response.statusCode == 200) {
-      _list = await response.stream.bytesToString();
-
-      return jsonDecode(_list)["items"];
+      String responseBody = utf8.decode(response.bodyBytes);
+      _list = jsonDecode(responseBody)['items'];
+      return _list
+          .map<YumNaverSearch>((item) => YumNaverSearch.fromJson(item))
+          .toList();
     } else {
-      print(response.reasonPhrase);
+      print('Request failed with status(searchNaver): ${response.statusCode}.');
       return [];
     }
   }

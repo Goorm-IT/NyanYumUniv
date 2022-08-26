@@ -2,6 +2,7 @@ import 'package:async/async.dart';
 import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/Widgets/star_rating.dart';
 import 'package:deanora/Widgets/star_rating_demical.dart';
+import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/review_by_store.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
@@ -22,8 +23,11 @@ import 'YumMainWidget/gery_border.dart';
 
 class YumStoreDetail extends StatefulWidget {
   final StoreComposition storeInfo;
+  final String naverMapUrl;
 
-  const YumStoreDetail({required this.storeInfo, Key? key}) : super(key: key);
+  const YumStoreDetail(
+      {required this.storeInfo, required this.naverMapUrl, Key? key})
+      : super(key: key);
 
   @override
   State<YumStoreDetail> createState() => _YumStoreDetailState();
@@ -32,6 +36,7 @@ class YumStoreDetail extends StatefulWidget {
 class _YumStoreDetailState extends State<YumStoreDetail> {
   late BehaviorSubject<int> _isLike;
   late BehaviorSubject<int> _isSave;
+  late String str;
   List<ReviewByStore> reviewList = [];
   List<MenuByStore> menuList = [];
   List<MenuByStore> recommendList = [];
@@ -240,11 +245,24 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                       height: 12,
                                     ),
                                     subTitle(" 위치"),
+
                                     SizedBox(
                                       height: 12,
                                     ),
-                                    NaverMapInDetail(
-                                      storeInfo: widget.storeInfo,
+                                    // NaverMapInDetail(
+                                    //   storeInfo: widget.storeInfo,
+                                    // ),
+                                    Container(
+                                      width: 310,
+                                      height: 170,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                        child: Image.memory(Uri.parse(
+                                                'data:image/jpeg;base64,${widget.naverMapUrl}')
+                                            .data!
+                                            .contentAsBytes()),
+                                      ),
                                     ),
                                     SizedBox(height: 10.0),
                                     Row(
@@ -366,21 +384,6 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                           );
                                         }).toList(),
                                       ),
-                                      // child: Row(
-                                      //   mainAxisAlignment:
-                                      //       MainAxisAlignment.spaceEvenly,
-                                      //   children: [1, 2, 3, 4, 5].map((e) {
-                                      //     bool _isChecked;
-                                      //     _isChecked =
-                                      //         totalScrore >= e ? true : false;
-                                      //     return Container(
-                                      //       width: 50,
-                                      //       child: StarRating(
-                                      //         isChecked: _isChecked,
-                                      //       ),
-                                      //     );
-                                      //   }).toList(),
-                                      // ),
                                     ),
                                     SizedBox(height: 13.0),
                                     Divider(

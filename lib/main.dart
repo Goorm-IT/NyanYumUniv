@@ -2,6 +2,7 @@ import 'package:deanora/provider/comment_provider.dart';
 import 'package:deanora/provider/like_store_provider.dart';
 import 'package:deanora/provider/menu_provider.dart';
 import 'package:deanora/provider/menutabbar_selected_provider.dart';
+import 'package:deanora/provider/naver_search_provider.dart';
 import 'package:deanora/provider/review_provider.dart';
 import 'package:deanora/provider/save_store_provider.dart';
 import 'package:deanora/provider/storeInfo_provider.dart';
@@ -62,6 +63,9 @@ void main() async {
     ),
     ChangeNotifierProvider(
       create: (BuildContext context) => MenuTabBarSelectedProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (BuildContext context) => NaverSearchProvider(),
     ),
   ], child: MyApp()));
 }

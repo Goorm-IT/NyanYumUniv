@@ -10,8 +10,10 @@ import 'package:deanora/model/yum_store_list_composition.dart';
 import 'package:deanora/model/yum_top_5.dart';
 import 'package:deanora/provider/category_selected_provider.dart';
 import 'package:deanora/provider/menu_provider.dart';
+import 'package:deanora/provider/naver_search_provider.dart';
 import 'package:deanora/provider/review_provider.dart';
 import 'package:deanora/provider/storeInfo_provider.dart';
+import 'package:deanora/screen/tmp_search.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/gery_border.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/star_score.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
@@ -51,12 +53,15 @@ class _YumMainState extends State<YumMain> {
   late MenuProvider _menuProvider;
   late StoreInfoProvider _storeInfoProvider;
   late CategorySelectedProvider _categorySelectedProvider;
+  late NaverSearchProvider _naverSearchProvider;
   Widget build(BuildContext context) {
     _reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
     _storeInfoProvider = Provider.of<StoreInfoProvider>(context, listen: false);
     _menuProvider = Provider.of<MenuProvider>(context, listen: false);
     _categorySelectedProvider =
         Provider.of<CategorySelectedProvider>(context, listen: false);
+    _naverSearchProvider =
+        Provider.of<NaverSearchProvider>(context, listen: false);
     final searchController = TextEditingController();
     final availableHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.top -
@@ -115,10 +120,12 @@ class _YumMainState extends State<YumMain> {
                               )),
                           IconButton(
                               onPressed: () async {
-                                var naverOpneApi = NaverOpneApi();
-                                List tmp = await naverOpneApi
-                                    .naverSearchLocal(searchController.text);
-                                print(tmp);
+                                await _naverSearchProvider
+                                    .getReviewByStore(searchController.text);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => TmpSearch()));
                               },
                               icon: Icon(Icons.search))
                         ],
@@ -170,12 +177,20 @@ class _YumMainState extends State<YumMain> {
                                         setState(() {
                                           _isLoading = false;
                                         });
+                                        NaverOpneApi naverOpneApi =
+                                            NaverOpneApi();
+                                        String str =
+                                            await naverOpneApi.getNaverMapImage(
+                                                x: e.mapX,
+                                                y: e.mapY,
+                                                title: e.storeAlias);
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 YumStoreDetail(
                                               storeInfo: e,
+                                              naverMapUrl: str,
                                             ),
                                           ),
                                         );
@@ -449,11 +464,19 @@ class _YumMainState extends State<YumMain> {
                                     setState(() {
                                       _isLoading = false;
                                     });
+                                    NaverOpneApi naverOpneApi = NaverOpneApi();
+                                    String str =
+                                        await naverOpneApi.getNaverMapImage(
+                                            x: provider.storeInfo[0].mapX,
+                                            y: provider.storeInfo[0].mapY,
+                                            title: provider
+                                                .storeInfo[0].storeAlias);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => YumStoreDetail(
                                           storeInfo: provider.storeInfo[0],
+                                          naverMapUrl: str,
                                         ),
                                       ),
                                     );

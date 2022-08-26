@@ -8,14 +8,19 @@ class StoreComposition<String, double> {
   final String category;
   final String address;
   final double storeId;
-  StoreComposition(
-      {required this.imagePath,
-      required this.storeAlias,
-      required this.score,
-      required this.commentId,
-      required this.category,
-      required this.address,
-      required this.storeId});
+  final double mapX;
+  final double mapY;
+  StoreComposition({
+    required this.imagePath,
+    required this.storeAlias,
+    required this.score,
+    required this.commentId,
+    required this.category,
+    required this.address,
+    required this.storeId,
+    required this.mapX,
+    required this.mapY,
+  });
 
   factory StoreComposition.fromJson(Map<String, dynamic> json) {
     return StoreComposition(
@@ -26,6 +31,8 @@ class StoreComposition<String, double> {
       category: json["category"] as String,
       address: json["address"] as String,
       storeId: json["storeId"] as double,
+      mapX: json["mapX"] as double,
+      mapY: json["mapY"] as double,
     );
   }
 }

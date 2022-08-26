@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/provider/like_store_provider.dart';
 import 'package:deanora/provider/menu_provider.dart';
 import 'package:deanora/provider/review_provider.dart';
@@ -75,12 +76,17 @@ class _YumLikeListState extends State<YumLikeList> {
                                   provider.likedlist[index].storeId.toString());
                               await _reviewProvider.getReviewByStore(
                                   provider.likedlist[index].storeId.toString());
-
+                              NaverOpneApi naverOpneApi = NaverOpneApi();
+                              String str = await naverOpneApi.getNaverMapImage(
+                                  x: provider.likedlist[index].mapX,
+                                  y: provider.likedlist[index].mapY,
+                                  title: provider.likedlist[index].storeAlias);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => YumStoreDetail(
                                     storeInfo: provider.likedlist[index],
+                                    naverMapUrl: str,
                                   ),
                                 ),
                               );

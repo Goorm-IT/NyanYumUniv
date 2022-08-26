@@ -214,11 +214,21 @@ class _YumStoreListState extends State<YumStoreList> {
                                     setState(() {
                                       _isLoading = false;
                                     });
+
+                                    NaverOpneApi naverOpneApi = NaverOpneApi();
+                                    String str =
+                                        await naverOpneApi.getNaverMapImage(
+                                            x: provider.storeInfo[index].mapX,
+                                            y: provider.storeInfo[index].mapY,
+                                            title: provider
+                                                .storeInfo[index].storeAlias);
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => YumStoreDetail(
                                           storeInfo: provider.storeInfo[index],
+                                          naverMapUrl: str,
                                         ),
                                       ),
                                     );
