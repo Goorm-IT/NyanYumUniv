@@ -13,14 +13,13 @@ class StoreListItem extends StatefulWidget {
   final double height;
   final String? imagePath;
   final String storeAlias;
-  final double score;
+
   final int storeId;
 
   const StoreListItem({
     required this.height,
     required this.imagePath,
     required this.storeAlias,
-    required this.score,
     required this.storeId,
     Key? key,
   }) : super(key: key);
@@ -41,116 +40,130 @@ class _StoreListItemState extends State<StoreListItem> {
     _commentProvider = Provider.of<CommentProvider>(context, listen: false);
     _commentProvider.getCommentByStore(widget.storeId.toString());
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Row(
-      children: [
-        Container(
-          width: widget.height - 10,
-          height: widget.height - 10,
-          margin: const EdgeInsets.only(
-            left: 15,
-            right: 15,
-            bottom: 15,
-          ),
-          child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: widget.imagePath != null
-                  ? CachedNetworkImage(
-                      fadeInDuration: const Duration(milliseconds: 100),
-                      fadeOutDuration: const Duration(milliseconds: 100),
-                      imageUrl: widget.imagePath.toString(),
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Image.asset(
-                        'assets/images/defaultImg.png',
-                        width: 110,
-                        height: 110,
-                      ),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                    )
-                  : Container(
-                      color: Color(0xffF3F3F5),
-                      child: Center(
-                          child: Image.asset(
-                              'assets/images/default_nobackground.png')))),
-        ),
-        Flexible(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              SizedBox(
-                height: 2,
+          children: [
+            Container(
+              width: widget.height - 10,
+              height: widget.height - 10,
+              margin: const EdgeInsets.only(
+                left: 15,
+                right: 15,
+                bottom: 15,
               ),
-              Row(
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: widget.imagePath != null
+                      ? CachedNetworkImage(
+                          fadeInDuration: const Duration(milliseconds: 100),
+                          fadeOutDuration: const Duration(milliseconds: 100),
+                          imageUrl: widget.imagePath.toString(),
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Image.asset(
+                            'assets/images/defaultImg.png',
+                            width: 110,
+                            height: 110,
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        )
+                      : Container(
+                          color: Color(0xffF3F3F5),
+                          child: Center(
+                              child: Image.asset(
+                                  'assets/images/default_nobackground.png')))),
+            ),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(
-                    '${widget.storeAlias}  ',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  SizedBox(
+                    height: 2,
+                  ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Container(
+                          child: Text(
+                            '${widget.storeAlias.replaceAll("</b>", "").replaceAll("<b>", " ")}',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 16),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      FutureBuilder<Object>(
+                          future: getScore(widget.storeId.toString()),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              return StarScore(
+                                  score: double.parse(
+                                      snapshot.data.toStringAsFixed(1)));
+                            } else {
+                              return StarScore(score: 0.0);
+                            }
+                          }),
+                      SizedBox(
+                        width: 30,
+                      ),
+                    ],
                   ),
                   FutureBuilder<Object>(
-                      future: getScore(widget.storeId.toString()),
-                      builder: (context, AsyncSnapshot snapshot) {
+                      future: getStoreReview(widget.storeId.toString()),
+                      builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          return StarScore(
-                              score: double.parse(
-                                  snapshot.data.toStringAsFixed(1)));
+                          return Container(
+                            margin: const EdgeInsets.only(right: 20.0),
+                            width: 150,
+                            child: Text(
+                              snapshot.data.toString(),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
                         } else {
-                          return StarScore(score: 0.0);
+                          return Container();
                         }
                       }),
+                  FutureBuilder<Object>(
+                      future: getStoreMenu(widget.storeId.toString()),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data == "아직 리뷰가 없습니다.") {
+                            return Container();
+                          }
+                          return Container(
+                            padding: const EdgeInsets.all(3.0),
+                            decoration: greyBorder(5.0),
+                            width: 75,
+                            child: Row(
+                              children: [
+                                putimg(14.0, 12.0, "thumbs"),
+                                Container(
+                                  width: 46,
+                                  child: Text(
+                                    ' ${snapshot.data.toString()}',
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }),
+                  SizedBox(
+                    height: 10,
+                  )
                 ],
               ),
-              FutureBuilder<Object>(
-                  future: getStoreReview(widget.storeId.toString()),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Container(
-                        margin: const EdgeInsets.only(right: 20.0),
-                        width: 150,
-                        child: Text(
-                          snapshot.data.toString(),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  }),
-              FutureBuilder<Object>(
-                  future: getStoreMenu(widget.storeId.toString()),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data == "아직 리뷰가 없습니다.") {
-                        return Container();
-                      }
-                      return Container(
-                        padding: const EdgeInsets.all(3.0),
-                        decoration: greyBorder(5.0),
-                        width: 75,
-                        child: Row(
-                          children: [
-                            putimg(14.0, 12.0, "thumbs"),
-                            Container(
-                              width: 46,
-                              child: Text(
-                                ' ${snapshot.data.toString()}',
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  }),
-              SizedBox(
-                height: 10,
-              )
-            ],
-          ),
-        )
-      ],
-    ));
+            )
+          ],
+        ));
   }
 
   Future<String> getStoreMenu(String storeId) async {
@@ -159,7 +172,7 @@ class _StoreListItemState extends State<StoreListItem> {
     _list.sort((a, b) => b.choiceCount.compareTo(a.choiceCount));
 
     if (_list.isEmpty) {
-      return "아직 리뷰가 없습니다.";
+      return "아직 리뷰가 없습니다";
     } else {
       return _list[0].menuAlias;
     }

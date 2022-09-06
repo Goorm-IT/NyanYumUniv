@@ -99,7 +99,6 @@ class _YumSaveListState extends State<YumSaveList> {
                                 imagePath: provider.savedlist[index].imagePath,
                                 storeAlias:
                                     provider.savedlist[index].storeAlias,
-                                score: provider.savedlist[index].score,
                                 storeId: provider.savedlist[index].storeId,
                               ),
                             ),

@@ -1,10 +1,15 @@
 import 'package:blur/blur.dart';
 import 'package:deanora/const/color.dart';
+import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/provider/menutabbar_selected_provider.dart';
+import 'package:deanora/provider/save_store_provider.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/MyCalendar.dart';
+import 'package:deanora/screen/yumScreen/yum_add_store.dart';
 import 'package:deanora/screen/yumScreen/yum_my_profile.dart';
-
+import 'package:deanora/screen/yumScreen/yum_save_list.dart';
+import 'package:deanora/screen/yumScreen/yum_search_add_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -42,10 +47,25 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
   late Animation<double> _animationRotate;
   late final void Function() _listenerDown;
   late final void Function() _listenerUp;
+  late SaveStoreProvider _saveStoreProvider;
+
+  Future<bool> _isLogin_naver() async {
+    NaverAccessToken res = await FlutterNaverLogin.currentAccessToken;
+
+    bool isLogin = res.accessToken.isNotEmpty && res.accessToken != 'no token';
+    return isLogin;
+  }
+
+  Future<String> _login_naver() async {
+    NaverLoginResult res = await FlutterNaverLogin.logIn();
+
+    return res.account.email;
+  }
 
   @override
   initState() {
     super.initState();
+
     radioModel.add(new RadioCustom(1, "onNyum", "offNyum", "내 강의실"));
     radioModel.add(new RadioCustom(2, "onYum", "offYum", "맛집 찾기"));
     _animationControllerUp = new AnimationController(
@@ -79,26 +99,37 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
 
     classList.add(menuList(
       "학사일정",
+      () {},
       MyCalendar(),
     ));
     classList.add(menuList(
       "교내 공지사항",
+      () {},
     ));
     classList.add(menuList(
       "시간표",
+      () {},
     ));
     foodList.add(menuList(
       "내가 쓴 리뷰",
+      () {},
     ));
     foodList.add(menuList(
       "저장한 맛집",
+      () async {
+        await _saveStoreProvider.getSaveStore();
+      },
+      YumSaveList(),
     ));
     foodList.add(menuList(
       "마이페이지",
+      () {},
       MyProfilePage(),
     ));
     foodList.add(menuList(
       "리뷰 작성",
+      () {},
+      YumSearchAddStore(),
     ));
   }
 
@@ -187,6 +218,7 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
 
   @override
   Widget build(BuildContext context) {
+    _saveStoreProvider = Provider.of<SaveStoreProvider>(context, listen: false);
     return StreamBuilder<Object>(
         stream: widget.backButtonToggle.stream,
         builder: (context, snapshot) {
@@ -383,9 +415,12 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
         });
   }
 
-  Widget menuList(String name, [nav]) {
+  Widget menuList(String name, Function _onTap, [nav]) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        bool isLogin_naver = await _isLogin_naver();
+        print(isLogin_naver);
+        _onTap();
         if (nav != null) {
           widget.menuTabBarToggle(-1);
           _moveButtonDown();

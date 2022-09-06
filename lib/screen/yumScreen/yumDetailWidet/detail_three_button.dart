@@ -6,12 +6,16 @@ import 'package:deanora/const/color.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
+import 'package:deanora/model/yum_user.dart';
+import 'package:deanora/provider/menu_provider.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/gery_border.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ThreeButton extends StatefulWidget {
@@ -42,7 +46,7 @@ class _ThreeButtonState extends State<ThreeButton>
     with TickerProviderStateMixin {
   final AsyncMemoizer<int> _memoizer1 = AsyncMemoizer();
   final AsyncMemoizer<int> _memoizer2 = AsyncMemoizer();
-
+  YumUser yumUser = GetIt.I<YumUser>();
   final ScrollController _scrollController = ScrollController();
   final _content = TextEditingController();
   TextEditingController addMenuAlias = TextEditingController();
@@ -55,7 +59,7 @@ class _ThreeButtonState extends State<ThreeButton>
   bool isSaveLoading = false;
   late AnimationController isLikeAnimationController;
   late AnimationController isSaveAnimationController;
-
+  late MenuProvider _menuProvider;
   List<bool> isMenuChecked = [];
 
   void _scrollToTop() {
@@ -79,18 +83,34 @@ class _ThreeButtonState extends State<ThreeButton>
   getlikeinit() {
     return this._memoizer1.runOnce(() async {
       LikeApi likeApi = LikeApi();
-      int tmp = await likeApi.checkLike(widget.storeInfo.storeId.toString());
-      widget.isLike.sink.add(tmp);
-      return tmp;
+      try {
+        int tmp = await likeApi.checkLike(widget.storeInfo.storeId.toString());
+        widget.isLike.sink.add(tmp);
+        return tmp;
+      } catch (e) {
+        YumUserHttp yumUserHttp = YumUserHttp(yumUser.uid);
+        await yumUserHttp.yumLogin();
+        int tmp = await likeApi.checkLike(widget.storeInfo.storeId.toString());
+        widget.isLike.sink.add(tmp);
+        return tmp;
+      }
     });
   }
 
   getsaveinit() {
     return this._memoizer2.runOnce(() async {
       SaveApi saveApi = SaveApi();
-      int tmp = await saveApi.checkSave(widget.storeInfo.storeId.toString());
-      widget.isSave.sink.add(tmp);
-      return tmp;
+      try {
+        int tmp = await saveApi.checkSave(widget.storeInfo.storeId.toString());
+        widget.isSave.sink.add(tmp);
+        return tmp;
+      } catch (e) {
+        YumUserHttp yumUserHttp = YumUserHttp(yumUser.uid);
+        await yumUserHttp.yumLogin();
+        int tmp = await saveApi.checkSave(widget.storeInfo.storeId.toString());
+        widget.isSave.sink.add(tmp);
+        return tmp;
+      }
     });
   }
 
@@ -112,34 +132,38 @@ class _ThreeButtonState extends State<ThreeButton>
 
   @override
   Widget build(BuildContext context) {
+    _menuProvider = Provider.of<MenuProvider>(context, listen: false);
     List<DropdownMenuItem<String>> items = [];
     String? dropinit = "";
     if (widget.menuList.length > 3) {
+      //이부분 추가하면 됨
       items.clear();
       for (int i = 2; i < widget.menuList.length; i++) {
-        items.add(DropdownMenuItem(
-          child: Container(
-            width: 80,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  widget.menuList[i].menuAlias,
-                  style: TextStyle(fontSize: 12),
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  '${widget.menuList[i].cost.toString()}원',
-                  style: TextStyle(fontSize: 7),
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                )
-              ],
+        items.add(
+          DropdownMenuItem(
+            child: Container(
+              width: 80,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.menuList[i].menuAlias,
+                    style: TextStyle(fontSize: 12),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    '${widget.menuList[i].cost.toString()}원',
+                    style: TextStyle(fontSize: 7),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ],
+              ),
             ),
+            value: i.toString(),
           ),
-          value: i.toString(),
-        ));
+        );
       }
       dropinit = items[0].value.toString();
     }
@@ -267,6 +291,8 @@ class _ThreeButtonState extends State<ThreeButton>
                                                     "write_review_location"),
                                                 Text(
                                                   "  가게 찾기",
+                                                  // widget.storeInfo.storeAlias
+                                                  //     .toString(),
                                                   style: TextStyle(
                                                       color: Color(0xff707070),
                                                       fontSize: 12.0),
@@ -389,7 +415,7 @@ class _ThreeButtonState extends State<ThreeButton>
                                               hintStyle: TextStyle(
                                                   color: Color(0xffD6D6D6),
                                                   fontSize: 13.0),
-                                              hintText: "20자 이상 작성해주세요",
+                                              hintText: "리뷰를 작성해주세요",
                                               enabledBorder:
                                                   UnderlineInputBorder(
                                                 borderSide: BorderSide(
@@ -770,14 +796,41 @@ class _ThreeButtonState extends State<ThreeButton>
                                                                               cost: int.parse(addMenuCost.text),
                                                                               menuAlias: addMenuAlias.text.toString(),
                                                                               storeId: widget.storeInfo.storeId.toString());
-                                                                          addMenuAlias
-                                                                              .clear();
-                                                                          addMenuCost
-                                                                              .clear();
+
                                                                           Navigator.pop(
                                                                               context);
                                                                           if (rst ==
                                                                               200) {
+                                                                            print(addMenuAlias.text);
+                                                                            print(addMenuCost.text);
+                                                                            await _menuProvider.getMenubyStore(widget.storeInfo.storeId.toString());
+                                                                            setModalState(() {
+                                                                              isMenuChecked.add(false);
+                                                                              items.add(
+                                                                                DropdownMenuItem(
+                                                                                  child: Container(
+                                                                                    width: 80,
+                                                                                    child: Column(
+                                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                                      children: [
+                                                                                        Text(
+                                                                                          addMenuAlias.text,
+                                                                                          style: TextStyle(fontSize: 12),
+                                                                                          textAlign: TextAlign.center,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        ),
+                                                                                        Text(
+                                                                                          '${addMenuCost.text.toString()}원',
+                                                                                          style: TextStyle(fontSize: 7),
+                                                                                          textAlign: TextAlign.center,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        )
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              );
+                                                                            });
                                                                             showDialog(
                                                                               context: context,
                                                                               builder: (BuildContext context) => AlertDialog(
@@ -788,6 +841,10 @@ class _ThreeButtonState extends State<ThreeButton>
                                                                               ),
                                                                             );
                                                                           }
+                                                                          addMenuAlias
+                                                                              .clear();
+                                                                          addMenuCost
+                                                                              .clear();
                                                                         }
                                                                       },
                                                                       style: ElevatedButton.styleFrom(
@@ -855,11 +912,8 @@ class _ThreeButtonState extends State<ThreeButton>
                                             );
                                           }).toList(),
                                         ),
-                                        Text(
-                                          "건의하기",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
+                                        SizedBox(
+                                          height: 100,
                                         ),
                                       ],
                                     ),

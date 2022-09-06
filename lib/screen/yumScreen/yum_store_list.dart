@@ -242,7 +242,6 @@ class _YumStoreListState extends State<YumStoreList> {
                                           provider.storeInfo[index].imagePath,
                                       storeAlias:
                                           provider.storeInfo[index].storeAlias,
-                                      score: provider.storeInfo[index].score,
                                       storeId:
                                           provider.storeInfo[index].storeId,
                                     ),
@@ -284,13 +283,5 @@ class _YumStoreListState extends State<YumStoreList> {
         ),
       ),
     );
-  }
-
-  Future<List> getStoreList(int startPageNo, int endPageNo,
-      [String category = '']) async {
-    final yumStorehttp = YumStorehttp();
-    final storeList =
-        await yumStorehttp.storeList(startPageNo, endPageNo, category);
-    return storeList;
   }
 }

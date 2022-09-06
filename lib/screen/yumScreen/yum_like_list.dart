@@ -98,7 +98,6 @@ class _YumLikeListState extends State<YumLikeList> {
                                 imagePath: provider.likedlist[index].imagePath,
                                 storeAlias:
                                     provider.likedlist[index].storeAlias,
-                                score: provider.likedlist[index].score,
                                 storeId: provider.likedlist[index].storeId,
                               ),
                             ),

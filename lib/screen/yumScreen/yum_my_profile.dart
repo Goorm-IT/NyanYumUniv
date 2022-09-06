@@ -254,9 +254,11 @@ class _MyProfilePageState extends State<MyProfilePage>
                                 onTap: () async {
                                   await _saveStoreProvider.getSaveStore();
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => YumSaveList()));
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => YumSaveList(),
+                                    ),
+                                  );
                                 },
                                 child: _ProfileIcon(
                                     image: 'profile_store_icon',
@@ -300,12 +302,15 @@ class _MyProfilePageState extends State<MyProfilePage>
                                 width: 150,
                                 child: Divider(
                                     color: Color(0xffD6D6D6), thickness: 0.5)),
-                            Container(
-                                margin: const EdgeInsets.symmetric(vertical: 5),
-                                child: Text(
-                                  "건의하기",
-                                  style: TextStyle(fontSize: 11),
-                                )),
+                            GestureDetector(
+                              child: Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: Text(
+                                    "건의하기",
+                                    style: TextStyle(fontSize: 11),
+                                  )),
+                            ),
                             Container(
                                 width: 150,
                                 child: Divider(
@@ -314,6 +319,7 @@ class _MyProfilePageState extends State<MyProfilePage>
                               onTap: () async {
                                 _logout_naver();
                                 _yum_delete();
+
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(

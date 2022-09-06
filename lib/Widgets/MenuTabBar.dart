@@ -18,8 +18,7 @@ class MenuTabBar extends StatefulWidget {
       this.colorMenuIconDefault = Colors.white,
       this.backgroundMenuIconActivated = Colors.white,
       this.backgroundMenuIconDefault = Colors.blue})
-      : assert(iconButtons.length > 1 &&
-            iconButtons.length % 2 == 0);
+      : assert(iconButtons.length > 1 && iconButtons.length % 2 == 0);
 
   _MenuTabBar createState() => _MenuTabBar();
 }

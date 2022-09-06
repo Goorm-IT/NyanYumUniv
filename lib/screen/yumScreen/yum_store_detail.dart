@@ -43,7 +43,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
   List<String> imagePathList = [];
   bool crossChange = true;
   bool _isLoading = false;
-  double totalScrore = 0;
+  double totalScrore = 0.0;
   var priceFormat = NumberFormat('###,###,###,###');
   final ScrollController _scrollController = ScrollController();
   void _scrollToTop() {
@@ -75,7 +75,9 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
     for (int i = 0; i < context.read<ReviewProvider>().review.length; i++) {
       totalScrore += context.read<ReviewProvider>().review[i].score;
     }
-    totalScrore /= context.read<ReviewProvider>().review.length;
+    if (context.read<ReviewProvider>().review.length != 0) {
+      totalScrore /= context.read<ReviewProvider>().review.length;
+    }
   }
 
   @override
@@ -391,10 +393,10 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                       color: Color(0xffD6D6D6),
                                     ),
                                     SizedBox(height: 24.0),
-                                    subTitle("건의하기"),
+
                                     Container(
                                       width: 200,
-                                      height: 400,
+                                      height: 200,
                                     ),
                                   ],
                                 ),

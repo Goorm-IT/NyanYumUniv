@@ -116,30 +116,46 @@ class YumStorehttp {
     }
   }
 
-  Future<List<dynamic>> storeList(int startPageNo, int endPageNo,
-      [String category = '']) async {
-    List<dynamic> _list = [];
-    Map<String, dynamic> httpBody = category == ''
-        ? {
-            "startPageNo": startPageNo,
-            "endPageNo": endPageNo,
-          }
-        : {
-            "startPageNo": startPageNo,
-            "endPageNo": endPageNo,
-            "category": category,
-          };
-    final url = Uri.http(yumURL, '/nyu/stores',
-        httpBody.map((key, value) => MapEntry(key, value.toString())));
+  Future<List<StoreComposition>> getstorebyAlias(
+      {required String storeAlias}) async {
+    List<dynamic> _tmp;
+    final url = Uri.http(
+        yumURL, '/nyu/store/search', {"storeAlias": storeAlias, "order": "1"});
     var response = await http.get(url);
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
-      _list = jsonDecode(responseBody)['storeList'];
-
-      return _list;
+      _tmp = jsonDecode(responseBody);
+      return _tmp
+          .map<StoreComposition>((item) => StoreComposition.fromJson(item))
+          .toList();
     } else {
-      print('Request failed with status(storeList1): ${response.statusCode}.');
+      print(
+          'Request failed with status(getstorebyAlias): ${response.statusCode}.');
       return [];
+    }
+  }
+
+  Future<void> addStore(
+      {required String address,
+      required String file,
+      required String category,
+      required String mapX,
+      required String mapY,
+      required String storeAlias}) async {
+    var headers = {'Cookie': _cookie};
+    var request = http.Request(
+        'POST',
+        Uri.parse(
+            'http://54.180.116.149:82/nyu/store?address=$address&category=$category&mapX=$mapX&mapY=$mapY&storeAlias=$storeAlias'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
     }
   }
 
@@ -371,6 +387,16 @@ class ReportApi {
     print(response.body);
   }
 }
+
+// class SupportApi {
+//    String yumURL = '54.180.116.149:82';
+//      Future<void> yumreport({required String category, required String content, required String re}) async {
+//     final url = Uri.http(
+//         yumURL, '/nyu/report', {"report": report, "reviewId": reviewId});
+//     var response = await http.post(url, headers: {'Cookie': _cookie});
+//     print(response.body);
+//   }
+// }
 
 class NaverOpneApi {
   Future<String> getNaverMapImage(

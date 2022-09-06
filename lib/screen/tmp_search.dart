@@ -13,17 +13,7 @@ class _TmpSearchState extends State<TmpSearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<NaverSearchProvider>(
-          builder: (consumerContext, provider, consumerWidget) {
-        print(provider.searchList.length);
-        return Container(
-            height: 600,
-            child: ListView.builder(
-                itemCount: provider.searchList.length,
-                itemBuilder: (BuildContext classContext, int index) {
-                  return Text('${provider.searchList[index].title}');
-                }));
-      }),
+      body: Container(),
     );
   }
 }
