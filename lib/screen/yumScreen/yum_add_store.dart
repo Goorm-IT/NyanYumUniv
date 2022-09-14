@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:deanora/Widgets/Widgets.dart';
+import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/Widgets/star_rating.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/model/menu_by_store.dart';
@@ -7,7 +8,11 @@ import 'package:deanora/model/yum_store_list_composition.dart';
 import 'package:deanora/provider/menu_provider.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/gery_border.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:html/parser.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class YumAddStore extends StatefulWidget {
@@ -27,9 +32,16 @@ class _YumAddStoreState extends State<YumAddStore> {
   final _content = TextEditingController();
   late MenuProvider _menuProvider;
   File? myimage;
+  int writeResult = -1;
   int isChecked = 0;
+  int flag = 0;
   int _menuId = -1;
+  bool isLoading = false;
+  int _dropselected = -1;
   List<bool> isMenuChecked = [];
+  List<MenuByStore> _menuList = [];
+  List<DropdownMenuItem<String>> items = [];
+  String? dropinit = "";
   void _scrollToTop() {
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
@@ -43,17 +55,19 @@ class _YumAddStoreState extends State<YumAddStore> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {});
+    _menuList = widget.menuList;
+
+    for (int i = 0; i < widget.menuList.length; i++) {
+      isMenuChecked.add(false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     _menuProvider = Provider.of<MenuProvider>(context, listen: false);
-    List<DropdownMenuItem<String>> items = [];
-    String? dropinit = "";
-    if (widget.menuList.length > 3) {
-      //이부분 추가하면 됨
+    if (_menuList.length > 3) {
       items.clear();
-      for (int i = 2; i < widget.menuList.length; i++) {
+      for (int i = 2; i < _menuList.length; i++) {
         items.add(
           DropdownMenuItem(
             child: Container(
@@ -62,13 +76,13 @@ class _YumAddStoreState extends State<YumAddStore> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    widget.menuList[i].menuAlias,
+                    _menuList[i].menuAlias,
                     style: TextStyle(fontSize: 12),
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    '${widget.menuList[i].cost.toString()}원',
+                    '${_menuList[i].cost.toString()}원',
                     style: TextStyle(fontSize: 7),
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
@@ -80,17 +94,19 @@ class _YumAddStoreState extends State<YumAddStore> {
           ),
         );
       }
-      dropinit = items[0].value.toString();
+      if (flag == 0) {
+        dropinit = items[0].value.toString();
+        flag = 1;
+      }
     }
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Stack(
+      child: Scaffold(
+          body: Stack(
         children: [
           Container(
             margin: const EdgeInsets.only(top: 35),
-            height: MediaQuery.of(context).size.height * 0.85,
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
             child: SingleChildScrollView(
                 controller: _scrollController,
                 child: Container(
@@ -126,11 +142,9 @@ class _YumAddStoreState extends State<YumAddStore> {
                             children: [
                               putimg(18.0, 18.0, "write_review_location"),
                               Text(
-                                "  가게 찾기",
-                                // widget.storeInfo.storeAlias
-                                //     .toString(),
+                                widget.storeInfo.storeAlias.toString(),
                                 style: TextStyle(
-                                    color: Color(0xff707070), fontSize: 12.0),
+                                    color: Color(0xff707070), fontSize: 13.0),
                               ),
                             ],
                           ),
@@ -142,7 +156,7 @@ class _YumAddStoreState extends State<YumAddStore> {
                       SizedBox(height: 15),
                       GestureDetector(
                         onTap: () {
-                          // showBottomSheet(context);
+                          showBottomSheet(context);
                         },
                         child: Container(
                           height: 310,
@@ -183,7 +197,7 @@ class _YumAddStoreState extends State<YumAddStore> {
                         child: Material(
                           child: InkWell(
                             onTap: () {
-                              // showBottomSheet(context);
+                              showBottomSheet(context);
                             },
                             child: Material(
                               color: Colors.transparent,
@@ -259,15 +273,14 @@ class _YumAddStoreState extends State<YumAddStore> {
                       SizedBox(
                         height: 15,
                       ),
-                      if (widget.menuList.length == 0)
+                      if (_menuList.length == 0)
                         Center(child: Text("등록된 메뉴가 없습니다"))
-                      else if (widget.menuList.length <= 3)
+                      else if (_menuList.length <= 3)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: widget.menuList.asMap().entries.map((e) {
+                          children: _menuList.asMap().entries.map((e) {
                             var val = e.value;
                             int idx = e.key;
-
                             return GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -311,65 +324,84 @@ class _YumAddStoreState extends State<YumAddStore> {
                             );
                           }).toList(),
                         )
-                      else if (widget.menuList.length > 3)
+                      else if (_menuList.length > 3)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              height: 35,
-                              width: 90,
-                              margin: const EdgeInsets.all(5),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              decoration:
-                                  greyBorderNChangeColor(5.0, isMenuChecked[0]),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    widget.menuList[0].menuAlias,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                  Text(
-                                    '${widget.menuList[0].cost.toString()}원',
-                                    style: TextStyle(fontSize: 7),
-                                  ),
-                                ],
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _menuId = _menuList[0].menuId;
+                                  _dropselected = 1;
+                                });
+                              },
+                              child: Container(
+                                height: 35,
+                                width: 90,
+                                margin: const EdgeInsets.all(5),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                decoration: greyBorderNChangeColor(
+                                    5.0, _dropselected == 1),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      _menuList[0].menuAlias,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    Text(
+                                      '${_menuList[0].cost.toString()}원',
+                                      style: TextStyle(fontSize: 7),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _menuId = _menuList[1].menuId;
+                                  _dropselected = 2;
+                                });
+                              },
+                              child: Container(
+                                height: 35,
+                                width: 90,
+                                margin: const EdgeInsets.all(5),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                decoration: greyBorderNChangeColor(
+                                    5.0, _dropselected == 2),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      _menuList[1].menuAlias,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    Text(
+                                      '${_menuList[1].cost.toString()}원',
+                                      style: TextStyle(fontSize: 7),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             Container(
                               height: 35,
-                              width: 90,
-                              margin: const EdgeInsets.all(5),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
                               decoration:
-                                  greyBorderNChangeColor(5.0, isMenuChecked[1]),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    widget.menuList[1].menuAlias,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                  Text(
-                                    '${widget.menuList[1].cost.toString()}원',
-                                    style: TextStyle(fontSize: 7),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: 35,
-                              decoration: greyBorder(5),
+                                  greyBorderNChangeColor(5, _dropselected == 3),
                               child: DropdownButton(
                                 value: dropinit,
                                 underline: SizedBox(),
                                 items: items,
                                 onChanged: (String? str) {
                                   setState(() {
+                                    _menuId = _menuList[int.parse(str!)].menuId;
+                                    _dropselected = 3;
                                     dropinit = str;
                                   });
                                 },
@@ -515,7 +547,6 @@ class _YumAddStoreState extends State<YumAddStore> {
                                                       addMenuAlias.text != "") {
                                                     YumMenuhttp yumMenuhttp =
                                                         YumMenuhttp();
-
                                                     int rst = await yumMenuhttp
                                                         .addMenu(
                                                             cost: int.parse(
@@ -530,57 +561,23 @@ class _YumAddStoreState extends State<YumAddStore> {
                                                                 .storeId
                                                                 .toString());
 
-                                                    Navigator.pop(context);
                                                     if (rst == 200) {
-                                                      print(addMenuAlias.text);
-                                                      print(addMenuCost.text);
                                                       await _menuProvider
                                                           .getMenubyStore(widget
                                                               .storeInfo.storeId
                                                               .toString());
+                                                      _menuList =
+                                                          await yumMenuhttp
+                                                              .menuByStore(widget
+                                                                  .storeInfo
+                                                                  .storeId
+                                                                  .toString());
                                                       setState(() {
                                                         isMenuChecked
                                                             .add(false);
-                                                        items.add(
-                                                          DropdownMenuItem(
-                                                            child: Container(
-                                                              width: 80,
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Text(
-                                                                    addMenuAlias
-                                                                        .text,
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            12),
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                  ),
-                                                                  Text(
-                                                                    '${addMenuCost.text.toString()}원',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            7),
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        );
                                                       });
+
+                                                      Navigator.pop(context);
                                                       showDialog(
                                                         context: context,
                                                         builder: (BuildContext
@@ -590,6 +587,31 @@ class _YumAddStoreState extends State<YumAddStore> {
                                                               Text('추가 완료'),
                                                           actions: [
                                                             ElevatedButton(
+                                                                onPressed: () =>
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop(),
+                                                                child:
+                                                                    Text('확인')),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      Navigator.pop(context);
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            AlertDialog(
+                                                          content: Text(
+                                                              ' 오류가 발생했습니다\n 잠시후에 다시 시도해주세요'),
+                                                          actions: [
+                                                            ElevatedButton(
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                        primary:
+                                                                            Color(
+                                                                                0xff7D48D9)),
                                                                 onPressed: () =>
                                                                     Navigator.of(
                                                                             context)
@@ -652,7 +674,6 @@ class _YumAddStoreState extends State<YumAddStore> {
                               setState(() {
                                 isChecked = e;
                               });
-                              print(isChecked);
                             },
                             child: StarRating(
                               isChecked: e <= isChecked ? true : false,
@@ -667,17 +688,172 @@ class _YumAddStoreState extends State<YumAddStore> {
                   ),
                 )),
           ),
-          // Positioned(
-          //   right: 50,
-          //   bottom: 50 + MediaQuery.of(context).viewInsets.bottom,
-          //   child: SizedBox(
-          //     width: 45,
-          //     height: 45,
-          //     child: renderFloatingActionButton(),
-          //   ),
-          // )
+          Positioned(
+            right: 50,
+            bottom: 50 + MediaQuery.of(context).viewInsets.bottom,
+            child: SizedBox(
+              width: 45,
+              height: 45,
+              child: renderFloatingActionButton(),
+            ),
+          ),
+          Stack(
+            children: [
+              isLoading == false
+                  ? Container()
+                  : Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      color: Colors.grey.withOpacity(0.6),
+                      child: Center(
+                        child: Center(
+                          child: CustomLoadingImage(),
+                        ),
+                      ),
+                    ),
+            ],
+          )
         ],
+      )),
+    );
+  }
+
+  Future<ImageSource?> showBottomSheet(BuildContext context) async {
+    if (Platform.isIOS) {
+      return showCupertinoModalPopup(
+          context: context,
+          builder: (context) => CupertinoActionSheet(
+                actions: [
+                  CupertinoActionSheetAction(
+                      onPressed: () {
+                        getImage(ImageSource.camera);
+                        return Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        "카메라",
+                      )),
+                  CupertinoActionSheetAction(
+                      onPressed: () {
+                        getImage(ImageSource.gallery);
+                        return Navigator.of(context).pop(ImageSource.gallery);
+                      },
+                      child: Text("갤러리"))
+                ],
+              ));
+    } else {
+      return showModalBottomSheet(
+          context: context,
+          builder: (context) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: Icon(
+                      Icons.camera_alt,
+                    ),
+                    title: Container(
+                      margin: const EdgeInsets.only(bottom: 5),
+                      child: Text(
+                        "카메라",
+                      ),
+                    ),
+                    onTap: () {
+                      getImage(ImageSource.camera);
+
+                      print(myimage);
+                      return Navigator.of(context).pop();
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.image),
+                    title: Container(
+                        margin: const EdgeInsets.only(bottom: 5),
+                        child: Text("갤러리")),
+                    onTap: () {
+                      getImage(ImageSource.gallery);
+
+                      return Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ));
+    }
+  }
+
+  Future getImage(ImageSource source) async {
+    try {
+      final image = await ImagePicker().pickImage(source: source);
+      if (image == null) return;
+      final imagePath = File(image.path);
+      setState(() {
+        myimage = imagePath;
+      });
+    } on PlatformException catch (e) {
+      print('Failed to get image $e');
+    }
+  }
+
+  FloatingActionButton renderFloatingActionButton() {
+    return FloatingActionButton(
+      onPressed: () async {
+        if (myimage == null) {
+          showdialog(
+            context,
+            "리뷰 사진을 등록해 주세요",
+          );
+        } else if (_content.text == "") {
+          showdialog(
+            context,
+            "한줄평을 작성해 주세요",
+          );
+        } else if (_menuId == -1) {
+          showdialog(
+            context,
+            "메뉴를 선택해주세요",
+          );
+        } else if (isChecked == 0) {
+          showdialog(
+            context,
+            "별점을 선택해주세요",
+          );
+        } else {
+          setState(() {
+            isLoading = true;
+          });
+
+          await postReview(myimage?.path, _content.text, _menuId, isChecked,
+              widget.storeInfo.storeId);
+          setState(() {
+            isLoading = false;
+          });
+          if (writeResult == 200) {
+            setState(() {
+              myimage = null;
+              _content.clear();
+              _menuId = -1;
+              isChecked = 0;
+              _dropselected = -1;
+              writeResult = -1;
+              for (int i = 0; i < isMenuChecked.length; i++) {
+                isMenuChecked[i] = false;
+              }
+            });
+            showdialog(context, "리뷰 완료");
+          } else {
+            showdialog(context, "리뷰 등록에 실패했습니다");
+          }
+        }
+      },
+      backgroundColor: Colors.black,
+      child: Text(
+        "저장",
+        style: TextStyle(fontSize: 11.0),
       ),
     );
+  }
+
+  Future<void> postReview(file, content, menuId, score, storeId) async {
+    var yumReviewhttp = YumReviewhttp();
+    writeResult =
+        await yumReviewhttp.writeReview(file, content, menuId, score, storeId);
   }
 }

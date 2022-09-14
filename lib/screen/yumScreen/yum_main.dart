@@ -185,365 +185,380 @@ class _YumMainState extends State<YumMain> {
                           return Center(child: Text("가게 정보가 없습니다."));
                         }
                         List<StoreComposition>? top5List = snap.data;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CarouselSlider(
-                              items: top5List!.map((e) {
-                                return Builder(
-                                  builder:
-                                      (BuildContext carouselSlidercontext) {
-                                    return Container(
-                                      margin: EdgeInsets.only(right: 15.0),
-                                      child: GestureDetector(
-                                        onTap: () async {
-                                          setState(() {
-                                            _isLoading = true;
-                                          });
-                                          await _menuProvider.getMenubyStore(
-                                              e.storeId.toString());
-                                          await _reviewProvider
-                                              .getReviewByStore(
-                                                  e.storeId.toString());
-
-                                          setState(() {
-                                            _isLoading = false;
-                                          });
-                                          NaverOpneApi naverOpneApi =
-                                              NaverOpneApi();
-                                          String str = await naverOpneApi
-                                              .getNaverMapImage(
-                                                  x: e.mapX,
-                                                  y: e.mapY,
-                                                  title: e.storeAlias);
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  YumStoreDetail(
-                                                storeInfo: e,
-                                                naverMapUrl: str,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
-                                            child: e.imagePath != null
-                                                ? Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    child: CachedNetworkImage(
-                                                      fadeInDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  100),
-                                                      fadeOutDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  100),
-                                                      imageUrl: e.imagePath,
-                                                      fit: BoxFit.cover,
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          CustomLoadingImage(),
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          Icon(Icons.error),
-                                                    ),
-                                                  )
-                                                : Container(
-                                                    color: Color(0xffd6d6d6),
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    child: Image.asset(
-                                                      'assets/images/defaultImg.png',
-                                                    ),
-                                                  )),
-                                      ),
-                                    );
-                                  },
-                                );
-                              }).toList(),
-                              options: CarouselOptions(
-                                  height: 180,
-                                  autoPlay: false,
-                                  viewportFraction: 0.9,
-                                  enableInfiniteScroll: false,
-                                  onPageChanged: (index, reason) {
-                                    setState(() {
-                                      top5Idx = index;
-                                    });
-                                  }),
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            Container(
-                              height: 25,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 18.0),
-                                child: Text(
-                                  '${top5List[top5Idx].storeAlias}',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w800),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 8.0,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 18.0),
-                              child: FutureBuilder<Object>(
-                                  future: getStoreReview(
-                                      top5List[top5Idx].storeId.toString()),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height -
+                              60 -
+                              -MediaQuery.of(context).padding.top -
+                              MediaQuery.of(context).padding.bottom -
+                              100,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CarouselSlider(
+                                items: top5List!.map((e) {
+                                  return Builder(
+                                    builder:
+                                        (BuildContext carouselSlidercontext) {
                                       return Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 20.0),
-                                        child: Text(
-                                          snapshot.data.toString(),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      );
-                                    } else {
-                                      return Container();
-                                    }
-                                  }),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 18.0),
-                              child: Row(
-                                children: [
-                                  FutureBuilder<Object>(
-                                      future: getStoreMenu(
-                                          top5List[top5Idx].storeId.toString()),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return Container(
-                                            padding: const EdgeInsets.all(3.0),
-                                            decoration: greyBorder(5.0),
-                                            child: Row(
-                                              children: [
-                                                snapshot.data == "아직 리뷰가 없습니다."
-                                                    ? Container()
-                                                    : putimg(
-                                                        14.0, 12.0, "thumbs"),
-                                                Text(
-                                                  ' ${snapshot.data.toString()}',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        } else {
-                                          return Container();
-                                        }
-                                      }),
-                                  SizedBox(
-                                    width: 5.0,
-                                  ),
-                                  SizedBox(
-                                    width: 5.0,
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.all(4.0),
-                                    decoration: greyBorder(5.0),
-                                    child: FutureBuilder<Object>(
-                                        future: getScore(top5List[top5Idx]
-                                            .storeId
-                                            .toString()),
-                                        builder:
-                                            (context, AsyncSnapshot snapshot) {
-                                          if (snapshot.hasData) {
-                                            return StarScore(
-                                                score: double.parse(snapshot
-                                                    .data
-                                                    .toStringAsFixed(1)));
-                                          } else {
-                                            return StarScore(score: 0.0);
-                                          }
-                                        }),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 80),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 18),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "맛집 List",
-                                    style: TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                  SizedBox(width: 20),
-                                  Container(
-                                    width: 18,
-                                    height: 18,
-                                    child: FloatingActionButton(
-                                      onPressed: () async {
-                                        await _storeInfoProvider.loadStoreInfo(
-                                            1,
-                                            10,
-                                            context
-                                                .read<
-                                                    CategorySelectedProvider>()
-                                                .selected);
+                                        margin: EdgeInsets.only(right: 15.0),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            setState(() {
+                                              _isLoading = true;
+                                            });
+                                            await _menuProvider.getMenubyStore(
+                                                e.storeId.toString());
+                                            await _reviewProvider
+                                                .getReviewByStore(
+                                                    e.storeId.toString());
 
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
+                                            NaverOpneApi naverOpneApi =
+                                                NaverOpneApi();
+                                            String str = await naverOpneApi
+                                                .getNaverMapImage(
+                                                    x: e.mapX,
+                                                    y: e.mapY,
+                                                    title: e.storeAlias);
+                                            setState(() {
+                                              _isLoading = false;
+                                            });
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
                                                 builder: (context) =>
-                                                    YumStoreList(
-                                                        availableHeight:
-                                                            availableHeight)));
-                                      },
-                                      child: Container(
-                                        width: 18,
-                                        height: 18,
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.white),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              spreadRadius: 0.0,
-                                              blurRadius: 0.0,
-                                            )
-                                          ],
-                                          shape: BoxShape.circle,
-                                          color: Colors.white,
-                                        ),
-                                        child: Icon(
-                                          Icons.chevron_right,
-                                          color: Colors.black,
-                                          size: 15,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Container(
-                              height: 25,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 25.0),
-                                child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: categorytype.map((e) {
-                                        return Consumer<
-                                                CategorySelectedProvider>(
-                                            builder: (providercontext, provider,
-                                                widgets) {
-                                          return GestureDetector(
-                                            onTap: () async {
-                                              _categorySelectedProvider
-                                                  .getSelectedCategory(e.title);
-
-                                              for (int i = 0;
-                                                  i < categorytype.length;
-                                                  i++) {
-                                                setState(() {
-                                                  if (e.title ==
-                                                      categorytype[i].title) {
-                                                    categorytype[i].isChecked =
-                                                        true;
-                                                  } else {
-                                                    categorytype[i].isChecked =
-                                                        false;
-                                                  }
-                                                });
-                                              }
-                                              provider.selected == 'ALL'
-                                                  ? await changeCategory()
-                                                  : await changeCategory(
-                                                      provider.selected);
-                                            },
-                                            child: YumCategory(
-                                              color: e.color,
-                                              title: e.title,
-                                              isChecked: e.isChecked,
-                                            ),
-                                          );
-                                        });
-                                      }).toList(),
-                                    )),
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Consumer<StoreInfoProvider>(
-                              builder: (providercontext, provider, widgets) {
-                                if (provider.storeInfo != [] &&
-                                    provider.storeInfo.length > 0) {
-                                  print(provider.storeInfo.length);
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      setState(() {
-                                        _isLoading = true;
-                                      });
-                                      await _menuProvider.getMenubyStore(
-                                          provider.storeInfo[0].storeId
-                                              .toString());
-                                      await _reviewProvider.getReviewByStore(
-                                          provider.storeInfo[0].storeId
-                                              .toString());
-
-                                      setState(() {
-                                        _isLoading = false;
-                                      });
-                                      NaverOpneApi naverOpneApi =
-                                          NaverOpneApi();
-                                      String str =
-                                          await naverOpneApi.getNaverMapImage(
-                                              x: provider.storeInfo[0].mapX,
-                                              y: provider.storeInfo[0].mapY,
-                                              title: provider
-                                                  .storeInfo[0].storeAlias);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => YumStoreDetail(
-                                            storeInfo: provider.storeInfo[0],
-                                            naverMapUrl: str,
-                                          ),
+                                                    YumStoreDetail(
+                                                  storeInfo: e,
+                                                  naverMapUrl: str,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                              child: e.imagePath != null
+                                                  ? Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: CachedNetworkImage(
+                                                        fadeInDuration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    100),
+                                                        fadeOutDuration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    100),
+                                                        imageUrl: e.imagePath,
+                                                        fit: BoxFit.cover,
+                                                        placeholder: (context,
+                                                                url) =>
+                                                            CustomLoadingImage(),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            Icon(Icons.error),
+                                                      ),
+                                                    )
+                                                  : Container(
+                                                      color: Color(0xffd6d6d6),
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: Image.asset(
+                                                        'assets/images/defaultImg.png',
+                                                      ),
+                                                    )),
                                         ),
                                       );
                                     },
-                                    child: Container(
-                                      height: (availableHeight - 112) / 5,
-                                      child: StoreListItem(
-                                        height: (availableHeight - 112) / 5,
-                                        imagePath:
-                                            provider.storeInfo[0].imagePath,
-                                        storeAlias:
-                                            provider.storeInfo[0].storeAlias,
-                                        storeId: provider.storeInfo[0].storeId,
-                                      ),
-                                    ),
                                   );
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                          ],
+                                }).toList(),
+                                options: CarouselOptions(
+                                    height: 180,
+                                    autoPlay: false,
+                                    viewportFraction: 0.9,
+                                    enableInfiniteScroll: false,
+                                    onPageChanged: (index, reason) {
+                                      setState(() {
+                                        top5Idx = index;
+                                      });
+                                    }),
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Container(
+                                height: 25,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 18.0),
+                                  child: Text(
+                                    '${top5List[top5Idx].storeAlias}',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w800),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 8.0,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18.0),
+                                child: FutureBuilder<Object>(
+                                    future: getStoreReview(
+                                        top5List[top5Idx].storeId.toString()),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Container(
+                                          margin: const EdgeInsets.only(
+                                              right: 20.0),
+                                          child: Text(
+                                            snapshot.data.toString(),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    }),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18.0),
+                                child: Row(
+                                  children: [
+                                    FutureBuilder<Object>(
+                                        future: getStoreMenu(top5List[top5Idx]
+                                            .storeId
+                                            .toString()),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            return Container(
+                                              padding:
+                                                  const EdgeInsets.all(3.0),
+                                              decoration: greyBorder(5.0),
+                                              child: Row(
+                                                children: [
+                                                  snapshot.data ==
+                                                          "아직 리뷰가 없습니다."
+                                                      ? Container()
+                                                      : putimg(
+                                                          14.0, 12.0, "thumbs"),
+                                                  Text(
+                                                    ' ${snapshot.data.toString()}',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          } else {
+                                            return Container();
+                                          }
+                                        }),
+                                    SizedBox(
+                                      width: 5.0,
+                                    ),
+                                    SizedBox(
+                                      width: 5.0,
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.all(4.0),
+                                      decoration: greyBorder(5.0),
+                                      child: FutureBuilder<Object>(
+                                          future: getScore(top5List[top5Idx]
+                                              .storeId
+                                              .toString()),
+                                          builder: (context,
+                                              AsyncSnapshot snapshot) {
+                                            if (snapshot.hasData) {
+                                              return StarScore(
+                                                  score: double.parse(snapshot
+                                                      .data
+                                                      .toStringAsFixed(1)));
+                                            } else {
+                                              return StarScore(score: 0.0);
+                                            }
+                                          }),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Flexible(
+                                child: SizedBox(height: 140),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "맛집 List",
+                                      style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    SizedBox(width: 20),
+                                    Container(
+                                      width: 18,
+                                      height: 18,
+                                      child: FloatingActionButton(
+                                        onPressed: () async {
+                                          await _storeInfoProvider.loadStoreInfo(
+                                              1,
+                                              10,
+                                              context
+                                                  .read<
+                                                      CategorySelectedProvider>()
+                                                  .selected);
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      YumStoreList(
+                                                          availableHeight:
+                                                              availableHeight)));
+                                        },
+                                        child: Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.white),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                spreadRadius: 0.0,
+                                                blurRadius: 0.0,
+                                              )
+                                            ],
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                          ),
+                                          child: Icon(
+                                            Icons.chevron_right,
+                                            color: Colors.black,
+                                            size: 15,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Container(
+                                height: 25,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 25.0),
+                                  child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: categorytype.map((e) {
+                                          return Consumer<
+                                                  CategorySelectedProvider>(
+                                              builder: (providercontext,
+                                                  provider, widgets) {
+                                            return GestureDetector(
+                                              onTap: () async {
+                                                _categorySelectedProvider
+                                                    .getSelectedCategory(
+                                                        e.title);
+
+                                                for (int i = 0;
+                                                    i < categorytype.length;
+                                                    i++) {
+                                                  setState(() {
+                                                    if (e.title ==
+                                                        categorytype[i].title) {
+                                                      categorytype[i]
+                                                          .isChecked = true;
+                                                    } else {
+                                                      categorytype[i]
+                                                          .isChecked = false;
+                                                    }
+                                                  });
+                                                }
+                                                provider.selected == 'ALL'
+                                                    ? await changeCategory()
+                                                    : await changeCategory(
+                                                        provider.selected);
+                                              },
+                                              child: YumCategory(
+                                                color: e.color,
+                                                title: e.title,
+                                                isChecked: e.isChecked,
+                                              ),
+                                            );
+                                          });
+                                        }).toList(),
+                                      )),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Consumer<StoreInfoProvider>(
+                                builder: (providercontext, provider, widgets) {
+                                  if (provider.storeInfo != [] &&
+                                      provider.storeInfo.length > 0) {
+                                    print(provider.storeInfo.length);
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        setState(() {
+                                          _isLoading = true;
+                                        });
+                                        await _menuProvider.getMenubyStore(
+                                            provider.storeInfo[0].storeId
+                                                .toString());
+                                        await _reviewProvider.getReviewByStore(
+                                            provider.storeInfo[0].storeId
+                                                .toString());
+
+                                        NaverOpneApi naverOpneApi =
+                                            NaverOpneApi();
+                                        String str =
+                                            await naverOpneApi.getNaverMapImage(
+                                                x: provider.storeInfo[0].mapX,
+                                                y: provider.storeInfo[0].mapY,
+                                                title: provider
+                                                    .storeInfo[0].storeAlias);
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                YumStoreDetail(
+                                              storeInfo: provider.storeInfo[0],
+                                              naverMapUrl: str,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        height: (availableHeight - 112) / 5,
+                                        child: StoreListItem(
+                                          height: (availableHeight - 112) / 5,
+                                          imagePath:
+                                              provider.storeInfo[0].imagePath,
+                                          storeAlias:
+                                              provider.storeInfo[0].storeAlias,
+                                          storeId:
+                                              provider.storeInfo[0].storeId,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         );
                       })
                 ],

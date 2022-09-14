@@ -295,6 +295,21 @@ class YumReviewhttp {
     }
     return response.statusCode;
   }
+
+  Future<List<ReviewByStore>> reviewbyUser() async {
+    List<dynamic> _list = [];
+    final url = Uri.http(yumURL, '/nyu/review/user');
+    var response = await http.get(url, headers: {'Cookie': _cookie});
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+      _list = jsonDecode(responseBody)['userReviewList'];
+      return _list
+          .map<ReviewByStore>((item) => ReviewByStore.fromJson(item))
+          .toList();
+    } else {
+      return [];
+    }
+  }
 }
 
 class LikeApi {

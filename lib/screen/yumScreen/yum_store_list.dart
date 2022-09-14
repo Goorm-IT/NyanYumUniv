@@ -211,10 +211,6 @@ class _YumStoreListState extends State<YumStoreList> {
                                       print(e);
                                     }
 
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-
                                     NaverOpneApi naverOpneApi = NaverOpneApi();
                                     String str =
                                         await naverOpneApi.getNaverMapImage(
@@ -222,6 +218,9 @@ class _YumStoreListState extends State<YumStoreList> {
                                             y: provider.storeInfo[index].mapY,
                                             title: provider
                                                 .storeInfo[index].storeAlias);
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
 
                                     Navigator.push(
                                       context,

@@ -1,11 +1,13 @@
 import 'package:blur/blur.dart';
 import 'package:deanora/const/color.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
+import 'package:deanora/model/review_by_store.dart';
 import 'package:deanora/provider/menutabbar_selected_provider.dart';
 import 'package:deanora/provider/save_store_provider.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/MyCalendar.dart';
 import 'package:deanora/screen/yumScreen/yum_add_store.dart';
 import 'package:deanora/screen/yumScreen/yum_my_profile.dart';
+import 'package:deanora/screen/yumScreen/yum_my_review.dart';
 import 'package:deanora/screen/yumScreen/yum_save_list.dart';
 import 'package:deanora/screen/yumScreen/yum_search_add_store.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +37,7 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
   List<RadioCustom> radioModel = [];
   List<Widget> classList = [];
   List<Widget> foodList = [];
+  List<ReviewByStore> myreviewList = [];
   late BehaviorSubject<int> _isActivated;
   late BehaviorSubject<double> _positionButton;
   late PublishSubject<double> _opacity;
@@ -113,6 +116,7 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
     foodList.add(menuList(
       "내가 쓴 리뷰",
       () {},
+      YumMyReview(),
     ));
     foodList.add(menuList(
       "저장한 맛집",
@@ -420,7 +424,7 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
       onTap: () async {
         bool isLogin_naver = await _isLogin_naver();
         print(isLogin_naver);
-        _onTap();
+        await _onTap();
         if (nav != null) {
           widget.menuTabBarToggle(-1);
           _moveButtonDown();

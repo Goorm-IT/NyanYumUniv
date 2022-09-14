@@ -24,16 +24,6 @@ class YumCategory extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
-              // title != "ALL"
-              //     ? Container(
-              //         width: 13,
-              //         height: 13,
-              //         decoration: BoxDecoration(
-              //           color: isChecked ? Color(0xffFAFAFA) : color,
-              //           shape: BoxShape.circle,
-              //         ),
-              //       )
-              //     : Container(),
               Text(
                 title,
                 style: TextStyle(
@@ -52,7 +42,9 @@ class YumCategory extends StatelessWidget {
 BoxDecoration greyBorderNChangeColor(double _radius, bool _isChecked) {
   return BoxDecoration(
     borderRadius: BorderRadius.circular(_radius),
-    color: _isChecked ? Color(0xffF3F3F5) : Colors.transparent,
-    border: Border.all(color: Color(0xffd6d6d6)),
+    color: Color(0xfffafafa),
+    border: Border.all(
+      color: _isChecked ? Colors.black : Color(0xffdadada),
+    ),
   );
 }

@@ -17,13 +17,25 @@ Future<dynamic> showdialog(
   return showDialog(
     context: context,
     builder: (BuildContext context) => AlertDialog(
-      content: Text('$message '),
+      contentPadding: const EdgeInsets.all(0),
+      content: Container(
+        width: MediaQuery.of(context).size.width - 100,
+        height: 40,
+        child: Center(
+          child: Text('$message '),
+        ),
+      ),
       actions: [
-        ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('확인'),
+        Container(
+          child: Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(primary: Color(0xff7D48D9)),
+              child: Text('확인'),
+            ),
+          ),
         ),
       ],
     ),
