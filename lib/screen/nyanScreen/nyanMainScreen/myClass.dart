@@ -3,10 +3,12 @@ import 'package:deanora/Widgets/LoginDataCtrl.dart';
 import 'package:deanora/Widgets/custom_circlular_bar.dart';
 import 'package:deanora/Widgets/custom_loading_image.dart';
 import 'package:deanora/http/crawl/crawl.dart';
+import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
 import 'package:deanora/model/assignment.dart';
 import 'package:deanora/model/lecture.dart';
 import 'package:deanora/model/user.dart';
+import 'package:deanora/screen/MyMenu.dart';
 import 'package:deanora/screen/nyanScreen/nyanMainScreen/myAssignment.dart';
 import 'package:deanora/screen/nyanScreen/nyanSubScreen/MyCalendar.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -137,8 +139,51 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                             height: 20,
                             child: GestureDetector(
                                 onTap: () async {
-                                  ctrl.removeLoginData();
-                                  Navigator.pop(context);
+                                  showDialog(
+                                    context: context,
+                                    builder: ((BuildContext context) =>
+                                        AlertDialog(
+                                          content: Text("로그아웃 하시겠습니까?"),
+                                          actions: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                ElevatedButton(
+                                                    onPressed: () async {
+                                                      Navigator.pop(context);
+                                                      await ctrl
+                                                          .removeLoginData();
+                                                      Navigator.pushAndRemoveUntil(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      MyMenu()),
+                                                          (route) => false);
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            primary: Color(
+                                                                0xff7D48D9)),
+                                                    child: Text("확인")),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            primary: Color(
+                                                                0xff7D48D9)),
+                                                    child: Text("취소"))
+                                              ],
+                                            ),
+                                          ],
+                                        )),
+                                  );
                                 },
                                 child: RotationTransition(
                                   turns: new AlwaysStoppedAnimation(180 / 360),
@@ -189,10 +234,23 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text("내 강의실 List",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 18)),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      YumUserHttp _yumUserHttp = YumUserHttp();
+                                      List tmp =
+                                          await _yumUserHttp.getUserStatus();
+                                      if (tmp.isNotEmpty &&
+                                          tmp[0].uid != "null") {
+                                        print("로그인 된거임");
+                                      } else {
+                                        print(tmp);
+                                      }
+                                    },
+                                    child: Text("내 강의실 List",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 18)),
+                                  ),
                                   InkWell(
                                     onTap: () async {
                                       Navigator.push(

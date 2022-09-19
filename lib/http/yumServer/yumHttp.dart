@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:deanora/http/customException.dart';
+import 'package:deanora/model/check_user_status.dart';
 import 'package:deanora/model/comment_by_store.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/review_by_store.dart';
@@ -14,10 +15,8 @@ import 'package:http/http.dart';
 late String _cookie;
 
 class YumUserHttp {
-  String _uid;
-  YumUserHttp(this._uid);
   String yumURL = '54.180.116.149:82';
-  Future<int> yumRegister(_email) async {
+  Future<int> yumRegister(_uid, _email) async {
     // final url = Uri.parse("http://52.79.251.162:80/auth/register");
     // var response = await http
     //     .put(url, body: <String, String?>{"uid": _uid, "nickName": _nickName});
@@ -36,7 +35,7 @@ class YumUserHttp {
       url,
       headers: {'Cookie': _cookie},
     );
-    // print(response.body);
+    print(response.body);
   }
 
   Future<int> yumUpdateNickName(userAlias) async {
@@ -45,7 +44,26 @@ class YumUserHttp {
     return response.statusCode;
   }
 
-  Future<int> yumLogin() async {
+  Future<List> getUserStatus() async {
+    final url = Uri.http(yumURL, '/nyu/user');
+    var _list = [];
+    try {
+      var response = await http.get(url, headers: {'Cookie': _cookie});
+      if (response.statusCode == 200) {
+        String responseBody = utf8.decode(response.bodyBytes);
+        _list = jsonDecode(responseBody);
+        return _list
+            .map<CheckUserStatus>((item) => CheckUserStatus.fromJson(item))
+            .toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<int> yumLogin(_uid) async {
     final url = Uri.http(yumURL, '/nyu/user/session', {"uid": _uid});
     var response = await http.get(url);
     String _tmpCookie = response.headers['set-cookie'] ?? '';

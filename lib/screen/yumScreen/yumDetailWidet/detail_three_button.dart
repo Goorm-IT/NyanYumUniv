@@ -90,8 +90,8 @@ class _ThreeButtonState extends State<ThreeButton>
         widget.isLike.sink.add(tmp);
         return tmp;
       } catch (e) {
-        YumUserHttp yumUserHttp = YumUserHttp(yumUser.uid);
-        await yumUserHttp.yumLogin();
+        YumUserHttp yumUserHttp = YumUserHttp();
+        await yumUserHttp.yumLogin(yumUser.uid);
         int tmp = await likeApi.checkLike(widget.storeInfo.storeId.toString());
         widget.isLike.sink.add(tmp);
         return tmp;
@@ -107,8 +107,8 @@ class _ThreeButtonState extends State<ThreeButton>
         widget.isSave.sink.add(tmp);
         return tmp;
       } catch (e) {
-        YumUserHttp yumUserHttp = YumUserHttp(yumUser.uid);
-        await yumUserHttp.yumLogin();
+        YumUserHttp yumUserHttp = YumUserHttp();
+        await yumUserHttp.yumLogin(yumUser.uid);
         int tmp = await saveApi.checkSave(widget.storeInfo.storeId.toString());
         widget.isSave.sink.add(tmp);
         return tmp;

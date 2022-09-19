@@ -587,6 +587,11 @@ class _YumAddStoreState extends State<YumAddStore> {
                                                               Text('추가 완료'),
                                                           actions: [
                                                             ElevatedButton(
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                        primary:
+                                                                            Color(
+                                                                                0xff7D48D9)),
                                                                 onPressed: () =>
                                                                     Navigator.of(
                                                                             context)

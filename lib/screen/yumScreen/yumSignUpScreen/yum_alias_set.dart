@@ -103,11 +103,12 @@ class _MyYumNickRegistState extends State<MyYumNickRegist>
                             });
                           }
                         } else {
-                          var yumUserHttp = new YumUserHttp(widget.n_email);
-                          var yumRegister = await yumUserHttp
-                              .yumRegister(_nickNameController.text);
+                          var yumUserHttp = new YumUserHttp();
+                          var yumRegister = await yumUserHttp.yumRegister(
+                              widget.n_email, _nickNameController.text);
                           if (yumRegister == 200) {
-                            var yumLogin = await yumUserHttp.yumLogin();
+                            var yumLogin =
+                                await yumUserHttp.yumLogin(widget.n_email);
                             var yumInfo = await yumUserHttp.yumInfo();
                             print(yumInfo[0]["userAlias"]);
 

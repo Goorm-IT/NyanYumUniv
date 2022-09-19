@@ -43,11 +43,11 @@ class _MyProfileImgState extends State<MyProfileImg>
 
   @override
   Widget build(BuildContext context) {
-    final yumUserhttp = YumUserHttp(widget.nEmail);
+    final yumUserhttp = YumUserHttp();
     return MaterialApp(
       home: Scaffold(
           body: FutureBuilder(
-        future: yumUserhttp.yumLogin(),
+        future: yumUserhttp.yumLogin(widget.nEmail),
         builder: (futurecontext, snap) {
           if (snap.hasData) {
             return Stack(

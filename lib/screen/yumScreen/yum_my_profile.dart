@@ -6,6 +6,7 @@ import 'package:deanora/provider/like_store_provider.dart';
 import 'package:deanora/provider/save_store_provider.dart';
 import 'package:deanora/screen/MyMenu.dart';
 import 'package:deanora/screen/yumScreen/yum_like_list.dart';
+import 'package:deanora/screen/yumScreen/yum_my_review.dart';
 import 'package:deanora/screen/yumScreen/yum_save_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
@@ -33,9 +34,16 @@ class _MyProfilePageState extends State<MyProfilePage>
   }
 
   void _yum_delete() async {
-    var yumUserHttp = YumUserHttp(yumUser.uid);
-    await yumUserHttp.yumLogin();
+    var yumUserHttp = YumUserHttp();
+    await yumUserHttp.yumLogin(yumUser.uid);
     await yumUserHttp.yumDelete();
+  }
+
+  @override
+  void dispose() {
+    _nicknameController.dispose();
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -193,10 +201,9 @@ class _MyProfilePageState extends State<MyProfilePage>
                                         yumUser.userAlias) {
                                       fadeMessage("닉네임을 변경해주세요", Colors.red);
                                     } else {
-                                      var yumUserHttp =
-                                          new YumUserHttp(yumUser.uid);
-                                      var yumLogin =
-                                          await yumUserHttp.yumLogin();
+                                      var yumUserHttp = new YumUserHttp();
+                                      var yumLogin = await yumUserHttp
+                                          .yumLogin(yumUser.uid);
                                       var yumUpdateNickName =
                                           await yumUserHttp.yumUpdateNickName(
                                               _nicknameController.text);
@@ -246,11 +253,17 @@ class _MyProfilePageState extends State<MyProfilePage>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            _ProfileIcon(
-                                image: 'profile_review_icon', title: '내가 쓴 리뷰'),
-                            Material(
-                              color: Colors.white,
-                              child: InkWell(
+                            _item(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: ((context) =>
+                                              YumMyReview())));
+                                },
+                                image: 'profile_review_icon',
+                                title: '내가 쓴 리뷰'),
+                            _item(
                                 onTap: () async {
                                   await _saveStoreProvider.getSaveStore();
                                   Navigator.push(
@@ -260,14 +273,9 @@ class _MyProfilePageState extends State<MyProfilePage>
                                     ),
                                   );
                                 },
-                                child: _ProfileIcon(
-                                    image: 'profile_store_icon',
-                                    title: '저장한 맛집'),
-                              ),
-                            ),
-                            Material(
-                              color: Colors.white,
-                              child: InkWell(
+                                image: 'profile_store_icon',
+                                title: '저장한 맛집'),
+                            _item(
                                 onTap: () async {
                                   await _likeStoreProvider.getLikeStore();
                                   Navigator.push(
@@ -275,13 +283,8 @@ class _MyProfilePageState extends State<MyProfilePage>
                                       MaterialPageRoute(
                                           builder: (context) => YumLikeList()));
                                 },
-                                child: _ProfileIcon(
-                                    image: 'profile_like_icon',
-                                    title: '좋아요한 맛집'),
-                              ),
-                            ),
-                            // _ProfileIcon(
-                            //     image: 'profile_comment_icon', title: '댓글 내역')
+                                image: 'profile_like_icon',
+                                title: '좋아요한 맛집'),
                           ],
                         ),
                       ),
@@ -317,13 +320,65 @@ class _MyProfilePageState extends State<MyProfilePage>
                                     color: Color(0xffD6D6D6), thickness: 0.5)),
                             GestureDetector(
                               onTap: () async {
-                                _logout_naver();
-                                _yum_delete();
+                                return showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    contentPadding: const EdgeInsets.all(0),
+                                    content: Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          100,
+                                      height: 60,
+                                      child: Center(
+                                        child: Text('로그아웃 하시겠습니까?'),
+                                      ),
+                                    ),
+                                    actions: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            child: Center(
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                  _logout_naver();
+                                                  _yum_delete();
 
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MyMenu()));
+                                                  Navigator.pushAndRemoveUntil(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              MyMenu()),
+                                                      (route) => false);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Color(0xff7D48D9)),
+                                                child: Text('확인'),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Container(
+                                            child: Center(
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Color(0xff7D48D9)),
+                                                child: Text('취소'),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
                               },
                               child: Container(
                                   margin:
@@ -337,12 +392,76 @@ class _MyProfilePageState extends State<MyProfilePage>
                                 width: 150,
                                 child: Divider(
                                     color: Color(0xffD6D6D6), thickness: 0.5)),
-                            Container(
-                                margin: const EdgeInsets.symmetric(vertical: 5),
-                                child: Text(
-                                  "회원탈퇴",
-                                  style: TextStyle(fontSize: 11),
-                                )),
+                            GestureDetector(
+                              onTap: () async {
+                                return showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    contentPadding: const EdgeInsets.all(0),
+                                    content: Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          100,
+                                      height: 60,
+                                      child: Center(
+                                        child: Text('회원탈퇴 하시겠습니까?'),
+                                      ),
+                                    ),
+                                    actions: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            child: Center(
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                  var yumUserHttp =
+                                                      YumUserHttp();
+                                                  await yumUserHttp.yumDelete();
+                                                  Navigator.pushAndRemoveUntil(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              MyMenu()),
+                                                      (route) => false);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Color(0xff7D48D9)),
+                                                child: Text('확인'),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Container(
+                                            child: Center(
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Color(0xff7D48D9)),
+                                                child: Text('취소'),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: Text(
+                                    "회원탈퇴",
+                                    style: TextStyle(fontSize: 11),
+                                  )),
+                            ),
                             Container(
                                 width: 150,
                                 child: Divider(
@@ -429,6 +548,19 @@ class _MyProfilePageState extends State<MyProfilePage>
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _item(
+      {required Function()? onTap,
+      required String image,
+      required String title}) {
+    return Material(
+      color: Colors.white,
+      child: InkWell(
+        onTap: onTap,
+        child: _ProfileIcon(image: image, title: title),
       ),
     );
   }

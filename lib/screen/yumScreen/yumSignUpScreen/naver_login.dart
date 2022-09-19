@@ -94,8 +94,8 @@ class _NaverLoginPageState extends State<NaverLoginPage> {
 
                       bool isLogin = await _isLogin_naver();
                       if (isLogin) {
-                        var yumUserHttp = new YumUserHttp(nEmail);
-                        var yumLogin = await yumUserHttp.yumLogin();
+                        var yumUserHttp = new YumUserHttp();
+                        var yumLogin = await yumUserHttp.yumLogin(nEmail);
                         if (yumLogin == 200) {
                           var yumInfo = await yumUserHttp.yumInfo();
 

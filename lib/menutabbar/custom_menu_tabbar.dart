@@ -51,7 +51,7 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
   late final void Function() _listenerDown;
   late final void Function() _listenerUp;
   late SaveStoreProvider _saveStoreProvider;
-
+  bool isNyumLogin = false;
   Future<bool> _isLogin_naver() async {
     NaverAccessToken res = await FlutterNaverLogin.currentAccessToken;
 
@@ -83,7 +83,7 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
     _opacity = PublishSubject<double>(); // on off 됐을때 투명도로 페이지 관리
     _positionButton =
         BehaviorSubject.seeded(0); // 버튼의 첫위치 default값 margin+ 10 이 실제 위치
-    _animationRotate = Tween<double>(begin: 0, end: 2.3).animate(
+    _animationRotate = Tween<double>(begin: 0, end: 2.35).animate(
         CurvedAnimation(
             parent: _animationControllerRotate,
             curve: Curves.ease)); // 버튼 눌렀을때 회전
@@ -217,6 +217,10 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
     _isActivated.close();
     _positionButton.close();
     _opacity.close();
+    _animationControllerUp.dispose();
+    _animationControllerDown.dispose();
+    _animationControllerRotate.dispose();
+    _animationControllerFadeText.dispose();
     super.dispose();
   }
 
@@ -331,13 +335,52 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
                         builder: (context, AsyncSnapshot<int> snapshot) {
                           if (snapshot.data == 1) {
                             _animationControllerFadeText.forward();
-                            return Column(
-                                children: (context
-                                            .read<MenuTabBarSelectedProvider>()
-                                            .selected ==
-                                        1)
-                                    ? classList
-                                    : foodList);
+
+                            return Container(
+                              child: Stack(
+                                children: [
+                                  Center(
+                                    child: Column(
+                                        children: (context
+                                                    .read<
+                                                        MenuTabBarSelectedProvider>()
+                                                    .selected ==
+                                                1)
+                                            ? classList
+                                            : foodList),
+                                  ),
+                                  (context
+                                                  .read<
+                                                      MenuTabBarSelectedProvider>()
+                                                  .selected ==
+                                              2 &&
+                                          !isNyumLogin)
+                                      ? Stack(
+                                          children: [
+                                            Blur(
+                                              blur: 1,
+                                              child: Container(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height -
+                                                    foodList.length * 60 -
+                                                    50,
+                                                color: Colors.white
+                                                    .withOpacity(0.8),
+                                              ),
+                                            ),
+                                            Container(
+                                              alignment: Alignment.topCenter,
+                                              margin: const EdgeInsets.only(
+                                                  top: 50),
+                                              child: Text("냠대를 먼저 활성화 해주세요"),
+                                            ),
+                                          ],
+                                        )
+                                      : Container()
+                                ],
+                              ),
+                            );
                           } else {
                             _animationControllerFadeText.reverse();
                             return Container();
@@ -352,9 +395,26 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
                 child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Listener(
-                      onPointerDown: (_) {
+                      onPointerDown: (_) async {
                         _isActivated.sink.add(0);
                         widget.menuTabBarToggle(0);
+                        if (context
+                                .read<MenuTabBarSelectedProvider>()
+                                .selected ==
+                            2) {
+                          YumUserHttp _yumUserHttp = YumUserHttp();
+                          List tmp = await _yumUserHttp.getUserStatus();
+                          if (tmp.isNotEmpty && tmp[0].uid != "null") {
+                            print("로그인 되었습니다.");
+                            setState(() {
+                              isNyumLogin = true;
+                            });
+                          } else {
+                            setState(() {
+                              isNyumLogin = false;
+                            });
+                          }
+                        }
                       },
                       onPointerUp: (e) {
                         _movementCancel(e.position.dy);
@@ -422,8 +482,6 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
   Widget menuList(String name, Function _onTap, [nav]) {
     return GestureDetector(
       onTap: () async {
-        bool isLogin_naver = await _isLogin_naver();
-        print(isLogin_naver);
         await _onTap();
         if (nav != null) {
           widget.menuTabBarToggle(-1);
@@ -462,7 +520,7 @@ class _RadioState extends State<_Radio> {
       return Container(
         width: MediaQuery.of(context).size.width / 2,
         child: GestureDetector(
-          onTap: () {
+          onTap: () async {
             setState(() {
               provider.getSelectedMenu(widget.selected);
             });

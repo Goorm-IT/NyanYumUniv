@@ -42,6 +42,12 @@ class _YumMainState extends State<YumMain> {
   bool _isLoading = false;
 
   @override
+  void dispose() {
+    backButtonToggle.close();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     backButtonToggle = BehaviorSubject.seeded(-1);
@@ -504,7 +510,6 @@ class _YumMainState extends State<YumMain> {
                                 builder: (providercontext, provider, widgets) {
                                   if (provider.storeInfo != [] &&
                                       provider.storeInfo.length > 0) {
-                                    print(provider.storeInfo.length);
                                     return GestureDetector(
                                       onTap: () async {
                                         setState(() {
@@ -553,7 +558,9 @@ class _YumMainState extends State<YumMain> {
                                       ),
                                     );
                                   } else {
-                                    return Container();
+                                    return Container(
+                                      height: (availableHeight - 112) / 5,
+                                    );
                                   }
                                 },
                               ),

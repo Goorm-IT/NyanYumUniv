@@ -184,6 +184,10 @@ class _MyMenuState extends State<MyMenu> {
   Future<void> nyanLogintest() async {
     var crawl = new Crawl(id: saved_id, pw: saved_pw);
     try {
+      await getLoginSaveDate();
+      if (saved_id == '') {
+        throw CustomException(300, '로그인 정보 없음');
+      }
       try {
         userInfo = GetIt.I<NyanUser>(instanceName: "userInfo");
         classesInfo = GetIt.I<List<Lecture>>(instanceName: "classesInfo");
@@ -247,23 +251,22 @@ class _MyMenuState extends State<MyMenu> {
 
     String nEmail = "";
     if (isLogin_naver == true) {
-      nEmail = await _get_user().timeout(const Duration(milliseconds: 2000),
+      nEmail = await _get_user().timeout(const Duration(milliseconds: 1500),
           onTimeout: () async {
         print('_get_user 오류');
         await _logout_naver();
         return await _login_naver();
       });
       try {
-        var yumUserHttp = new YumUserHttp(nEmail);
-        var yumLogin = await yumUserHttp.yumLogin();
+        var yumUserHttp = new YumUserHttp();
+        var yumLogin = await yumUserHttp.yumLogin(nEmail);
         if (yumLogin == 200) {
           var yumInfo = await yumUserHttp.yumInfo();
 
           setState(() {
             _loadingVisible = !_loadingVisible;
           });
-          await _storeInfoProvider.loadStoreInfo(
-              1, 10, context.read<CategorySelectedProvider>().selected);
+          await _storeInfoProvider.loadStoreInfo(1, 10, "ALL");
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -302,6 +305,7 @@ class _MyMenuState extends State<MyMenu> {
   Widget contentsMenu(_ontapcontroller, image, title, descrition) {
     var windowHeight = MediaQuery.of(context).size.height;
     var windowWidth = MediaQuery.of(context).size.width;
+
     return InkWell(
       onTap: () async {
         await _ontapcontroller();
@@ -316,14 +320,15 @@ class _MyMenuState extends State<MyMenu> {
                   child: Stack(
                     children: [
                       Container(
-                        child: Image.asset('assets/images/$image.png'),
+                        child: Image.asset(
+                          'assets/images/$image.png',
+                        ),
                       ),
                       Opacity(
                         opacity: 0.1,
                         child: Container(
                           color: Colors.black,
                           width: 500,
-                          height: 212,
                         ),
                       )
                     ],

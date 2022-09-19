@@ -34,6 +34,7 @@ class _MyCustomCheckboxState extends State<MyCustomCheckbox> {
 
   @override
   Widget build(BuildContext context) {
+    _isSelected = widget.isChecked;
     return GestureDetector(
       onTap: () {
         setState(() {
