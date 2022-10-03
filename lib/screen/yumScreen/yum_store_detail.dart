@@ -8,6 +8,7 @@ import 'package:deanora/model/review_by_store.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
 import 'package:deanora/provider/menu_provider.dart';
 import 'package:deanora/provider/review_provider.dart';
+import 'package:deanora/screen/yumScreen/YumMainWidget/star_score.dart';
 import 'package:deanora/screen/yumScreen/yumDetailWidet/detail.naver_map.dart';
 import 'package:deanora/screen/yumScreen/yumDetailWidet/detail_comment_list.dart';
 import 'package:deanora/screen/yumScreen/yumDetailWidet/detail_main_image.dart';
@@ -107,7 +108,7 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                     AnimatedCrossFade(
                       firstChild: Container(),
                       secondChild: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 55.0),
+                        margin: const EdgeInsets.only(left: 25.0),
                         height: 40,
                         width: MediaQuery.of(context).size.width,
                         child: Row(
@@ -169,16 +170,68 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      widget.storeInfo.storeAlias,
-                                      style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.w700),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Flexible(
+                                          child: Container(
+                                            child: Text(
+                                              '${widget.storeInfo.storeAlias.trim()}',
+                                              style: TextStyle(
+                                                  fontSize: 25,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  fontWeight: FontWeight.w700),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.all(3.0),
+                                          decoration: greyBorder(5.0),
+                                          child: Row(
+                                            children: [
+                                              menuProvider.menu.length == 0
+                                                  ? Container()
+                                                  : putimg(
+                                                      14.0, 12.0, "thumbs"),
+                                              menuProvider.menu.length == 0
+                                                  ? Container(
+                                                      width: 130,
+                                                      child:
+                                                          Text("아직 리뷰가 없습니다"),
+                                                    )
+                                                  : Container(
+                                                      child: Text(
+                                                        ' ${menuProvider.menu[0].menuAlias.toString()}',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Container(
+                                          width: 45,
+                                          padding: const EdgeInsets.all(5.0),
+                                          decoration: greyBorder(5.0),
+                                          child: StarScore(
+                                              score: double.parse(totalScrore
+                                                  .toStringAsFixed(1))),
+                                        )
+                                      ],
                                     ),
                                     SizedBox(
                                       height: 12,
                                     ),
                                     Divider(
+                                      thickness: 1,
                                       height: 0,
                                       color: Color(0xffD6D6D6),
                                     ),
@@ -186,6 +239,9 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                       height: 12,
                                     ),
                                     subTitle("포토리뷰"),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
                                     PhotoReViewIndetail(
                                       imagePathList: imagePathList,
                                       reviewList: reviewprovider.review,
@@ -222,12 +278,13 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                                                             )));
                                               },
                                               style: ElevatedButton.styleFrom(
+                                                  foregroundColor: Colors.grey,
+                                                  backgroundColor:
+                                                      Colors.transparent,
                                                   padding:
                                                       const EdgeInsets.all(0),
                                                   shadowColor:
-                                                      Colors.transparent,
-                                                  onPrimary: Colors.grey,
-                                                  primary: Colors.transparent),
+                                                      Colors.transparent),
                                               child: putimg(
                                                   15.0, 15.0, 'notifyButton')),
                                         ),

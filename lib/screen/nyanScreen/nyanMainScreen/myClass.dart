@@ -164,8 +164,9 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                                     },
                                                     style: ElevatedButton
                                                         .styleFrom(
-                                                            primary: Color(
-                                                                0xff7D48D9)),
+                                                            backgroundColor:
+                                                                Color(
+                                                                    0xff7D48D9)),
                                                     child: Text("확인")),
                                                 SizedBox(
                                                   width: 10,
@@ -176,8 +177,9 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                                     },
                                                     style: ElevatedButton
                                                         .styleFrom(
-                                                            primary: Color(
-                                                                0xff7D48D9)),
+                                                            backgroundColor:
+                                                                Color(
+                                                                    0xff7D48D9)),
                                                     child: Text("취소"))
                                               ],
                                             ),

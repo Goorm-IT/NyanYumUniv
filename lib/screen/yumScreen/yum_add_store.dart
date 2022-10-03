@@ -543,96 +543,103 @@ class _YumAddStoreState extends State<YumAddStore> {
                                           Expanded(
                                             child: ElevatedButton(
                                                 onPressed: () async {
-                                                  if (addMenuCost.text != "" &&
-                                                      addMenuAlias.text != "") {
-                                                    YumMenuhttp yumMenuhttp =
-                                                        YumMenuhttp();
-                                                    int rst = await yumMenuhttp
-                                                        .addMenu(
-                                                            cost: int.parse(
-                                                                addMenuCost
-                                                                    .text),
-                                                            menuAlias:
-                                                                addMenuAlias
-                                                                    .text
-                                                                    .toString(),
-                                                            storeId: widget
-                                                                .storeInfo
-                                                                .storeId
-                                                                .toString());
-
-                                                    if (rst == 200) {
-                                                      await _menuProvider
-                                                          .getMenubyStore(widget
-                                                              .storeInfo.storeId
-                                                              .toString());
-                                                      _menuList =
-                                                          await yumMenuhttp
-                                                              .menuByStore(widget
+                                                  try {
+                                                    if (addMenuCost.text !=
+                                                            "" &&
+                                                        addMenuAlias.text !=
+                                                            "") {
+                                                      YumMenuhttp yumMenuhttp =
+                                                          YumMenuhttp();
+                                                      int rst = await yumMenuhttp
+                                                          .addMenu(
+                                                              cost: int.parse(
+                                                                  addMenuCost
+                                                                      .text),
+                                                              menuAlias:
+                                                                  addMenuAlias
+                                                                      .text
+                                                                      .toString(),
+                                                              storeId: widget
                                                                   .storeInfo
                                                                   .storeId
                                                                   .toString());
-                                                      setState(() {
-                                                        isMenuChecked
-                                                            .add(false);
-                                                      });
 
-                                                      Navigator.pop(context);
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                                context) =>
-                                                            AlertDialog(
-                                                          content:
-                                                              Text('추가 완료'),
-                                                          actions: [
-                                                            ElevatedButton(
-                                                                style: ElevatedButton
-                                                                    .styleFrom(
-                                                                        primary:
-                                                                            Color(
-                                                                                0xff7D48D9)),
-                                                                onPressed: () =>
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop(),
-                                                                child:
-                                                                    Text('확인')),
-                                                          ],
-                                                        ),
-                                                      );
-                                                    } else {
-                                                      Navigator.pop(context);
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                                context) =>
-                                                            AlertDialog(
-                                                          content: Text(
-                                                              ' 오류가 발생했습니다\n 잠시후에 다시 시도해주세요'),
-                                                          actions: [
-                                                            ElevatedButton(
-                                                                style: ElevatedButton
-                                                                    .styleFrom(
-                                                                        primary:
-                                                                            Color(
-                                                                                0xff7D48D9)),
-                                                                onPressed: () =>
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop(),
-                                                                child:
-                                                                    Text('확인')),
-                                                          ],
-                                                        ),
-                                                      );
+                                                      if (rst == 200) {
+                                                        await _menuProvider
+                                                            .getMenubyStore(
+                                                                widget.storeInfo
+                                                                    .storeId
+                                                                    .toString());
+                                                        _menuList =
+                                                            await yumMenuhttp
+                                                                .menuByStore(widget
+                                                                    .storeInfo
+                                                                    .storeId
+                                                                    .toString());
+                                                        setState(() {
+                                                          isMenuChecked
+                                                              .add(false);
+                                                        });
+
+                                                        Navigator.pop(context);
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              AlertDialog(
+                                                            content:
+                                                                Text('추가 완료'),
+                                                            actions: [
+                                                              ElevatedButton(
+                                                                  style: ElevatedButton.styleFrom(
+                                                                      backgroundColor:
+                                                                          Color(
+                                                                              0xff7D48D9)),
+                                                                  onPressed: () =>
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(),
+                                                                  child: Text(
+                                                                      '확인')),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      } else {
+                                                        Navigator.pop(context);
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              AlertDialog(
+                                                            content: Text(
+                                                                ' 오류가 발생했습니다\n 잠시후에 다시 시도해주세요'),
+                                                            actions: [
+                                                              ElevatedButton(
+                                                                  style: ElevatedButton.styleFrom(
+                                                                      backgroundColor:
+                                                                          Color(
+                                                                              0xff7D48D9)),
+                                                                  onPressed: () =>
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(),
+                                                                  child: Text(
+                                                                      '확인')),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      }
+                                                      addMenuAlias.clear();
+                                                      addMenuCost.clear();
                                                     }
-                                                    addMenuAlias.clear();
-                                                    addMenuCost.clear();
+                                                  } catch (e) {
+                                                    showdialog(context,
+                                                        "가격에는 숫자만 입력해주세요");
                                                   }
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                    primary: Color(0xff7D48D9)),
+                                                    backgroundColor:
+                                                        Color(0xff7D48D9)),
                                                 child: Text('저장')),
                                           ),
                                         ],

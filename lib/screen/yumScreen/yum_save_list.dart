@@ -66,44 +66,51 @@ class _YumSaveListState extends State<YumSaveList> {
                 if (provider.savedlist == [] && provider.savedlist.length < 0) {
                   return CircularProgressIndicator();
                 } else {
-                  return Container(
-                    height: availableHeight - 180,
-                    child: ListView.builder(
-                        itemCount: provider.savedlist.length,
-                        itemBuilder: (BuildContext listContext, int index) {
-                          return GestureDetector(
-                            onTap: () async {
-                              await _menuProvider.getMenubyStore(
-                                  provider.savedlist[index].storeId.toString());
-                              await _reviewProvider.getReviewByStore(
-                                  provider.savedlist[index].storeId.toString());
-                              NaverOpneApi naverOpneApi = NaverOpneApi();
-                              String str = await naverOpneApi.getNaverMapImage(
-                                  x: provider.savedlist[index].mapX,
-                                  y: provider.savedlist[index].mapY,
-                                  title: provider.savedlist[index].storeAlias);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => YumStoreDetail(
-                                    storeInfo: provider.savedlist[index],
-                                    naverMapUrl: str,
+                  return Flexible(
+                    child: Container(
+                      height: availableHeight,
+                      child: ListView.builder(
+                          itemCount: provider.savedlist.length,
+                          itemBuilder: (BuildContext listContext, int index) {
+                            return GestureDetector(
+                              onTap: () async {
+                                await _menuProvider.getMenubyStore(provider
+                                    .savedlist[index].storeId
+                                    .toString());
+                                await _reviewProvider.getReviewByStore(provider
+                                    .savedlist[index].storeId
+                                    .toString());
+                                NaverOpneApi naverOpneApi = NaverOpneApi();
+                                String str =
+                                    await naverOpneApi.getNaverMapImage(
+                                        x: provider.savedlist[index].mapX,
+                                        y: provider.savedlist[index].mapY,
+                                        title: provider
+                                            .savedlist[index].storeAlias);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => YumStoreDetail(
+                                      storeInfo: provider.savedlist[index],
+                                      naverMapUrl: str,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              height: (availableHeight - 112) / 5,
-                              child: StoreListItem(
+                                );
+                              },
+                              child: Container(
                                 height: (availableHeight - 112) / 5,
-                                imagePath: provider.savedlist[index].imagePath,
-                                storeAlias:
-                                    provider.savedlist[index].storeAlias,
-                                storeId: provider.savedlist[index].storeId,
+                                child: StoreListItem(
+                                  height: (availableHeight - 112) / 5,
+                                  imagePath:
+                                      provider.savedlist[index].imagePath,
+                                  storeAlias:
+                                      provider.savedlist[index].storeAlias,
+                                  storeId: provider.savedlist[index].storeId,
+                                ),
                               ),
-                            ),
-                          );
-                        }),
+                            );
+                          }),
+                    ),
                   );
                 }
               }),

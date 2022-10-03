@@ -38,7 +38,7 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
   @override
   Widget build(BuildContext context) {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: imagePathLists.length > 5
             ? [0, 1, 2, 3, 4].map((e) {
                 if (e != 4) {
@@ -56,8 +56,8 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                       );
                     },
                     child: Container(
-                      width: 50,
-                      height: 50,
+                      width: 55,
+                      height: 55,
                       child: CachedNetworkImage(
                         fadeInDuration: const Duration(milliseconds: 100),
                         fadeOutDuration: const Duration(milliseconds: 100),
@@ -76,8 +76,8 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                   return Stack(
                     children: [
                       Container(
-                        width: 50,
-                        height: 50,
+                        width: 55,
+                        height: 55,
                         child: CachedNetworkImage(
                           fadeInDuration: const Duration(milliseconds: 100),
                           fadeOutDuration: const Duration(milliseconds: 100),
@@ -107,8 +107,8 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                         child: Opacity(
                           opacity: 0.8,
                           child: Container(
-                            width: 50,
-                            height: 50,
+                            width: 55,
+                            height: 55,
                             color: Color(0xff53535380),
                             child: Center(
                                 child: Text(
@@ -140,8 +140,8 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                         );
                       },
                       child: Container(
-                        width: 50,
-                        height: 50,
+                        width: 55,
+                        height: 55,
                         child: CachedNetworkImage(
                           fadeInDuration: const Duration(milliseconds: 100),
                           fadeOutDuration: const Duration(milliseconds: 100),
@@ -174,8 +174,8 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                           );
                         },
                         child: Container(
-                          width: 50,
-                          height: 50,
+                          width: 55,
+                          height: 55,
                           child: CachedNetworkImage(
                             fadeInDuration: const Duration(milliseconds: 100),
                             fadeOutDuration: const Duration(milliseconds: 100),
@@ -193,7 +193,7 @@ class _PhotoReViewIndetailState extends State<PhotoReViewIndetail> {
                       );
                     } else {
                       return Container(
-                          width: 50, height: 50, color: Color(0xffD6D6D6));
+                          width: 55, height: 55, color: Color(0xffD6D6D6));
                     }
                   }).toList());
   }

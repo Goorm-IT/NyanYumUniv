@@ -182,7 +182,7 @@ class _YumReviewNotifyState extends State<YumReviewNotify>
                           },
                           child: Text("등록"),
                           style: ElevatedButton.styleFrom(
-                            primary: Color(0xff7D48D9),
+                            backgroundColor: Color(0xff7D48D9),
                           ),
                         ),
                       ),

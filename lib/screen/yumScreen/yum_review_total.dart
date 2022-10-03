@@ -23,7 +23,37 @@ class _YumReviewTotalState extends State<YumReviewTotal> {
           color: Colors.white,
           child: Column(
             children: [
-              Text("포토 리뷰"),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "포토 리뷰",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
+                    ClipOval(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          splashColor: Colors.grey,
+                          icon: Icon(Icons.close_sharp),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.all(15.0),

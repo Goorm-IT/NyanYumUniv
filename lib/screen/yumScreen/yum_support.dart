@@ -1,5 +1,9 @@
 import 'package:deanora/Widgets/Widgets.dart';
+import 'package:deanora/http/yumServer/yumHttp.dart';
+import 'package:deanora/model/user.dart';
+import 'package:deanora/model/yum_user.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class YumSupport extends StatefulWidget {
   const YumSupport({Key? key}) : super(key: key);
@@ -11,16 +15,18 @@ class YumSupport extends StatefulWidget {
 class _YumSupportState extends State<YumSupport>
     with SingleTickerProviderStateMixin {
   ScrollController _scrollController = ScrollController();
+  YumUser yumUser = GetIt.I<YumUser>();
   TextEditingController _textEditingController = TextEditingController();
-  int _notifyId = -1;
   FocusNode textFocus = FocusNode();
   late AnimationController _animationController;
   String errorMessage = "";
   Color errorMessageColor = Colors.red;
   bool _visible = false;
+  String userAlias = "";
   @override
   void initState() {
     super.initState();
+    userAlias = yumUser.userAlias;
     _animationController = new AnimationController(
         vsync: this, duration: Duration(milliseconds: 250));
   }
@@ -70,7 +76,7 @@ class _YumSupportState extends State<YumSupport>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        " 리뷰 신고",
+                        " 건의 하기",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600),
                       ),
@@ -83,12 +89,6 @@ class _YumSupportState extends State<YumSupport>
                         },
                       ),
                     ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  SizedBox(
-                    height: 5,
                   ),
                   SizedBox(
                     height: 16,
@@ -144,15 +144,14 @@ class _YumSupportState extends State<YumSupport>
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (_notifyId == -1) {
-                              fadeMessage("신고할 리뷰를 클릭해 주세요.", Colors.red);
-                            } else if (_textEditingController.text == "") {
+                            if (_textEditingController.text == "") {
                               fadeMessage("신고 내용을 작성해주세요.", Colors.red);
                             } else {
-                              // ReportApi reportApi = ReportApi();
-                              // await reportApi.yumreport(
-                              //     _textEditingController.text,
-                              //     _notifyId.toString());
+                              SupportApi _supportApi = SupportApi();
+                              await _supportApi.yumreport(
+                                content: _textEditingController.text,
+                                userAlias: userAlias,
+                              );
                               showdialog(
                                 context,
                                 "신고 되었습니다.",
@@ -161,13 +160,12 @@ class _YumSupportState extends State<YumSupport>
                               _animationController.reverse();
                               setState(() {
                                 _visible = false;
-                                _notifyId = -1;
                               });
                             }
                           },
                           child: Text("등록"),
                           style: ElevatedButton.styleFrom(
-                            primary: Color(0xff7D48D9),
+                            backgroundColor: Color(0xff7D48D9),
                           ),
                         ),
                       ),

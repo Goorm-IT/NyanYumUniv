@@ -63,7 +63,6 @@ class _ThreeButtonState extends State<ThreeButton>
   late AnimationController isSaveAnimationController;
   late MenuProvider _menuProvider;
   List<bool> isMenuChecked = [];
-
   void _scrollToTop() {
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
@@ -635,7 +634,7 @@ class _ThreeButtonState extends State<ThreeButton>
                                                             Radius.circular(
                                                                 18))),
                                                 content: Container(
-                                                  height: 130,
+                                                  height: 140,
                                                   width: 400,
                                                   child: Column(
                                                     mainAxisAlignment:
@@ -792,95 +791,91 @@ class _ThreeButtonState extends State<ThreeButton>
                                                                 ElevatedButton(
                                                                     onPressed:
                                                                         () async {
-                                                                      if (addMenuCost.text !=
-                                                                              "" &&
-                                                                          addMenuAlias.text !=
-                                                                              "") {
-                                                                        YumMenuhttp
-                                                                            yumMenuhttp =
-                                                                            YumMenuhttp();
+                                                                      try {
+                                                                        if (addMenuCost.text !=
+                                                                                "" &&
+                                                                            addMenuAlias.text !=
+                                                                                "") {
+                                                                          YumMenuhttp
+                                                                              yumMenuhttp =
+                                                                              YumMenuhttp();
 
-                                                                        int rst = await yumMenuhttp.addMenu(
-                                                                            cost:
-                                                                                int.parse(addMenuCost.text),
-                                                                            menuAlias: addMenuAlias.text.toString(),
-                                                                            storeId: widget.storeInfo.storeId.toString());
+                                                                          int rst = await yumMenuhttp.addMenu(
+                                                                              cost: int.parse(addMenuCost.text),
+                                                                              menuAlias: addMenuAlias.text.toString(),
+                                                                              storeId: widget.storeInfo.storeId.toString());
 
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                        setModalState(
-                                                                            () {
-                                                                          _dropselected =
-                                                                              -1;
-                                                                        });
-                                                                        if (rst ==
-                                                                            200) {
-                                                                          await _menuProvider.getMenubyStore(widget
-                                                                              .storeInfo
-                                                                              .storeId
-                                                                              .toString());
-                                                                          setModalState(
-                                                                              () {
-                                                                            isMenuChecked.add(false);
-                                                                            items.add(
-                                                                              DropdownMenuItem(
-                                                                                child: Container(
-                                                                                  width: 80,
-                                                                                  child: Column(
-                                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                                                    children: [
-                                                                                      Text(
-                                                                                        addMenuAlias.text,
-                                                                                        style: TextStyle(fontSize: 12),
-                                                                                        textAlign: TextAlign.center,
-                                                                                        overflow: TextOverflow.ellipsis,
-                                                                                      ),
-                                                                                      Text(
-                                                                                        '${addMenuCost.text.toString()}원',
-                                                                                        style: TextStyle(fontSize: 7),
-                                                                                        textAlign: TextAlign.center,
-                                                                                        overflow: TextOverflow.ellipsis,
-                                                                                      )
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            );
-                                                                          });
-                                                                          showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder: (BuildContext context) =>
-                                                                                AlertDialog(
-                                                                              content: Text('추가 완료'),
-                                                                              actions: [
-                                                                                ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: Text('확인')),
-                                                                              ],
-                                                                            ),
-                                                                          );
-                                                                        } else {
                                                                           Navigator.pop(
                                                                               context);
-                                                                          showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder: (BuildContext context) =>
-                                                                                AlertDialog(
-                                                                              content: Text(' 오류가 발생했습니다\n 잠시후에 다시 시도해주세요'),
-                                                                              actions: [
-                                                                                ElevatedButton(style: ElevatedButton.styleFrom(primary: Color(0xff7D48D9)), onPressed: () => Navigator.of(context).pop(), child: Text('확인')),
-                                                                              ],
-                                                                            ),
-                                                                          );
+                                                                          setModalState(
+                                                                              () {
+                                                                            _dropselected =
+                                                                                -1;
+                                                                          });
+                                                                          if (rst ==
+                                                                              200) {
+                                                                            await _menuProvider.getMenubyStore(widget.storeInfo.storeId.toString());
+                                                                            setModalState(() {
+                                                                              isMenuChecked.add(false);
+                                                                              items.add(
+                                                                                DropdownMenuItem(
+                                                                                  child: Container(
+                                                                                    width: 80,
+                                                                                    child: Column(
+                                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                                      children: [
+                                                                                        Text(
+                                                                                          addMenuAlias.text,
+                                                                                          style: TextStyle(fontSize: 12),
+                                                                                          textAlign: TextAlign.center,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        ),
+                                                                                        Text(
+                                                                                          '${addMenuCost.text.toString()}원',
+                                                                                          style: TextStyle(fontSize: 7),
+                                                                                          textAlign: TextAlign.center,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        )
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              );
+                                                                            });
+                                                                            showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) => AlertDialog(
+                                                                                content: Text('추가 완료'),
+                                                                                actions: [
+                                                                                  ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Color(0xff7D48D9)), onPressed: () => Navigator.of(context).pop(), child: Text('확인')),
+                                                                                ],
+                                                                              ),
+                                                                            );
+                                                                          } else {
+                                                                            Navigator.pop(context);
+                                                                            showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) => AlertDialog(
+                                                                                content: Text(' 오류가 발생했습니다\n 잠시후에 다시 시도해주세요'),
+                                                                                actions: [
+                                                                                  ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Color(0xff7D48D9)), onPressed: () => Navigator.of(context).pop(), child: Text('확인')),
+                                                                                ],
+                                                                              ),
+                                                                            );
+                                                                          }
+                                                                          addMenuAlias
+                                                                              .clear();
+                                                                          addMenuCost
+                                                                              .clear();
                                                                         }
-                                                                        addMenuAlias
-                                                                            .clear();
-                                                                        addMenuCost
-                                                                            .clear();
+                                                                      } catch (e) {
+                                                                        showdialog(
+                                                                            context,
+                                                                            "가격에는 숫자만 입력해주세요");
                                                                       }
                                                                     },
                                                                     style: ElevatedButton.styleFrom(
-                                                                        primary:
+                                                                        backgroundColor:
                                                                             Color(
                                                                                 0xff7D48D9)),
                                                                     child: Text(
@@ -993,7 +988,7 @@ class _ThreeButtonState extends State<ThreeButton>
             child: putimg(20.0, 20.0,
                 widget.isBlack ? 'detail_review_black' : 'detail_review'),
             style: ElevatedButton.styleFrom(
-              primary: Colors.transparent,
+              backgroundColor: Colors.transparent,
               padding: const EdgeInsets.all(0.0),
               shadowColor: Colors.transparent,
             ),
@@ -1042,7 +1037,7 @@ class _ThreeButtonState extends State<ThreeButton>
                                         ? 'detail_like_black'
                                         : 'detail_like'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
+                          backgroundColor: Colors.transparent,
                           padding: const EdgeInsets.all(0.0),
                           shadowColor: Colors.transparent,
                         ),
@@ -1097,7 +1092,7 @@ class _ThreeButtonState extends State<ThreeButton>
                                         ? 'detail_save_black'
                                         : 'detail_save'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
+                          backgroundColor: Colors.transparent,
                           padding: const EdgeInsets.all(0.0),
                           shadowColor: Colors.transparent,
                         ),

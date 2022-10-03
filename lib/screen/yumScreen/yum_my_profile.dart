@@ -8,6 +8,7 @@ import 'package:deanora/screen/MyMenu.dart';
 import 'package:deanora/screen/yumScreen/yum_like_list.dart';
 import 'package:deanora/screen/yumScreen/yum_my_review.dart';
 import 'package:deanora/screen/yumScreen/yum_save_list.dart';
+import 'package:deanora/screen/yumScreen/yum_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:get_it/get_it.dart';
@@ -33,10 +34,17 @@ class _MyProfilePageState extends State<MyProfilePage>
     FlutterNaverLogin.logOutAndDeleteToken();
   }
 
-  void _yum_delete() async {
+  void yumDelete() async {
+    var yumUserHttp = YumUserHttp();
+    print(yumUser.uid);
+    await yumUserHttp.yumLogin(yumUser.uid);
+    await yumUserHttp.yumDelete(yumUser.uid);
+  }
+
+  void yumLogout() async {
     var yumUserHttp = YumUserHttp();
     await yumUserHttp.yumLogin(yumUser.uid);
-    await yumUserHttp.yumDelete();
+    await yumUserHttp.yumLogOut();
   }
 
   @override
@@ -306,6 +314,12 @@ class _MyProfilePageState extends State<MyProfilePage>
                                 child: Divider(
                                     color: Color(0xffD6D6D6), thickness: 0.5)),
                             GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: ((context) => YumSupport())));
+                              },
                               child: Container(
                                   margin:
                                       const EdgeInsets.symmetric(vertical: 5),
@@ -344,7 +358,7 @@ class _MyProfilePageState extends State<MyProfilePage>
                                                 onPressed: () async {
                                                   Navigator.of(context).pop();
                                                   _logout_naver();
-                                                  _yum_delete();
+                                                  yumLogout();
 
                                                   Navigator.pushAndRemoveUntil(
                                                       context,
@@ -354,7 +368,8 @@ class _MyProfilePageState extends State<MyProfilePage>
                                                       (route) => false);
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                    primary: Color(0xff7D48D9)),
+                                                    backgroundColor:
+                                                        Color(0xff7D48D9)),
                                                 child: Text('확인'),
                                               ),
                                             ),
@@ -369,7 +384,8 @@ class _MyProfilePageState extends State<MyProfilePage>
                                                   Navigator.of(context).pop();
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                    primary: Color(0xff7D48D9)),
+                                                    backgroundColor:
+                                                        Color(0xff7D48D9)),
                                                 child: Text('취소'),
                                               ),
                                             ),
@@ -416,10 +432,10 @@ class _MyProfilePageState extends State<MyProfilePage>
                                             child: Center(
                                               child: ElevatedButton(
                                                 onPressed: () async {
+                                                  yumDelete();
+                                                  _logout_naver();
                                                   Navigator.of(context).pop();
-                                                  var yumUserHttp =
-                                                      YumUserHttp();
-                                                  await yumUserHttp.yumDelete();
+
                                                   Navigator.pushAndRemoveUntil(
                                                       context,
                                                       MaterialPageRoute(
@@ -428,7 +444,8 @@ class _MyProfilePageState extends State<MyProfilePage>
                                                       (route) => false);
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                    primary: Color(0xff7D48D9)),
+                                                    backgroundColor:
+                                                        Color(0xff7D48D9)),
                                                 child: Text('확인'),
                                               ),
                                             ),
@@ -443,7 +460,8 @@ class _MyProfilePageState extends State<MyProfilePage>
                                                   Navigator.of(context).pop();
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                    primary: Color(0xff7D48D9)),
+                                                    backgroundColor:
+                                                        Color(0xff7D48D9)),
                                                 child: Text('취소'),
                                               ),
                                             ),

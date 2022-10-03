@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:deanora/Widgets/Widgets.dart';
 import 'package:deanora/Widgets/star_rating.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/review_by_store.dart';
+import 'package:deanora/screen/yumScreen/YumMainWidget/gery_border.dart';
+import 'package:deanora/screen/yumScreen/yum_review_notify.dart';
 import 'package:deanora/screen/yumScreen/yum_review_total.dart';
 import 'package:flutter/material.dart';
 
@@ -48,25 +51,66 @@ class _YumReviewDetailState extends State<YumReviewDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("포토리뷰"),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => YumReviewTotal(
-                          reviewList: widget.reviewList,
-                          menuList: widget.menuList,
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "포토 리뷰",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        decoration: greyBorder(15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.grid_view,
+                              size: 13,
+                            ),
+                            Transform.translate(
+                              offset: Offset(2, -1.5),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => YumReviewTotal(
+                                        reviewList: widget.reviewList,
+                                        menuList: widget.menuList,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  "전체 보기",
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                  child: Text("전체 보기"),
-                ),
-              ],
+                      ClipOval(
+                        child: Material(
+                          color: Colors.transparent,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            splashColor: Colors.grey,
+                            icon: Icon(Icons.close_sharp),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
             Stack(
               children: [
@@ -116,8 +160,8 @@ class _YumReviewDetailState extends State<YumReviewDetail> {
                         size: 20,
                       ),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
-                        onPrimary: Colors.black,
+                        foregroundColor: Colors.black,
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
@@ -145,8 +189,8 @@ class _YumReviewDetailState extends State<YumReviewDetail> {
                         size: 20,
                       ),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
-                        onPrimary: Colors.black,
+                        foregroundColor: Colors.black,
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
@@ -185,18 +229,44 @@ class _YumReviewDetailState extends State<YumReviewDetail> {
                           ),
                         ],
                       ),
-                      Text(widget.reviewList[sliderIndex].score.toString(),
-                          style: TextStyle(
-                              color: Color(0xff707070), fontSize: 10)),
-                      Text(
-                          widget.reviewList[sliderIndex].registerDate
-                              .toString(),
-                          style: TextStyle(
-                              color: Color(0xff707070), fontSize: 10)),
+                      Row(
+                        children: [
+                          Transform.translate(
+                            offset: Offset(0, 4),
+                            child: Text(
+                                widget.reviewList[sliderIndex].registerDate
+                                    .toString()
+                                    .replaceAll('-', '.'),
+                                style: TextStyle(
+                                    color: Color(0xff707070), fontSize: 10)),
+                          ),
+                          SizedBox(
+                            width: 25,
+                            height: 25,
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => YumReviewNotify(
+                                              reviewList: widget.reviewList)));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.grey,
+                                    backgroundColor: Colors.transparent,
+                                    padding: const EdgeInsets.all(0),
+                                    shadowColor: Colors.transparent),
+                                child: putimg(15.0, 15.0, 'notifyButton')),
+                          )
+                        ],
+                      ),
                     ],
                   ),
                   Text('메뉴: $title',
                       style: TextStyle(color: Color(0xff707070), fontSize: 10)),
+                  SizedBox(
+                    height: 5,
+                  ),
                   Text(widget.reviewList[sliderIndex].userAlias,
                       style: TextStyle(color: Color(0xff707070), fontSize: 10)),
                   SizedBox(

@@ -263,10 +263,10 @@ class _MyMenuState extends State<MyMenu> {
         if (yumLogin == 200) {
           var yumInfo = await yumUserHttp.yumInfo();
 
+          await _storeInfoProvider.loadStoreInfo(1, 10, "ALL");
           setState(() {
             _loadingVisible = !_loadingVisible;
           });
-          await _storeInfoProvider.loadStoreInfo(1, 10, "ALL");
           Navigator.push(
             context,
             MaterialPageRoute(

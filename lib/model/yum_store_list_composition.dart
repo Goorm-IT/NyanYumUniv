@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 
-class StoreComposition<String, double> {
+class StoreComposition<String, double, List> {
   final String imagePath;
   final String storeAlias;
   final double score;
   final String? commentId;
-  final String category;
+  final List category;
   final String address;
   final double storeId;
   final double mapX;
@@ -28,7 +28,7 @@ class StoreComposition<String, double> {
       storeAlias: json["storeAlias"] as String,
       score: json["score"] as double,
       commentId: json["commentId"] as String?,
-      category: json["category"] as String,
+      category: json["category"].split('>') as List,
       address: json["address"] as String,
       storeId: json["storeId"] as double,
       mapX: json["mapX"] as double,

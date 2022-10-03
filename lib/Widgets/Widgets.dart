@@ -32,7 +32,8 @@ Future<dynamic> showdialog(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              style: ElevatedButton.styleFrom(primary: Color(0xff7D48D9)),
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: Color(0xff7D48D9)),
               child: Text('확인'),
             ),
           ),

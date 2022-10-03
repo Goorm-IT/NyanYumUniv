@@ -119,9 +119,10 @@ class _StoreListItemState extends State<StoreListItem> {
                           return Container(
                             margin: const EdgeInsets.only(right: 20.0),
                             width: 150,
+                            height: 30,
                             child: Text(
                               snapshot.data.toString(),
-                              overflow: TextOverflow.ellipsis,
+                              overflow: TextOverflow.fade,
                             ),
                           );
                         } else {

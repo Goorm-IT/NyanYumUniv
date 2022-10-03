@@ -101,16 +101,16 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
     _animationControllerDown.addListener(_listenerDown);
 
     classList.add(menuList(
+      " ",
+      () {},
+    ));
+    classList.add(menuList(
       "학사일정",
       () {},
       MyCalendar(),
     ));
     classList.add(menuList(
-      "교내 공지사항",
-      () {},
-    ));
-    classList.add(menuList(
-      "시간표",
+      " ",
       () {},
     ));
     foodList.add(menuList(

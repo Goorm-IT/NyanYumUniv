@@ -1,3 +1,4 @@
+import 'package:deanora/const/color.dart';
 import 'package:deanora/http/yumServer/yumHttp.dart';
 import 'package:deanora/model/menu_by_store.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
@@ -33,6 +34,9 @@ class _YumSearchAddStoreState extends State<YumSearchAddStore> {
                 "리뷰를 작성할 가게를 검색해 주세요",
                 style: TextStyle(fontSize: 18),
               ),
+              SizedBox(
+                height: 10,
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -42,6 +46,35 @@ class _YumSearchAddStoreState extends State<YumSearchAddStore> {
                     width: MediaQuery.of(context).size.width - 100,
                     height: 30,
                     child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "가게명으로 검색",
+                        hintStyle: TextStyle(
+                            fontSize: 15, color: Colors.grey.withOpacity(0.5)),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: PRIMARY_COLOR_DEEP),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: PRIMARY_COLOR_DEEP),
+                        ),
+                      ),
+                      textInputAction: TextInputAction.search,
+                      onSubmitted: (value) async {
+                        YumStorehttp _yumStorehttp = YumStorehttp();
+                        List<StoreComposition> tmp =
+                            await _yumStorehttp.getstorebyAlias(
+                          storeAlias: value,
+                        );
+                        setState(() {
+                          searchList = tmp;
+                          if (searchList.length > 0) {
+                            errorText = "";
+                            errorText2 = "";
+                          } else {
+                            errorText = '등록된 가게가 없습니다';
+                            errorText2 = '가게를 먼저 등록해주세요';
+                          }
+                        });
+                      },
                       controller: _controller,
                     ),
                   ),

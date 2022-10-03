@@ -29,8 +29,17 @@ class YumUserHttp {
     return response.statusCode;
   }
 
-  yumDelete() async {
-    final url = Uri.http(yumURL, '/nyu/user');
+  yumDelete(String uid) async {
+    final url = Uri.http(yumURL, '/nyu/user', {"uid": uid});
+    var response = await http.delete(
+      url,
+      headers: {'Cookie': _cookie},
+    );
+    print(response.body);
+  }
+
+  yumLogOut() async {
+    final url = Uri.http(yumURL, '/nyu/user/session');
     var response = await http.delete(
       url,
       headers: {'Cookie': _cookie},
@@ -206,6 +215,25 @@ class YumStorehttp {
       return [];
     }
   }
+
+  Future<List<StoreComposition>> searchStoreId(
+      {required String storeId}) async {
+    List<dynamic> _tmp;
+    final url = Uri.http(yumURL, '/nyu/store/search/storeid',
+        {"storeId": storeId, "order": "1"});
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+      _tmp = jsonDecode(responseBody);
+      return _tmp
+          .map<StoreComposition>((item) => StoreComposition.fromJson(item))
+          .toList();
+    } else {
+      print(
+          'Request failed with status(searchStoreId): ${response.statusCode}.');
+      return [];
+    }
+  }
 }
 
 class YumMenuhttp {
@@ -223,6 +251,25 @@ class YumMenuhttp {
           .toList();
     } else {
       print('Request failed with status(menuByStore): ${response.statusCode}.');
+      return [];
+    }
+  }
+
+  Future<List<MenuByStore>> searchMenuId({required String menuId}) async {
+    List<dynamic> _tmp;
+    final url = Uri.http(yumURL, '/nyu/menu/store/search/menuid', {
+      "menuId": menuId,
+    });
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+      _tmp = jsonDecode(responseBody)['MenuList'];
+      return _tmp
+          .map<MenuByStore>((item) => MenuByStore.fromJson(item))
+          .toList();
+    } else {
+      print(
+          'Request failed with status(searchStoreId): ${response.statusCode}.');
       return [];
     }
   }
@@ -421,15 +468,21 @@ class ReportApi {
   }
 }
 
-// class SupportApi {
-//    String yumURL = '54.180.116.149:82';
-//      Future<void> yumreport({required String category, required String content, required String re}) async {
-//     final url = Uri.http(
-//         yumURL, '/nyu/report', {"report": report, "reviewId": reviewId});
-//     var response = await http.post(url, headers: {'Cookie': _cookie});
-//     print(response.body);
-//   }
-// }
+class SupportApi {
+  String yumURL = '54.180.116.149:82';
+  Future<void> yumreport(
+      {required String content, required String userAlias}) async {
+    final url = Uri.http(yumURL, '/nyu/support', {
+      "category": "1",
+      "content": content,
+      "reviewId": "1",
+      "type": "1",
+      "userAlias": userAlias
+    });
+    var response = await http.post(url, headers: {'Cookie': _cookie});
+    print(response.body);
+  }
+}
 
 class NaverOpneApi {
   Future<String> getNaverMapImage(

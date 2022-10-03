@@ -8,23 +8,19 @@ import 'package:deanora/menutabbar/custom_menu_tabbar.dart';
 import 'package:deanora/model/yum_category_type.dart';
 import 'package:deanora/model/yum_naver_search.dart';
 import 'package:deanora/model/yum_store_list_composition.dart';
-import 'package:deanora/model/yum_top_5.dart';
 import 'package:deanora/provider/category_selected_provider.dart';
 import 'package:deanora/provider/menu_provider.dart';
 import 'package:deanora/provider/naver_search_provider.dart';
 import 'package:deanora/provider/review_provider.dart';
 import 'package:deanora/provider/storeInfo_provider.dart';
-import 'package:deanora/screen/tmp_search.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/gery_border.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/star_score.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_category.dart';
 import 'package:deanora/screen/yumScreen/YumMainWidget/yum_store_list_item.dart';
-import 'package:deanora/screen/yumScreen/yum_my_profile.dart';
 import 'package:deanora/screen/yumScreen/yum_search_screen.dart';
 import 'package:deanora/screen/yumScreen/yum_store_detail.dart';
 import 'package:deanora/screen/yumScreen/yum_store_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -117,7 +113,52 @@ class _YumMainState extends State<YumMain> {
                             Container(
                                 width: MediaQuery.of(context).size.width - 140,
                                 child: TextField(
+                                  textInputAction: TextInputAction.search,
+                                  onSubmitted: (value) async {
+                                    if (value != "") {
+                                      NaverOpneApi naverOpneApi =
+                                          NaverOpneApi();
+                                      YumStorehttp yumStorehttp =
+                                          YumStorehttp();
+
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
+
+                                      List<YumNaverSearch> _tmp =
+                                          await naverOpneApi.searchNaver(value);
+
+                                      for (int i = 0; i < _tmp.length; i++) {
+                                        await yumStorehttp.addStore(
+                                            address: _tmp[i].address,
+                                            file: "",
+                                            category: _tmp[i].category,
+                                            mapX: _tmp[i].mapx,
+                                            mapY: _tmp[i].mapy,
+                                            storeAlias: _tmp[i]
+                                                .title
+                                                .replaceAll("</b>", " ")
+                                                .replaceAll("<b>", " "));
+                                      }
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  YumSearchScreen(
+                                                    searchInfo: _tmp,
+                                                    availableHeight:
+                                                        availableHeight,
+                                                  )));
+                                    }
+                                  },
                                   decoration: InputDecoration(
+                                    hintText: "가게명으로 검색",
+                                    hintStyle: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.withOpacity(0.5)),
                                     enabledBorder: UnderlineInputBorder(
                                       borderSide:
                                           BorderSide(color: PRIMARY_COLOR_DEEP),
@@ -134,7 +175,9 @@ class _YumMainState extends State<YumMain> {
                                   if (searchController.text != "") {
                                     NaverOpneApi naverOpneApi = NaverOpneApi();
                                     YumStorehttp yumStorehttp = YumStorehttp();
-
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
                                     List<YumNaverSearch> _tmp =
                                         await naverOpneApi
                                             .searchNaver(searchController.text);
@@ -151,6 +194,9 @@ class _YumMainState extends State<YumMain> {
                                               .replaceAll("</b>", " ")
                                               .replaceAll("<b>", " "));
                                     }
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -239,51 +285,77 @@ class _YumMainState extends State<YumMain> {
                                               ),
                                             );
                                           },
-                                          child: ClipRRect(
+                                          child: Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                vertical: 10, horizontal: 0),
+                                            decoration: BoxDecoration(
+                                              color: Colors.transparent,
+                                              border: Border.all(
+                                                  width: 2,
+                                                  color: Colors.grey
+                                                      .withOpacity(0.03)),
                                               borderRadius:
-                                                  BorderRadius.circular(20.0),
-                                              child: e.imagePath != null
-                                                  ? Container(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      child: CachedNetworkImage(
-                                                        fadeInDuration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    100),
-                                                        fadeOutDuration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    100),
-                                                        imageUrl: e.imagePath,
-                                                        fit: BoxFit.cover,
-                                                        placeholder: (context,
-                                                                url) =>
-                                                            CustomLoadingImage(),
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            Icon(Icons.error),
-                                                      ),
-                                                    )
-                                                  : Container(
-                                                      color: Color(0xffd6d6d6),
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      child: Image.asset(
-                                                        'assets/images/defaultImg.png',
-                                                      ),
-                                                    )),
+                                                  BorderRadius.circular(15),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.2),
+                                                  spreadRadius: 1,
+                                                  blurRadius: 4,
+                                                  offset: Offset(3, 5),
+                                                )
+                                              ],
+                                            ),
+                                            // padding: const EdgeInsets.all(10),
+
+                                            child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                                child: e.imagePath != null
+                                                    ? Container(
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          fadeInDuration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      100),
+                                                          fadeOutDuration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      100),
+                                                          imageUrl: e.imagePath,
+                                                          fit: BoxFit.cover,
+                                                          placeholder: (context,
+                                                                  url) =>
+                                                              CustomLoadingImage(),
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              Icon(Icons.error),
+                                                        ),
+                                                      )
+                                                    : Container(
+                                                        color:
+                                                            Color(0xfff3f3f3),
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                        child: Image.asset(
+                                                          'assets/images/default_nobackground.png',
+                                                        ),
+                                                      )),
+                                          ),
                                         ),
                                       );
                                     },
                                   );
                                 }).toList(),
                                 options: CarouselOptions(
-                                    height: 180,
+                                    height: 190,
                                     autoPlay: false,
                                     viewportFraction: 0.9,
                                     enableInfiniteScroll: false,
@@ -299,9 +371,9 @@ class _YumMainState extends State<YumMain> {
                               Container(
                                 height: 25,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 18.0),
+                                  padding: const EdgeInsets.only(left: 30.0),
                                   child: Text(
-                                    '${top5List[top5Idx].storeAlias}',
+                                    '${top5List[top5Idx].storeAlias.trim()}',
                                     style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w800),
@@ -311,31 +383,107 @@ class _YumMainState extends State<YumMain> {
                               SizedBox(
                                 height: 8.0,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 18.0),
-                                child: FutureBuilder<Object>(
-                                    future: getStoreReview(
-                                        top5List[top5Idx].storeId.toString()),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        return Container(
-                                          margin: const EdgeInsets.only(
-                                              right: 20.0),
-                                          child: Text(
-                                            snapshot.data.toString(),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      } else {
-                                        return Container();
-                                      }
-                                    }),
+                              Container(
+                                // height: 50,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 30.0),
+                                  child: FutureBuilder<Object>(
+                                      future: getStoreReview(
+                                          top5List[top5Idx].storeId.toString()),
+                                      builder:
+                                          (getStoreReviewContext, snapshot) {
+                                        if (snapshot.hasData) {
+                                          List tmp = snapshot.data
+                                              .toString()
+                                              .split('\n');
+
+                                          return GestureDetector(
+                                            onTap: () async {
+                                              setState(() {
+                                                _isLoading = true;
+                                              });
+                                              await _menuProvider
+                                                  .getMenubyStore(
+                                                      top5List[top5Idx]
+                                                          .storeId
+                                                          .toString());
+                                              await _reviewProvider
+                                                  .getReviewByStore(
+                                                      top5List[top5Idx]
+                                                          .storeId
+                                                          .toString());
+
+                                              NaverOpneApi naverOpneApi =
+                                                  NaverOpneApi();
+                                              String str = await naverOpneApi
+                                                  .getNaverMapImage(
+                                                      x: top5List[top5Idx].mapX,
+                                                      y: top5List[top5Idx].mapY,
+                                                      title: top5List[top5Idx]
+                                                          .storeAlias);
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      YumStoreDetail(
+                                                    storeInfo:
+                                                        top5List[top5Idx],
+                                                    naverMapUrl: str,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  right: 20.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    snapshot.data.toString(),
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    // overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                  tmp.length >= 2
+                                                      ? Row(
+                                                          children: [
+                                                            Text("자세히 보기",
+                                                                style: TextStyle(
+                                                                    color: Color(
+                                                                        0xff818181),
+                                                                    fontSize:
+                                                                        8)),
+                                                            Icon(
+                                                              Icons
+                                                                  .chevron_right,
+                                                              color: Color(
+                                                                  0xff818181),
+                                                              size: 10,
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : Container()
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          return Container();
+                                        }
+                                      }),
+                                ),
                               ),
                               SizedBox(
                                 height: 10,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 18.0),
+                                padding: const EdgeInsets.only(left: 30.0),
                                 child: Row(
                                   children: [
                                     FutureBuilder<Object>(
@@ -398,62 +546,45 @@ class _YumMainState extends State<YumMain> {
                               Flexible(
                                 child: SizedBox(height: 140),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 18),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "맛집 List",
-                                      style: TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                    SizedBox(width: 20),
-                                    Container(
-                                      width: 18,
-                                      height: 18,
-                                      child: FloatingActionButton(
-                                        onPressed: () async {
-                                          await _storeInfoProvider.loadStoreInfo(
-                                              1,
-                                              10,
-                                              context
-                                                  .read<
-                                                      CategorySelectedProvider>()
-                                                  .selected);
+                              InkWell(
+                                onTap: () async {
+                                  await _storeInfoProvider.loadStoreInfo(
+                                      1,
+                                      10,
+                                      context
+                                          .read<CategorySelectedProvider>()
+                                          .selected);
 
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      YumStoreList(
-                                                          availableHeight:
-                                                              availableHeight)));
-                                        },
-                                        child: Container(
-                                          width: 18,
-                                          height: 18,
-                                          decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: Colors.white),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                spreadRadius: 0.0,
-                                                blurRadius: 0.0,
-                                              )
-                                            ],
-                                            shape: BoxShape.circle,
-                                            color: Colors.white,
-                                          ),
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => YumStoreList(
+                                              availableHeight:
+                                                  availableHeight)));
+                                },
+                                child: Container(
+                                  width: 130,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 20),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "맛집 List",
+                                          style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.w700),
+                                        ),
+                                        Container(
+                                          height: 20,
+                                          width: 30,
                                           child: Icon(
                                             Icons.chevron_right,
-                                            color: Colors.black,
-                                            size: 15,
+                                            color: Color(0xff818181),
                                           ),
                                         ),
-                                      ),
-                                    )
-                                  ],
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
                               SizedBox(height: 20),
@@ -508,6 +639,8 @@ class _YumMainState extends State<YumMain> {
                               SizedBox(height: 20),
                               Consumer<StoreInfoProvider>(
                                 builder: (providercontext, provider, widgets) {
+                                  print(
+                                      '${provider.storeInfo.length} asdadsadasd');
                                   if (provider.storeInfo != [] &&
                                       provider.storeInfo.length > 0) {
                                     return GestureDetector(
