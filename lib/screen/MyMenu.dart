@@ -216,9 +216,10 @@ class _MyMenuState extends State<MyMenu> {
         // await UserApi.instance.loginWithKakaoAccount();
         print('카카오계정으로 로그인 성공');
         User _user = await UserApi.instance.me();
-        String _email =
+        String _kakaoNick =
             _user.kakaoAccount!.profile?.toJson()['nickname'].toString() ?? "";
-        var yumHttp = new YumUserHttp(_email);
+
+        var yumHttp = new YumUserHttp(_kakaoNick);
         var yumLogin = await yumHttp.yumLogin();
         if (yumLogin == 200) {
           //로그인 성공
@@ -228,13 +229,15 @@ class _MyMenuState extends State<MyMenu> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    MyYumMain(yumInfo[0]["nickName"], _email)),
+                    MyYumMain(yumInfo[0]["nickName"], _kakaoNick)),
           );
         } else if (yumLogin == 400) {
           // 로그인 실패, 회원가입 으로
           print("닉네임 설정 해야함 토큰은 있음");
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => MyYumNickRegist(_email)));
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MyYumNickRegist(_kakaoNick)));
         } else {
           // 기타 에러
           print(yumLogin);
