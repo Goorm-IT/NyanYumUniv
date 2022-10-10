@@ -261,8 +261,9 @@ class _MyMenuState extends State<MyMenu> {
         var yumUserHttp = new YumUserHttp();
         var yumLogin = await yumUserHttp.yumLogin(nEmail);
         if (yumLogin == 200) {
-          var yumInfo = await yumUserHttp.yumInfo();
-
+          try {
+            var yumInfo = await yumUserHttp.yumInfo();
+          } catch (e) {}
           await _storeInfoProvider.loadStoreInfo(1, 10, "ALL");
           setState(() {
             _loadingVisible = !_loadingVisible;
@@ -284,10 +285,20 @@ class _MyMenuState extends State<MyMenu> {
             ),
           );
         } else {
-          print(yumLogin);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyYumNickRegist(nEmail),
+            ),
+          );
         }
       } catch (e) {
-        print(e);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MyYumNickRegist(nEmail),
+          ),
+        );
       }
     } else {
       setState(() {

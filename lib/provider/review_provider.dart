@@ -9,8 +9,13 @@ class ReviewProvider extends ChangeNotifier {
   List<ReviewByStore> get review => _review;
 
   getReviewByStore(String storeId) async {
-    List<ReviewByStore> _list = await yumReviewhttp.reviewByStore(storeId);
-    _review = _list;
-    notifyListeners();
+    try {
+      List<ReviewByStore> _list = await yumReviewhttp.reviewByStore(storeId);
+      _review = _list;
+      notifyListeners();
+    } catch (e) {
+      _review = [];
+      notifyListeners();
+    }
   }
 }

@@ -245,7 +245,7 @@ class _MyCalendarState extends State<MyCalendar> {
   }
 
   Widget _calendarBody() {
-    if (_sequentialDates == null) return Text("Calendar Error");
+    if (_sequentialDates == []) return Text("Calendar Error");
     return Container(
       margin: EdgeInsets.only(bottom: 10, left: 30, right: 30),
       child: GridView.builder(

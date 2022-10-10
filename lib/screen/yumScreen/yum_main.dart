@@ -127,19 +127,20 @@ class _YumMainState extends State<YumMain> {
 
                                       List<YumNaverSearch> _tmp =
                                           await naverOpneApi.searchNaver(value);
-
-                                      for (int i = 0; i < _tmp.length; i++) {
-                                        await yumStorehttp.addStore(
-                                            address: _tmp[i].address,
-                                            file: "",
-                                            category: _tmp[i].category,
-                                            mapX: _tmp[i].mapx,
-                                            mapY: _tmp[i].mapy,
-                                            storeAlias: _tmp[i]
-                                                .title
-                                                .replaceAll("</b>", " ")
-                                                .replaceAll("<b>", " "));
-                                      }
+                                      try {
+                                        for (int i = 0; i < _tmp.length; i++) {
+                                          await yumStorehttp.addStore(
+                                              address: _tmp[i].address,
+                                              file: "",
+                                              category: _tmp[i].category,
+                                              mapX: _tmp[i].mapx,
+                                              mapY: _tmp[i].mapy,
+                                              storeAlias: _tmp[i]
+                                                  .title
+                                                  .replaceAll("</b>", " ")
+                                                  .replaceAll("<b>", " "));
+                                        }
+                                      } catch (e) {}
                                       setState(() {
                                         _isLoading = false;
                                       });
@@ -183,16 +184,18 @@ class _YumMainState extends State<YumMain> {
                                             .searchNaver(searchController.text);
 
                                     for (int i = 0; i < _tmp.length; i++) {
-                                      await yumStorehttp.addStore(
-                                          address: _tmp[i].address,
-                                          file: "",
-                                          category: _tmp[i].category,
-                                          mapX: _tmp[i].mapx,
-                                          mapY: _tmp[i].mapy,
-                                          storeAlias: _tmp[i]
-                                              .title
-                                              .replaceAll("</b>", " ")
-                                              .replaceAll("<b>", " "));
+                                      try {
+                                        await yumStorehttp.addStore(
+                                            address: _tmp[i].address,
+                                            file: "",
+                                            category: _tmp[i].category,
+                                            mapX: _tmp[i].mapx,
+                                            mapY: _tmp[i].mapy,
+                                            storeAlias: _tmp[i]
+                                                .title
+                                                .replaceAll("</b>", " ")
+                                                .replaceAll("<b>", " "));
+                                      } catch (e) {}
                                     }
                                     setState(() {
                                       _isLoading = false;
@@ -736,39 +739,38 @@ class _YumMainState extends State<YumMain> {
 
   Future<String> getStoreReview(String storeId) async {
     final yumReviewhttp = YumReviewhttp();
-    final _list = await yumReviewhttp.commentByStore(storeId);
-    if (_list[0].reviewId == -1) {
-      return "아직 리뷰가 없습니다";
-    } else {
+    try {
+      final _list = await yumReviewhttp.commentByStore(storeId);
       return _list[0].content;
+    } catch (e) {
+      return "아직 리뷰가 없습니다";
     }
   }
 
   Future<double> getScore(String storeId) async {
     final yumReviewhttp = YumReviewhttp();
-    final _list = await yumReviewhttp.reviewByStore(storeId);
-    double _tmp = 0;
-    for (int i = 0; i < _list.length; i++) {
-      _tmp += _list[i].score;
-    }
-    _tmp /= _list.length;
 
-    if (_list.isEmpty) {
-      return 0.0;
-    } else {
+    try {
+      final _list = await yumReviewhttp.reviewByStore(storeId);
+      double _tmp = 0;
+      for (int i = 0; i < _list.length; i++) {
+        _tmp += _list[i].score;
+      }
+      _tmp /= _list.length;
       return _tmp;
+    } catch (e) {
+      return 0.0;
     }
   }
 
   Future<String> getStoreMenu(String storeId) async {
     final yumMenuhttp = YumMenuhttp();
-    final _list = await yumMenuhttp.menuByStore(storeId);
-    _list.sort((a, b) => b.choiceCount.compareTo(a.choiceCount));
-
-    if (_list.isEmpty) {
-      return "아직 리뷰가 없습니다";
-    } else {
+    try {
+      final _list = await yumMenuhttp.menuByStore(storeId);
+      _list.sort((a, b) => b.choiceCount.compareTo(a.choiceCount));
       return _list[0].menuAlias;
+    } catch (e) {
+      return "아직 리뷰가 없습니다";
     }
   }
 }

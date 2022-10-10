@@ -8,8 +8,13 @@ class CommentProvider extends ChangeNotifier {
   List<CommentByStore> get comment => _comment;
 
   getCommentByStore(String storeId) async {
-    List<CommentByStore> _list = await yumReviewhttp.commentByStore(storeId);
-    _comment = _list;
-    notifyListeners();
+    try {
+      List<CommentByStore> _list = await yumReviewhttp.commentByStore(storeId);
+      _comment = _list;
+      notifyListeners();
+    } catch (e) {
+      _comment = [];
+      notifyListeners();
+    }
   }
 }

@@ -9,8 +9,13 @@ class SaveStoreProvider extends ChangeNotifier {
   List<StoreComposition> get savedlist => _savedlist;
 
   getSaveStore() async {
-    List<StoreComposition> _list = await saveApi.getSaveList();
-    _savedlist = _list;
-    notifyListeners();
+    try {
+      List<StoreComposition> _list = await saveApi.getSaveList();
+      _savedlist = _list;
+      notifyListeners();
+    } catch (e) {
+      _savedlist = [];
+      notifyListeners();
+    }
   }
 }

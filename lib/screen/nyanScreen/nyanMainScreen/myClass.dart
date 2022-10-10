@@ -239,14 +239,6 @@ class _MyClassState extends State<MyClass> with TickerProviderStateMixin {
                                   GestureDetector(
                                     onTap: () async {
                                       YumUserHttp _yumUserHttp = YumUserHttp();
-                                      List tmp =
-                                          await _yumUserHttp.getUserStatus();
-                                      if (tmp.isNotEmpty &&
-                                          tmp[0].uid != "null") {
-                                        print("로그인 된거임");
-                                      } else {
-                                        print(tmp);
-                                      }
                                     },
                                     child: Text("내 강의실 List",
                                         style: TextStyle(

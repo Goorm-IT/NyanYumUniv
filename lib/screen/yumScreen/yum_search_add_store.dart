@@ -60,20 +60,27 @@ class _YumSearchAddStoreState extends State<YumSearchAddStore> {
                       textInputAction: TextInputAction.search,
                       onSubmitted: (value) async {
                         YumStorehttp _yumStorehttp = YumStorehttp();
-                        List<StoreComposition> tmp =
-                            await _yumStorehttp.getstorebyAlias(
-                          storeAlias: value,
-                        );
-                        setState(() {
-                          searchList = tmp;
-                          if (searchList.length > 0) {
-                            errorText = "";
-                            errorText2 = "";
-                          } else {
-                            errorText = '등록된 가게가 없습니다';
-                            errorText2 = '가게를 먼저 등록해주세요';
-                          }
-                        });
+                        try {
+                          List<StoreComposition> tmp =
+                              await _yumStorehttp.getstorebyAlias(
+                            storeAlias: _controller.text,
+                          );
+                          setState(() {
+                            searchList = tmp;
+                            if (searchList.length > 0) {
+                              errorText = "";
+                              errorText2 = "";
+                            } else {
+                              errorText = '등록된 가게가 없습니다';
+                              errorText2 = '가게를 먼저 등록해주세요';
+                            }
+                          });
+                        } catch (e) {
+                          setState(() {
+                            errorText = '검색에 실패했습니다';
+                            errorText2 = '잠시후 다시 시도해주세요';
+                          });
+                        }
                       },
                       controller: _controller,
                     ),
@@ -86,20 +93,27 @@ class _YumSearchAddStoreState extends State<YumSearchAddStore> {
                       splashRadius: 25,
                       onPressed: () async {
                         YumStorehttp _yumStorehttp = YumStorehttp();
-                        List<StoreComposition> tmp =
-                            await _yumStorehttp.getstorebyAlias(
-                          storeAlias: _controller.text,
-                        );
-                        setState(() {
-                          searchList = tmp;
-                          if (searchList.length > 0) {
-                            errorText = "";
-                            errorText2 = "";
-                          } else {
-                            errorText = '등록된 가게가 없습니다';
-                            errorText2 = '가게를 먼저 등록해주세요';
-                          }
-                        });
+                        try {
+                          List<StoreComposition> tmp =
+                              await _yumStorehttp.getstorebyAlias(
+                            storeAlias: _controller.text,
+                          );
+                          setState(() {
+                            searchList = tmp;
+                            if (searchList.length > 0) {
+                              errorText = "";
+                              errorText2 = "";
+                            } else {
+                              errorText = '등록된 가게가 없습니다';
+                              errorText2 = '가게를 먼저 등록해주세요';
+                            }
+                          });
+                        } catch (e) {
+                          setState(() {
+                            errorText = '검색에 실패했습니다';
+                            errorText2 = '잠시후 다시 시도해주세요';
+                          });
+                        }
                       },
                       icon: Icon(
                         Icons.search,
@@ -126,8 +140,12 @@ class _YumSearchAddStoreState extends State<YumSearchAddStore> {
                               YumMenuhttp _yumMenuttp = YumMenuhttp();
                               List<MenuByStore> menuList = [];
                               if (searchList.length > 0) {
-                                menuList = await _yumMenuttp.menuByStore(
-                                    searchList[index].storeId.toString());
+                                try {
+                                  menuList = await _yumMenuttp.menuByStore(
+                                      searchList[index].storeId.toString());
+                                } catch (e) {
+                                  menuList = [];
+                                }
                               }
 
                               Navigator.push(

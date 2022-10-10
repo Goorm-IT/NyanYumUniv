@@ -9,8 +9,13 @@ class LikeStoreProvider extends ChangeNotifier {
   List<StoreComposition> get likedlist => _likedlist;
 
   getLikeStore() async {
-    List<StoreComposition> _list = await likeApi.getLikeList();
-    _likedlist = _list;
-    notifyListeners();
+    try {
+      List<StoreComposition> _list = await likeApi.getLikeList();
+      _likedlist = _list;
+      notifyListeners();
+    } catch (e) {
+      _likedlist = [];
+      notifyListeners();
+    }
   }
 }

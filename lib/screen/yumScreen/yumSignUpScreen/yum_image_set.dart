@@ -163,10 +163,9 @@ class _MyProfileImgState extends State<MyProfileImg>
                                 setState(() {
                                   _loadingVisible = !_loadingVisible;
                                 });
-                                final getpath = await yumUserhttp
-                                    .yumProfileImg(myimage?.path);
-                                print(getpath);
-                                if (getpath == 200) {
+                                try {
+                                  final getpath = await yumUserhttp
+                                      .yumProfileImg(myimage?.path);
                                   final newInfo = await yumUserhttp.yumInfo();
                                   setState(() {
                                     _loadingVisible = !_loadingVisible;
@@ -177,7 +176,7 @@ class _MyProfileImgState extends State<MyProfileImg>
                                       builder: (context) => YumMain(),
                                     ),
                                   );
-                                }
+                                } catch (e) {}
                               }
                             },
                             style: ElevatedButton.styleFrom(

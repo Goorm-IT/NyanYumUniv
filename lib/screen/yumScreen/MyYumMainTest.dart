@@ -33,8 +33,7 @@ class _MyYumMainState extends State<MyYumMain> {
           children: [
             Consumer<StoreInfoProvider>(
               builder: (context, provider, widget) {
-                if (provider.storeInfo != null &&
-                    provider.storeInfo.length > 0) {
+                if (provider.storeInfo.length > 0) {
                   return Container(
                     height: 400,
                     child: ListView.builder(

@@ -61,7 +61,7 @@ class _MyCustomCheckboxState extends State<MyCustomCheckbox> {
                 color: widget.selectedIconColor,
                 size: widget.iconSize,
               )
-            : null,
+            : Container(),
       ),
     );
   }

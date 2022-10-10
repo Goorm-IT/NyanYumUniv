@@ -9,8 +9,13 @@ class MenuProvider extends ChangeNotifier {
   List<MenuByStore> get menu => _menu;
 
   getMenubyStore(String storeId) async {
-    List<MenuByStore> _list = await yumMenuhttp.menuByStore(storeId);
-    _menu = _list;
-    notifyListeners();
+    try {
+      List<MenuByStore> _list = await yumMenuhttp.menuByStore(storeId);
+      _menu = _list;
+      notifyListeners();
+    } catch (e) {
+      _menu = [];
+      notifyListeners();
+    }
   }
 }

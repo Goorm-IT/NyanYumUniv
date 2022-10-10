@@ -550,21 +550,21 @@ class _YumAddStoreState extends State<YumAddStore> {
                                                             "") {
                                                       YumMenuhttp yumMenuhttp =
                                                           YumMenuhttp();
-                                                      int rst = await yumMenuhttp
-                                                          .addMenu(
-                                                              cost: int.parse(
-                                                                  addMenuCost
-                                                                      .text),
-                                                              menuAlias:
-                                                                  addMenuAlias
-                                                                      .text
-                                                                      .toString(),
-                                                              storeId: widget
-                                                                  .storeInfo
-                                                                  .storeId
-                                                                  .toString());
 
-                                                      if (rst == 200) {
+                                                      try {
+                                                        int rst = await yumMenuhttp
+                                                            .addMenu(
+                                                                cost: int.parse(
+                                                                    addMenuCost
+                                                                        .text),
+                                                                menuAlias:
+                                                                    addMenuAlias
+                                                                        .text
+                                                                        .toString(),
+                                                                storeId: widget
+                                                                    .storeInfo
+                                                                    .storeId
+                                                                    .toString());
                                                         await _menuProvider
                                                             .getMenubyStore(
                                                                 widget.storeInfo
@@ -604,7 +604,7 @@ class _YumAddStoreState extends State<YumAddStore> {
                                                             ],
                                                           ),
                                                         );
-                                                      } else {
+                                                      } catch (e) {
                                                         Navigator.pop(context);
                                                         showDialog(
                                                           context: context,
@@ -629,6 +629,7 @@ class _YumAddStoreState extends State<YumAddStore> {
                                                           ),
                                                         );
                                                       }
+
                                                       addMenuAlias.clear();
                                                       addMenuCost.clear();
                                                     }
