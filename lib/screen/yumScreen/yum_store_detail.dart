@@ -139,19 +139,19 @@ class _YumStoreDetailState extends State<YumStoreDetail> {
                       child: ListView(
                         controller: _scrollController,
                         children: [
-                          widget.storeInfo.imagePath == null
+                          widget.storeInfo.imagePath != null
                               ? MainImage(
-                                  isNull: true,
-                                  menuList: menuProvider.menu,
-                                  storeInfo: widget.storeInfo,
-                                  isLike: _isLike,
-                                  isSave: _isSave,
-                                )
-                              : MainImage(
                                   isNull: false,
                                   menuList: menuProvider.menu,
                                   storeInfo: widget.storeInfo,
                                   imagePath: widget.storeInfo.imagePath,
+                                  isLike: _isLike,
+                                  isSave: _isSave,
+                                )
+                              : MainImage(
+                                  isNull: true,
+                                  menuList: menuProvider.menu,
+                                  storeInfo: widget.storeInfo,
                                   isLike: _isLike,
                                   isSave: _isSave,
                                 ),

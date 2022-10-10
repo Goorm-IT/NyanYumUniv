@@ -37,14 +37,18 @@ class _MyProfilePageState extends State<MyProfilePage>
   void yumDelete() async {
     var yumUserHttp = YumUserHttp();
     print(yumUser.uid);
-    await yumUserHttp.yumLogin(yumUser.uid);
-    await yumUserHttp.yumDelete(yumUser.uid);
+    try {
+      await yumUserHttp.yumLogin(yumUser.uid);
+      await yumUserHttp.yumDelete(yumUser.uid);
+    } catch (e) {}
   }
 
   void yumLogout() async {
     var yumUserHttp = YumUserHttp();
-    await yumUserHttp.yumLogin(yumUser.uid);
-    await yumUserHttp.yumLogOut();
+    try {
+      await yumUserHttp.yumLogin(yumUser.uid);
+      await yumUserHttp.yumLogOut();
+    } catch (e) {}
   }
 
   @override
@@ -228,7 +232,9 @@ class _MyProfilePageState extends State<MyProfilePage>
                                             "사용 불가능한 닉네임입니다", Colors.red);
                                       }
                                     }
-                                  } catch (e) {}
+                                  } catch (e) {
+                                    fadeMessage("닉네임 변경에 실패했습니다.", Colors.red);
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.zero,

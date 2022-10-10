@@ -90,6 +90,7 @@ class _ThreeButtonState extends State<ThreeButton>
         return tmp;
       } catch (e) {
         YumUserHttp yumUserHttp = YumUserHttp();
+
         await yumUserHttp.yumLogin(yumUser.uid);
         int tmp = await likeApi.checkLike(widget.storeInfo.storeId.toString());
         widget.isLike.sink.add(tmp);
@@ -1008,11 +1009,13 @@ class _ThreeButtonState extends State<ThreeButton>
                         onPressed: () async {
                           isLikeLoading = true;
                           LikeApi likeApi = LikeApi();
-                          await likeApi
-                              .likeOnOff(widget.storeInfo.storeId.toString());
-                          int tmp = await likeApi
-                              .checkLike(widget.storeInfo.storeId.toString());
-                          widget.isLike.sink.add(tmp);
+                          try {
+                            await likeApi
+                                .likeOnOff(widget.storeInfo.storeId.toString());
+                            int tmp = await likeApi
+                                .checkLike(widget.storeInfo.storeId.toString());
+                            widget.isLike.sink.add(tmp);
+                          } catch (e) {}
 
                           isLikeLoading = false;
                         },
@@ -1063,11 +1066,13 @@ class _ThreeButtonState extends State<ThreeButton>
                         onPressed: () async {
                           isSaveLoading = true;
                           SaveApi saveApi = SaveApi();
-                          await saveApi
-                              .saveOnOff(widget.storeInfo.storeId.toString());
-                          int tmp = await saveApi
-                              .checkSave(widget.storeInfo.storeId.toString());
-                          widget.isSave.sink.add(tmp);
+                          try {
+                            await saveApi
+                                .saveOnOff(widget.storeInfo.storeId.toString());
+                            int tmp = await saveApi
+                                .checkSave(widget.storeInfo.storeId.toString());
+                            widget.isSave.sink.add(tmp);
+                          } catch (e) {}
 
                           isSaveLoading = false;
                         },

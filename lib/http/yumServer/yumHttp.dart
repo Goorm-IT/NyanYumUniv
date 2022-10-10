@@ -65,10 +65,10 @@ class YumUserHttp {
             .map<CheckUserStatus>((item) => CheckUserStatus.fromJson(item))
             .toList();
       } else {
-        return [];
+        throw new CustomException(response.statusCode, 'getUserStatus');
       }
     } catch (e) {
-      return [];
+      throw new CustomException(400, 'getUserStatus');
     }
   }
 
@@ -78,14 +78,12 @@ class YumUserHttp {
     String _tmpCookie = response.headers['set-cookie'] ?? '';
     var idx = _tmpCookie.indexOf(';');
     _cookie = (idx == -1) ? _tmpCookie : _tmpCookie.substring(0, idx);
-    // if (response.statusCode == 200) {
-    //   print(response.body);
-    //   print(_cookie);
-    // } else {
-    //   print('Request failed with status: ${response.statusCode}.');
-    // }
 
-    return response.statusCode;
+    if (response.statusCode == 200) {
+      return response.statusCode;
+    } else {
+      throw new CustomException(response.statusCode, 'yumLogin');
+    }
   }
 
   Future<int> yumProfileImg(imgPath) async {
@@ -96,8 +94,11 @@ class YumUserHttp {
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
-
-    return response.statusCode;
+    if (response.statusCode == 200) {
+      return response.statusCode;
+    } else {
+      throw new CustomException(response.statusCode, 'yumProfileImg');
+    }
   }
 
   Future<List<dynamic>> yumInfo() async {
@@ -118,8 +119,7 @@ class YumUserHttp {
       ));
       return _list;
     } else {
-      print('Request failed with status: ${response.statusCode}.');
-      throw new CustomException(300, 'Cookie has Expired2');
+      throw new CustomException(response.statusCode, 'yumInfo');
     }
   }
 }
@@ -138,8 +138,7 @@ class YumStorehttp {
           .map<StoreComposition>((item) => StoreComposition.fromJson(item))
           .toList();
     } else {
-      print('Request failed with status(top5): ${response.statusCode}.');
-      return [];
+      throw new CustomException(response.statusCode, 'storeTop5');
     }
   }
 
@@ -156,9 +155,7 @@ class YumStorehttp {
           .map<StoreComposition>((item) => StoreComposition.fromJson(item))
           .toList();
     } else {
-      print(
-          'Request failed with status(getstorebyAlias): ${response.statusCode}.');
-      return [];
+      throw new CustomException(response.statusCode, 'getstorebyAlias');
     }
   }
 
@@ -182,7 +179,7 @@ class YumStorehttp {
     if (response.statusCode == 200) {
       print(await response.stream.bytesToString());
     } else {
-      print(response.reasonPhrase);
+      throw new CustomException(response.statusCode, 'addStore');
     }
   }
 
@@ -211,8 +208,7 @@ class YumStorehttp {
           .map<StoreComposition>((item) => StoreComposition.fromJson(item))
           .toList();
     } else {
-      print('Request failed with status(storeList2): ${response.statusCode}.');
-      return [];
+      throw new CustomException(response.statusCode, 'storeList2');
     }
   }
 
@@ -229,9 +225,7 @@ class YumStorehttp {
           .map<StoreComposition>((item) => StoreComposition.fromJson(item))
           .toList();
     } else {
-      print(
-          'Request failed with status(searchStoreId): ${response.statusCode}.');
-      return [];
+      throw new CustomException(response.statusCode, 'searchStoreId');
     }
   }
 }
@@ -250,8 +244,7 @@ class YumMenuhttp {
           .map<MenuByStore>((item) => MenuByStore.fromJson(item))
           .toList();
     } else {
-      print('Request failed with status(menuByStore): ${response.statusCode}.');
-      return [];
+      throw new CustomException(response.statusCode, 'menuByStore');
     }
   }
 
@@ -268,9 +261,7 @@ class YumMenuhttp {
           .map<MenuByStore>((item) => MenuByStore.fromJson(item))
           .toList();
     } else {
-      print(
-          'Request failed with status(searchStoreId): ${response.statusCode}.');
-      return [];
+      throw new CustomException(response.statusCode, 'searchMenuId');
     }
   }
 
@@ -289,11 +280,10 @@ class YumMenuhttp {
 
     print(response.statusCode);
     if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
+      return response.statusCode;
     } else {
-      print(response.reasonPhrase);
+      throw new CustomException(response.statusCode, 'addMenu');
     }
-    return response.statusCode;
   }
 }
 
@@ -312,9 +302,7 @@ class YumReviewhttp {
           .map<ReviewByStore>((item) => ReviewByStore.fromJson(item))
           .toList();
     } else {
-      print(
-          'Request failed with status(reviewByStore): ${response.statusCode}.');
-      return [];
+      throw new CustomException(response.statusCode, 'reviewByStore');
     }
   }
 
@@ -329,14 +317,7 @@ class YumReviewhttp {
           .map<CommentByStore>((item) => CommentByStore.fromJson(item))
           .toList();
     } else {
-      print(
-          'Request failed with status(commentByStore): ${response.statusCode}.');
-      return [
-        CommentByStore(
-          content: "-1",
-          reviewId: -1,
-        )
-      ];
+      throw new CustomException(response.statusCode, 'commentByStore');
     }
   }
 
@@ -352,12 +333,6 @@ class YumReviewhttp {
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
-
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
-    } else {
-      print(response.reasonPhrase);
-    }
     return response.statusCode;
   }
 
@@ -372,7 +347,7 @@ class YumReviewhttp {
           .map<ReviewByStore>((item) => ReviewByStore.fromJson(item))
           .toList();
     } else {
-      return [];
+      throw new CustomException(response.statusCode, 'reviewbyUser');
     }
   }
 }
@@ -436,7 +411,6 @@ class SaveApi {
     if (response.statusCode == 200) {
       return (jsonDecode(response.body)["show"]);
     } else {
-      print(response.statusCode);
       throw new CustomException(300, 'checkSave');
     }
   }
@@ -464,7 +438,11 @@ class ReportApi {
     final url = Uri.http(
         yumURL, '/nyu/report', {"report": report, "reviewId": reviewId});
     var response = await http.post(url, headers: {'Cookie': _cookie});
-    print(response.body);
+    if (response.statusCode == 200) {
+      print(response.body);
+    } else {
+      throw new CustomException(300, 'yumreportReportApi');
+    }
   }
 }
 
@@ -480,7 +458,11 @@ class SupportApi {
       "userAlias": userAlias
     });
     var response = await http.post(url, headers: {'Cookie': _cookie});
-    print(response.body);
+    if (response.statusCode == 200) {
+      print(response.body);
+    } else {
+      throw new CustomException(300, 'yumreportSupportApi');
+    }
   }
 }
 
@@ -504,8 +486,7 @@ class NaverOpneApi {
     if (response.statusCode == 200) {
       return Base64Encoder().convert(response.bodyBytes);
     } else {
-      print(response.statusCode);
-      throw new CustomException(300, 'failLoadNaverMap');
+      throw new CustomException(response.statusCode, 'failLoadNaverMap');
     }
   }
 
@@ -526,8 +507,7 @@ class NaverOpneApi {
           .map<YumNaverSearch>((item) => YumNaverSearch.fromJson(item))
           .toList();
     } else {
-      print('Request failed with status(searchNaver): ${response.statusCode}.');
-      return [];
+      throw new CustomException(response.statusCode, 'searchNaver');
     }
   }
 }

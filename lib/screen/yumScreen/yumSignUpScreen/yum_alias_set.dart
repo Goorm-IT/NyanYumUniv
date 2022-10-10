@@ -109,8 +109,10 @@ class _MyYumNickRegistState extends State<MyYumNickRegist>
                           if (yumRegister == 200) {
                             var yumLogin =
                                 await yumUserHttp.yumLogin(widget.n_email);
-                            var yumInfo = await yumUserHttp.yumInfo();
-                            print(yumInfo[0]["userAlias"]);
+                            var yumInfo;
+                            try {
+                              yumInfo = await yumUserHttp.yumInfo();
+                            } catch (e) {}
 
                             Navigator.pushReplacement(
                               context,

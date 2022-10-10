@@ -9,14 +9,19 @@ class StoreInfoProvider extends ChangeNotifier {
 
   loadStoreInfo(int startPageNo, int endPageNo, [String category = ""]) async {
     if (category == 'ALL') category = "";
-    List<StoreComposition> storeInfoList =
-        await yumStorehttp.storeList2(startPageNo, endPageNo, category);
+    try {
+      List<StoreComposition> storeInfoList =
+          await yumStorehttp.storeList2(startPageNo, endPageNo, category);
 
-    if (startPageNo == 1) {
-      _storeInfo = storeInfoList;
-    } else {
-      _storeInfo += storeInfoList;
+      if (startPageNo == 1) {
+        _storeInfo = storeInfoList;
+      } else {
+        _storeInfo += storeInfoList;
+      }
+      notifyListeners();
+    } catch (e) {
+      _storeInfo = [];
+      notifyListeners();
     }
-    notifyListeners();
   }
 }

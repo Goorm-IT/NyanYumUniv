@@ -403,13 +403,18 @@ class _CustomMenuTabbarState extends State<CustomMenuTabbar>
                                 .selected ==
                             2) {
                           YumUserHttp _yumUserHttp = YumUserHttp();
-                          List tmp = await _yumUserHttp.getUserStatus();
-                          if (tmp.isNotEmpty && tmp[0].uid != "null") {
-                            print("로그인 되었습니다.");
-                            setState(() {
-                              isNyumLogin = true;
-                            });
-                          } else {
+                          try {
+                            List tmp = await _yumUserHttp.getUserStatus();
+                            if (tmp[0].uid != "null") {
+                              setState(() {
+                                isNyumLogin = true;
+                              });
+                            } else {
+                              setState(() {
+                                isNyumLogin = false;
+                              });
+                            }
+                          } catch (e) {
                             setState(() {
                               isNyumLogin = false;
                             });

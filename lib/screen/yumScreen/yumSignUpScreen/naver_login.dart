@@ -95,8 +95,9 @@ class _NaverLoginPageState extends State<NaverLoginPage> {
                       bool isLogin = await _isLogin_naver();
                       if (isLogin) {
                         var yumUserHttp = new YumUserHttp();
-                        var yumLogin = await yumUserHttp.yumLogin(nEmail);
-                        if (yumLogin == 200) {
+
+                        try {
+                          var yumLogin = await yumUserHttp.yumLogin(nEmail);
                           var yumInfo = await yumUserHttp.yumInfo();
 
                           Navigator.pushReplacement(
@@ -105,15 +106,14 @@ class _NaverLoginPageState extends State<NaverLoginPage> {
                               builder: (context) => YumMain(),
                             ),
                           );
-                        } else if (yumLogin == 400) {
+                        } catch (e) {
+                          print(e);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => MyYumNickRegist(nEmail),
                             ),
                           );
-                        } else {
-                          print(yumLogin);
                         }
                       }
                     },
