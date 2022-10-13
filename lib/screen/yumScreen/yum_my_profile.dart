@@ -498,7 +498,7 @@ class _MyProfilePageState extends State<MyProfilePage>
                                       return AlertDialog(
                                         contentPadding:
                                             const EdgeInsets.symmetric(
-                                                vertical: 24, horizontal: 40),
+                                                vertical: 24, horizontal: 30),
                                         buttonPadding:
                                             const EdgeInsetsDirectional
                                                 .fromSTEB(0, 8, 0, 8),
@@ -511,19 +511,25 @@ class _MyProfilePageState extends State<MyProfilePage>
                                               fontWeight: FontWeight.w900),
                                         ),
                                         content: Container(
-                                            height: 60.0,
                                             child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text("이메일 : ${yumUser.uid}"),
-                                                SizedBox(
-                                                  height: 3,
-                                                ),
-                                                Text(
-                                                    "가입 일자 : ${yumUser.registerDate}")
-                                              ],
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                                child: Text(
+                                              "이메일 : ${yumUser.uid}",
+                                              style: TextStyle(fontSize: 15),
                                             )),
+                                            SizedBox(
+                                              height: 3,
+                                            ),
+                                            Text(
+                                              "가입 일자 : ${yumUser.registerDate}",
+                                              style: TextStyle(fontSize: 15),
+                                            )
+                                          ],
+                                        )),
                                         actions: [
                                           Container(
                                             alignment: Alignment.center,

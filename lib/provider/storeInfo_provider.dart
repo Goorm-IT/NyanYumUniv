@@ -12,7 +12,7 @@ class StoreInfoProvider extends ChangeNotifier {
     try {
       List<StoreComposition> storeInfoList =
           await yumStorehttp.storeList2(startPageNo, endPageNo, category);
-
+      print(storeInfoList);
       if (startPageNo == 1) {
         _storeInfo = storeInfoList;
       } else {
